@@ -20,6 +20,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to unpinMessage function (by using "unpinMessageCallbackToUser")
     func responseOfUnpinMessage(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'UNPIN_MESSAGE' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -42,7 +43,7 @@ extension Chat {
             delegate?.threadEvents(model: threadEventModel)
         }
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let thId = message.subjectId {
                 Chat.cacheDB.deletePinMessage(threadId: thId)
 //                Chat.cacheDB.deletePinMessageFromCMConversationEntity(threadId: thId)

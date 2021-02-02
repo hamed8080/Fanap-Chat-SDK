@@ -80,10 +80,10 @@ extension Chat {
          *
          *
          */
-        
-        let url = ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
+        guard let createChatModel = createChatModel else {return}
+        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
         let method: HTTPMethod = .get
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
         Alamofire.request(url, method: method, parameters: nil, headers: headers).responseString { (response) in
             
             // check if the result respons is success
@@ -192,10 +192,10 @@ extension Chat {
          *              - preferred_username:   String  (ex: "Reza")
          *
          */
-        
-        let url = SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GENERATE_KEY.rawValue
+        guard let createChatModel = createChatModel else {return}
+        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_GENERATE_KEY.rawValue
         let method: HTTPMethod = .post
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
         let params: Parameters = ["validity":       10 * 365 * 24 * 60 * 60,      // 10 years
                                   "renew":          "true",
                                   "keyAlgorithm":   keyAlgorithm ?? "aes",
@@ -316,9 +316,10 @@ extension Chat {
          *
          */
         // TODO: save the new keyId into the Cache
-        let url = SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GET_KEY.rawValue + "\(keyId)"
+        guard let createChatModel = createChatModel else {return}
+        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_GET_KEY.rawValue + "\(keyId)"
         let method: HTTPMethod = .get
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
         let params: Parameters = ["validity":       10 * 365 * 24 * 60 * 60,  // 10 years
                                   "renew":          false,
                                   "keyAlgorithm":   keyAlgorithm ?? "aes",
@@ -491,6 +492,7 @@ extension Chat {
      *
      */
     func ping() {
+        guard let createChatModel = createChatModel else {return}
         /*
          *
          *  -> if chat is connected and we also have the peerId
@@ -512,7 +514,7 @@ extension Chat {
                                                 repliedTo:          nil,
                                                 systemMetadata:     nil,
                                                 subjectId:          nil,
-                                                token:              token,
+                                                token:              createChatModel.token,
                                                 tokenIssuer:        nil,
                                                 typeCode:           nil,
                                                 uniqueId:           nil,
@@ -520,9 +522,9 @@ extension Chat {
                                                 isCreateThreadAndSendMessage: nil)
             
             let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                                  msgTTL:       msgTTL,
-                                                  peerName:     serverName,
-                                                  priority:     msgPriority,
+                                                  msgTTL:       createChatModel.msgTTL,
+                                                  peerName:     createChatModel.serverName,
+                                                  priority:     createChatModel.msgPriority,
                                                   pushMsgType:  5)
             
             sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -929,10 +931,11 @@ extension Chat {
     }
     
     private func chatErrorHandler(withMessage message: ChatMessage, messageContentAsJSON: JSON) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'ERROR' recieved", context: "Chat")
         
         // send log to Sentry 4.3.1
-        if captureSentryLogs {
+        if createChatModel.captureLogsOnSentry {
             let event = Event(level: SentrySeverity.error)
             event.message = "Message of type 'ERROR' recieved: \n \(message.returnToJSON())"
             Client.shared?.send(event: event, completion: { _ in })
@@ -983,6 +986,7 @@ extension Chat {
     
     
     func chatMessageHandler(threadId: Int, messageContent: JSON) {
+        guard let createChatModel = createChatModel else {return}
         let message = Message(threadId: threadId, pushMessageVO: messageContent)
         
         if let messageOwner = message.participant?.id {
@@ -996,7 +1000,7 @@ extension Chat {
             }
         }
         
-        if enableCache {
+        if createChatModel.enableCache {
             // save data comes from server to the Cache
             let theMessage = Message(threadId: threadId, pushMessageVO: messageContent)
             Chat.cacheDB.saveMessageObjects(messages: [theMessage], getHistoryParams: nil)
@@ -1030,6 +1034,7 @@ extension Chat {
     
     
     func userRemovedFromThread(id: Int?) {
+        guard let createChatModel = createChatModel else {return}
         if let threadId = id {
             let tRemoveFromThreadEM = ThreadEventModel(type:            ThreadEventTypes.THREAD_REMOVED_FROM,
                                                        participants:    nil,
@@ -1040,7 +1045,7 @@ extension Chat {
                                                        pinMessage:      nil)
             delegate?.threadEvents(model: tRemoveFromThreadEM)
             
-            if enableCache {
+            if createChatModel.enableCache {
                 Chat.cacheDB.deleteThreads(withThreadIds: [threadId])
             }
         }

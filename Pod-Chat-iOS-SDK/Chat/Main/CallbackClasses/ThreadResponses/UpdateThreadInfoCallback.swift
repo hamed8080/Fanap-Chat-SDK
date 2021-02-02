@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to updateThreadInfo function (by using "updateThreadInfoCallbackToUser")
     func responseOfUpdateThreadInfo(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'UPDATE_THREAD_INFO' recieved", context: "Chat")
         
         var threads: [Conversation]?
@@ -38,7 +39,7 @@ extension Chat {
         delegate?.threadEvents(model: tUpdateInfoEM)
         
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let threadJSON = message.content?.convertToJSON() {
                 let myThread = Conversation(messageContent: threadJSON)
                 Chat.cacheDB.saveThread(withThreadObjects: [myThread])

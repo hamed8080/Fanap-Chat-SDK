@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -46,8 +46,6 @@
 		3E17D2672450AF53009142F8 /* ParticipantManagementMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E17D2662450AF53009142F8 /* ParticipantManagementMethods.swift */; };
 		3E17D28D24D61EBC00B75135 /* UserEventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E17D28C24D61EBC00B75135 /* UserEventModel.swift */; };
 		3E17D29D24D61EE200B75135 /* UserEventTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E17D29C24D61EE200B75135 /* UserEventTypes.swift */; };
-		3E17D2CC24D6280900B75135 /* FanapPodAsyncSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E17D2C924D627ED00B75135 /* FanapPodAsyncSDK.framework */; };
-		3E17D2CD24D6280900B75135 /* FanapPodAsyncSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E17D2C924D627ED00B75135 /* FanapPodAsyncSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3E1EA58423A4ABC500B4C3F8 /* SendInteractiveMessageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1EA58323A4ABC500B4C3F8 /* SendInteractiveMessageRequest.swift */; };
 		3E1F313D24533DA500643EE6 /* BotManagementMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1F313C24533DA500643EE6 /* BotManagementMethods.swift */; };
 		3E1F314924533EAC00643EE6 /* CreateBotRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E1F314824533EAC00643EE6 /* CreateBotRequest.swift */; };
@@ -104,8 +102,6 @@
 		3E24085D21F5C844001F32F1 /* CMLinkedUser+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E24082E21F5C844001F32F1 /* CMLinkedUser+CoreDataClass.swift */; };
 		3E24085E21F5C844001F32F1 /* CMLinkedUser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E24082F21F5C844001F32F1 /* CMLinkedUser+CoreDataProperties.swift */; };
 		3E24085F21F5C844001F32F1 /* CMLinkedUser+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E24082F21F5C844001F32F1 /* CMLinkedUser+CoreDataProperties.swift */; };
-		3E25635C24D5A95B00C1CDD0 /* Sentry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E25635724D5A8F900C1CDD0 /* Sentry.framework */; };
-		3E25635D24D5A95B00C1CDD0 /* Sentry.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E25635724D5A8F900C1CDD0 /* Sentry.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3E2ADA5123D5A5AE00331407 /* CMPinMessage+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2ADA4F23D5A5AE00331407 /* CMPinMessage+CoreDataClass.swift */; };
 		3E2ADA5223D5A5AE00331407 /* CMPinMessage+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2ADA5023D5A5AE00331407 /* CMPinMessage+CoreDataProperties.swift */; };
 		3E33159923AFD0EB0070A3D1 /* RemoveRoleFromUserCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E33159823AFD0EB0070A3D1 /* RemoveRoleFromUserCallback.swift */; };
@@ -372,6 +368,9 @@
 		3EF2D3CC21A985BD005867C2 /* SeenMessageListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2D3CB21A985BD005867C2 /* SeenMessageListTest.swift */; };
 		3EF2D3D021A985D1005867C2 /* DeliverMessageListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2D3CF21A985D1005867C2 /* DeliverMessageListTest.swift */; };
 		3EFDB457236C6BB200623461 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EFDB448236C6B9B00623461 /* Alamofire.framework */; };
+		606CE666D25FB98F44F31901 /* Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB20F0DABB8F9A084F282E6C /* Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework */; };
+		6488D604C86FE30C2735ADCD /* Pods_FanapPodChatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F963BF16A5EBBABA44C9D4B /* Pods_FanapPodChatSDK.framework */; };
+		AC25F49425C986F800010DBF /* CreateChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC25F49325C986F800010DBF /* CreateChatModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -468,22 +467,8 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		3E841C8E2476DE0600854197 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3E25635D24D5A95B00C1CDD0 /* Sentry.framework in Embed Frameworks */,
-				3E17D2CD24D6280900B75135 /* FanapPodAsyncSDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		1970AC27F6A419BA6D7FD1AA /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FanapPodChatSDK-FanapPodChatSDKTests.release.xcconfig"; path = "Target Support Files/Pods-FanapPodChatSDK-FanapPodChatSDKTests/Pods-FanapPodChatSDK-FanapPodChatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		3E00CAE821DC8E5A0029B1FC /* MapRouting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRouting.swift; sourceTree = "<group>"; };
 		3E00CAF421DC9E6B0029B1FC /* MapRoutingResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRoutingResponse.swift; sourceTree = "<group>"; };
 		3E00CAF621DCA9030029B1FC /* MapStaticImageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStaticImageRequest.swift; sourceTree = "<group>"; };
@@ -804,6 +789,12 @@
 		3EF2D3CB21A985BD005867C2 /* SeenMessageListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeenMessageListTest.swift; sourceTree = "<group>"; };
 		3EF2D3CF21A985D1005867C2 /* DeliverMessageListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliverMessageListTest.swift; sourceTree = "<group>"; };
 		3EFDB43C236C6B9B00623461 /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Alamofire.xcodeproj; path = "../../../Usefull Libraries/Alamofire-4.8.2/Alamofire.xcodeproj"; sourceTree = "<group>"; };
+		5340A4E4AF6CD096185D9697 /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FanapPodChatSDK-FanapPodChatSDKTests.debug.xcconfig"; path = "Target Support Files/Pods-FanapPodChatSDK-FanapPodChatSDKTests/Pods-FanapPodChatSDK-FanapPodChatSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		6CC41299EAB14AF147733CA7 /* Pods-FanapPodChatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FanapPodChatSDK.debug.xcconfig"; path = "Target Support Files/Pods-FanapPodChatSDK/Pods-FanapPodChatSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		6F963BF16A5EBBABA44C9D4B /* Pods_FanapPodChatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FanapPodChatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7EF9432AF6B41704B9FAB1AC /* Pods-FanapPodChatSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FanapPodChatSDK.release.xcconfig"; path = "Target Support Files/Pods-FanapPodChatSDK/Pods-FanapPodChatSDK.release.xcconfig"; sourceTree = "<group>"; };
+		AC25F49325C986F800010DBF /* CreateChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateChatModel.swift; sourceTree = "<group>"; };
+		DB20F0DABB8F9A084F282E6C /* Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -811,9 +802,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E17D2CC24D6280900B75135 /* FanapPodAsyncSDK.framework in Frameworks */,
 				3EFDB457236C6BB200623461 /* Alamofire.framework in Frameworks */,
-				3E25635C24D5A95B00C1CDD0 /* Sentry.framework in Frameworks */,
+				6488D604C86FE30C2735ADCD /* Pods_FanapPodChatSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,6 +812,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EE025F721206E63001810FB /* FanapPodChatSDK.framework in Frameworks */,
+				606CE666D25FB98F44F31901 /* Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1055,6 +1046,8 @@
 				3E1C3581225B5E81001A343B /* SwiftyJSON.framework */,
 				3E1C357F225B5E7D001A343B /* SwiftyBeaver.framework */,
 				3E1C357D225B5E79001A343B /* Starscream.framework */,
+				6F963BF16A5EBBABA44C9D4B /* Pods_FanapPodChatSDK.framework */,
+				DB20F0DABB8F9A084F282E6C /* Pods_FanapPodChatSDK_FanapPodChatSDKTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1363,6 +1356,7 @@
 		3EB5208E22ABF68700B7EA45 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				AC25F49325C986F800010DBF /* CreateChatModel.swift */,
 				3EE0261621206EA6001810FB /* Chat.swift */,
 				3EBBEDFB2174C9FB00F5CDC7 /* ChatProtocols.swift */,
 				3E17D235244A5A0D009142F8 /* ChatDelegates.swift */,
@@ -1449,6 +1443,7 @@
 				3EFDB43C236C6B9B00623461 /* Alamofire.xcodeproj */,
 				3E17D2BF24D627ED00B75135 /* FanapPodAsyncSDK.xcodeproj */,
 				3E25909821D6C8E000CB9D7D /* Frameworks */,
+				B86E0320330AFA50529000C6 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1531,6 +1526,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B86E0320330AFA50529000C6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6CC41299EAB14AF147733CA7 /* Pods-FanapPodChatSDK.debug.xcconfig */,
+				7EF9432AF6B41704B9FAB1AC /* Pods-FanapPodChatSDK.release.xcconfig */,
+				5340A4E4AF6CD096185D9697 /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.debug.xcconfig */,
+				1970AC27F6A419BA6D7FD1AA /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1549,11 +1555,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3EE0260121206E63001810FB /* Build configuration list for PBXNativeTarget "FanapPodChatSDK" */;
 			buildPhases = (
+				1E7870AE7ADF0F1C81C09B41 /* [CP] Check Pods Manifest.lock */,
 				3EE025E821206E63001810FB /* Sources */,
 				3EE025E921206E63001810FB /* Frameworks */,
 				3EE025EA21206E63001810FB /* Headers */,
 				3EE025EB21206E63001810FB /* Resources */,
-				3E841C8E2476DE0600854197 /* Embed Frameworks */,
 				3E13BD37247894DA00CCE1D6 /* ShellScript */,
 			);
 			buildRules = (
@@ -1569,9 +1575,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3EE0260421206E63001810FB /* Build configuration list for PBXNativeTarget "FanapPodChatSDKTests" */;
 			buildPhases = (
+				57326CAB97623AE2405D124D /* [CP] Check Pods Manifest.lock */,
 				3EE025F221206E63001810FB /* Sources */,
 				3EE025F321206E63001810FB /* Frameworks */,
 				3EE025F421206E63001810FB /* Resources */,
+				9851C78BF1362D942A0922CB /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1745,6 +1753,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1E7870AE7ADF0F1C81C09B41 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FanapPodChatSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3E13BD37247894DA00CCE1D6 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1762,6 +1792,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which sentry-cli >/dev/null; then\nexport SENTRY_ORG=podchat\nexport SENTRY_PROJECT=ios\nexport SENTRY_AUTH_TOKEN=ac8d3b3801334c8caddb32f688f30ec947821bcf07494796bc4f9ebab2f68ca6\nERROR=$(sentry-cli upload-dif \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, download from https://github.com/getsentry/sentry-cli/releases\"\nfi\n";
+		};
+		57326CAB97623AE2405D124D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FanapPodChatSDK-FanapPodChatSDKTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9851C78BF1362D942A0922CB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FanapPodChatSDK-FanapPodChatSDKTests/Pods-FanapPodChatSDK-FanapPodChatSDKTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FanapPodChatSDK-FanapPodChatSDKTests/Pods-FanapPodChatSDK-FanapPodChatSDKTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FanapPodChatSDK-FanapPodChatSDKTests/Pods-FanapPodChatSDK-FanapPodChatSDKTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1955,6 +2024,7 @@
 				3E3315A723B206CC0070A3D1 /* BotEventModel.swift in Sources */,
 				3E1F31552453455500643EE6 /* AddBotCommandCallback.swift in Sources */,
 				3E8ADC7D23B3556300E3538D /* ServiceAddresses.swift in Sources */,
+				AC25F49425C986F800010DBF /* CreateChatModel.swift in Sources */,
 				3E8ADCFD23B7845200E3538D /* PinThreadCallback.swift in Sources */,
 				3E10995623C365240034093E /* CreateThreadMessageInput.swift in Sources */,
 				3EA1569421CE1C2B004B1346 /* LeaveThreadRequest.swift in Sources */,
@@ -2266,6 +2336,7 @@
 		};
 		3EE0260221206E63001810FB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6CC41299EAB14AF147733CA7 /* Pods-FanapPodChatSDK.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -2301,6 +2372,7 @@
 		};
 		3EE0260321206E63001810FB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7EF9432AF6B41704B9FAB1AC /* Pods-FanapPodChatSDK.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -2334,6 +2406,7 @@
 		};
 		3EE0260521206E63001810FB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5340A4E4AF6CD096185D9697 /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -2359,6 +2432,7 @@
 		};
 		3EE0260621206E63001810FB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1970AC27F6A419BA6D7FD1AA /* Pods-FanapPodChatSDK-FanapPodChatSDKTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

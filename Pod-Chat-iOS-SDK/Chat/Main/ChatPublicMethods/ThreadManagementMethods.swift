@@ -37,6 +37,7 @@ extension Chat {
                             uniqueId:       @escaping (String) -> (),
                             completion:     @escaping callbackTypeAlias) {
 
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to create thread participants with this parameters: \n \(closeThreadInput)", context: "Chat")
         uniqueId(closeThreadInput.uniqueId)
 
@@ -49,17 +50,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          closeThreadInput.threadId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           closeThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           closeThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           closeThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
 
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
 
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -90,7 +91,7 @@ extension Chat {
     public func createThread(inputModel createThreadInput: CreateThreadRequest,
                              uniqueId:          @escaping (String) -> (),
                              completion:        @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to create thread participants with this parameters: \n \(createThreadInput)", context: "Chat")
         uniqueId(createThreadInput.uniqueId)
         
@@ -103,17 +104,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           createThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           createThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           createThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -150,6 +151,7 @@ extension Chat {
                                         onSent:             @escaping callbackTypeAlias,
                                         onDelivere:         @escaping callbackTypeAlias,
                                         onSeen:             @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to create thread and Send Message participants with this parameters: \n \(creatThreadWithMessageInput)", context: "Chat")
         threadUniqueId(creatThreadWithMessageInput.createThreadInput.uniqueId)
@@ -169,17 +171,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           creatThreadWithMessageInput.createThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           creatThreadWithMessageInput.createThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           creatThreadWithMessageInput.createThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -351,6 +353,7 @@ extension Chat {
     ///
     /// - parameter inputModel:         (input) you have to send your parameters insid this model. (GetAllThreadsRequest)
     func getAllThreads(withInputModel input:   GetAllThreadsRequest) {
+        guard let createChatModel = createChatModel else {return}
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_THREADS.intValue(),
                                             content:            "\(input.convertContentToJSON())",
@@ -359,17 +362,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           input.typeCode ?? generalTypeCode,
+                                            typeCode:           input.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           nil,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -403,6 +406,7 @@ extension Chat {
                            uniqueId:            @escaping (String) -> (),
                            completion:          @escaping callbackTypeAlias,
                            cacheResponse:       @escaping (GetThreadsModel) -> ()) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to get threads with this parameters: \n \(getThreadsInput)", context: "Chat")
         uniqueId(getThreadsInput.uniqueId)
@@ -416,17 +420,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           getThreadsInput.typeCode ?? generalTypeCode,
+                                            typeCode:           getThreadsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getThreadsInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -436,7 +440,7 @@ extension Chat {
                                 seenCallback:       nil)
         
         // if cache is enabled by user, it will return cache result to the user
-        if (getCacheResponse ?? enableCache) {
+        if (getCacheResponse ?? createChatModel.enableCache) {
             if getThreadsInput.new ?? false {
                 if let cacheThreads = Chat.cacheDB.retrieveNewThreads(count:    getThreadsInput.count ?? 50,
                                                                       offset:   getThreadsInput.offset ?? 0) {
@@ -475,6 +479,7 @@ extension Chat {
     public func isNameAvailable(inputModel isNameAvailableThreadInput: IsPublicThreadNameAvailableRequest,
                                 uniqueId:       @escaping (String) -> (),
                                 completion:     @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to join thread with this parameters: \n \(isNameAvailableThreadInput.convertContentToJSON())", context: "Chat")
         uniqueId(isNameAvailableThreadInput.uniqueId)
@@ -488,17 +493,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           isNameAvailableThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           isNameAvailableThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           isNameAvailableThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -529,6 +534,7 @@ extension Chat {
     public func joinThread(inputModel joinThreadInput: JoinPublicThreadRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to join thread with this parameters: \n uniqueName = \(joinThreadInput.uniqueName)", context: "Chat")
         uniqueId(joinThreadInput.uniqueId)
@@ -542,17 +548,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           joinThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           joinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           joinThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -584,7 +590,7 @@ extension Chat {
     public func leaveThread(inputModel leaveThreadInput:   LeaveThreadRequest,
                             uniqueId:       @escaping (String) -> (),
                             completion:     @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to leave thread with this parameters: \n \(leaveThreadInput)", context: "Chat")
         uniqueId(leaveThreadInput.uniqueId)
         
@@ -597,17 +603,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          leaveThreadInput.threadId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           leaveThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           leaveThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           leaveThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -716,6 +722,7 @@ extension Chat {
     public func muteThread(inputModel muteThreadInput: MuteUnmuteThreadRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to mute threads with this parameters: \n \(muteThreadInput)", context: "Chat")
         uniqueId(muteThreadInput.uniqueId)
@@ -729,17 +736,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          muteThreadInput.subjectId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           muteThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           muteThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           muteThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -769,7 +776,7 @@ extension Chat {
     public func unmuteThread(inputModel unmuteThreadInput: MuteUnmuteThreadRequest,
                              uniqueId:          @escaping (String) -> (),
                              completion:        @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to unmute threads with this parameters: \n \(unmuteThreadInput)", context: "Chat")
         uniqueId(unmuteThreadInput.uniqueId)
         
@@ -782,17 +789,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          unmuteThreadInput.subjectId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           unmuteThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           unmuteThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unmuteThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -822,7 +829,7 @@ extension Chat {
     public func pinThread(inputModel pinThreadInput: PinUnpinThreadRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to pin threads with this parameters: \n \(pinThreadInput)", context: "Chat")
         uniqueId(pinThreadInput.uniqueId)
         
@@ -835,17 +842,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          pinThreadInput.threadId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           pinThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           pinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           pinThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -876,7 +883,7 @@ extension Chat {
     public func unpinThread(inputModel unpinThreadInput: PinUnpinThreadRequest,
                             uniqueId:       @escaping (String) -> (),
                             completion:     @escaping callbackTypeAlias) {
-    
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to unpin threads with this parameters: \n \(unpinThreadInput)", context: "Chat")
         uniqueId(unpinThreadInput.uniqueId)
         
@@ -889,17 +896,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          unpinThreadInput.threadId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           unpinThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           unpinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unpinThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                                msgTTL:       msgTTL,
-                                                peerName:     serverName,
-                                                priority:     msgPriority,
+                                                msgTTL:       createChatModel.msgTTL,
+                                                peerName:     createChatModel.serverName,
+                                                priority:     createChatModel.msgPriority,
                                                 pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -929,6 +936,7 @@ extension Chat {
     public func spamPvThread(inputModel spamPvThreadInput: SpamPrivateThreadRequest,
                              uniqueId:          @escaping (String) -> (),
                              completions:       @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         
         log.verbose("Try to request to spam thread with this parameters: \n \(spamPvThreadInput)", context: "Chat")
         uniqueId(spamPvThreadInput.uniqueId)
@@ -942,17 +950,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          spamPvThreadInput.threadId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           spamPvThreadInput.typeCode ?? generalTypeCode,
+                                            typeCode:           spamPvThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           spamPvThreadInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -984,7 +992,7 @@ extension Chat {
                                  uploadProgress:    @escaping (Float) -> (),
                                  uniqueId:          @escaping (String) -> (),
                                  completion:        @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to update thread info with this parameters: \n \(updateThreadInfoInput)", context: "Chat")
         uniqueId(updateThreadInfoInput.uniqueId)
         
@@ -1000,17 +1008,17 @@ extension Chat {
                                                 repliedTo:          nil,
                                                 systemMetadata:     nil,
                                                 subjectId:          updateThreadInfoInput.threadId,
-                                                token:              token,
+                                                token:              createChatModel.token,
                                                 tokenIssuer:        nil,
-                                                typeCode:           updateThreadInfoInput.typeCode ?? generalTypeCode,
+                                                typeCode:           updateThreadInfoInput.typeCode ?? createChatModel.typeCode,
                                                 uniqueId:           updateThreadInfoInput.uniqueId,
                                                 uniqueIds:          nil,
                                                 isCreateThreadAndSendMessage: nil)
             
             let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                                  msgTTL:       msgTTL,
-                                                  peerName:     serverName,
-                                                  priority:     msgPriority,
+                                                  msgTTL:       createChatModel.msgTTL,
+                                                  peerName:     createChatModel.serverName,
+                                                  priority:     createChatModel.msgPriority,
                                                   pushMsgType:  nil)
             
             sendMessageWithCallback(asyncMessageVO:     asyncMessage,

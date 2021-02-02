@@ -22,6 +22,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to getUserInfo function (by using "userInfoCallbackToUser")
     func responseOfUserInfo(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'USER_INFO' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -39,7 +40,7 @@ extension Chat {
                                                 user:       nil)
         Chat.sharedInstance.delegate?.systemEvents(model: systemEventModel)
         
-        if enableCache {
+        if createChatModel.enableCache {
             let user = User(messageContent: message.content?.convertToJSON() ?? [:])
             Chat.cacheDB.saveUserInfo(withUserObject: user)
         }

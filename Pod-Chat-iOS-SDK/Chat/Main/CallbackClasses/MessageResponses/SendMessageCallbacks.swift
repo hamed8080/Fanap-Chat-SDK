@@ -30,6 +30,7 @@ extension Chat {
          *      -> call the "onSent" which will send callback to sendMessage function (by using "sendCallbackToUserOnSent")
          *
          */
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'SENT' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -51,7 +52,7 @@ extension Chat {
                                                   pinned:   nil)
         delegate?.messageEvents(model: messageEventModel)
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let _ = message.subjectId {
                 // the response from server is come correctly, so this message will be removed from wait queue
                 Chat.cacheDB.deleteWaitTextMessage(uniqueId: message.uniqueId)

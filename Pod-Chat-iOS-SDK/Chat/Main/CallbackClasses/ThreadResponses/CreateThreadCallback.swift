@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to createThread function (by using "createThreadCallbackToUser")
     func responseOfCreateThread(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'CREATE_THREAD' recieved", context: "Chat")
         
         if let contentAsJSON = message.content?.convertToJSON() {
@@ -35,7 +36,7 @@ extension Chat {
             delegate?.threadEvents(model: tNewEM)
         }
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let threadJSON = message.content?.convertToJSON() {
                 let myThread = Conversation(messageContent: threadJSON)
                 Chat.cacheDB.saveThread(withThreadObjects: [myThread])

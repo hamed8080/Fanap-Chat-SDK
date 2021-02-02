@@ -57,12 +57,13 @@ extension Chat {
                               response: CreateReturnData,
                               success:  @escaping callbackTypeAlias,
                               failure:  @escaping callbackTypeAlias) {
+            
             log.verbose("GetHistoryCallbacks", context: "Chat")
             
             if let arrayContent = response.resultAsArray as? [JSON] {
                 let content = sendParams.content?.convertToJSON()
                 
-                if Chat.sharedInstance.enableCache {
+                if Chat.sharedInstance.createChatModel?.enableCache == true {
                     // save data comes from server to the Cache
                     var messages = [Message]()
                     for item in (response.resultAsArray as? [JSON]) ?? [] {
@@ -189,7 +190,7 @@ extension Chat {
             if let arrayContent = response.resultAsArray as? [JSON] {
                 let content = sendParams.content?.convertToJSON()
                 
-                if Chat.sharedInstance.enableCache {
+                if Chat.sharedInstance.createChatModel?.enableCache == true {
                     
                 }
                 

@@ -212,6 +212,7 @@ extension Chat: AsyncDelegates {
     }
     
     func makeChatReady() {
+        guard let createChatModel = createChatModel else {return}
         if userInfo == nil {
             getUserInfoRetryCount += 1
             getUserInfo(getCacheResponse: nil, uniqueId: { _ in }, completion: { (result) in
@@ -222,7 +223,7 @@ extension Chat: AsyncDelegates {
                     self.userInfo = User(withUserObject: resultModel.user)
                     self.isChatReady = true
                     self.delegate?.chatReady(withUserInfo: self.userInfo!)
-                    if self.enableCache {
+                    if createChatModel.enableCache {
                         self.getAllThreads(withInputModel: GetAllThreadsRequest(summary: true, typeCode: nil))
                     }
                 }
@@ -290,6 +291,3 @@ extension Chat: AsyncDelegates {
     
     
 }
-
-
-

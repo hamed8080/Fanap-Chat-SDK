@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to getThreadParticipants function (by using "threadParticipantsCallbackToUser")
     func responseOfThreadParticipants(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'THREAD_PARTICIPANTS' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:       false,
@@ -32,7 +33,7 @@ extension Chat {
                                           contentCount:   message.contentCount,
                                           subjectId:      message.subjectId)
         
-        if enableCache {
+        if createChatModel.enableCache {
             let threadParticipantsModel = GetThreadParticipantsResponse(messageContent: (returnData.resultAsArray as? [JSON]) ?? [],
                                                                         contentCount:   returnData.contentCount,
                                                                         count:          0,

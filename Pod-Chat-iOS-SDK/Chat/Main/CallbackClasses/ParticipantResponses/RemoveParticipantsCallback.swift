@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to removeParticipant function (by using "removeParticipantsCallbackToUser")
     func responseOfRemoveParticipant(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'REMOVE_PARTICIPANT' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -50,7 +51,7 @@ extension Chat {
         delegate?.threadEvents(model: tLastActivityEM)
         
         
-        if enableCache {
+        if createChatModel.enableCache {
             var participantIds = [Int]()
             if let res = message.content?.convertToJSON() {
                 let conversation = Conversation(messageContent: res)

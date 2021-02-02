@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to clearHistory function (by using "clearHistoryCallbackToUser")
     func responseOfClearHistory(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'CLEAR_HISTORY' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:       false,
@@ -32,7 +33,7 @@ extension Chat {
                                           contentCount:   nil,
                                           subjectId:      message.subjectId)
         
-        if enableCache {
+        if createChatModel.enableCache {
             Chat.cacheDB.deleteMessage(inThread: message.subjectId!, allMessages: true, withMessageIds: nil)
         }
         

@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to leaveThread function (by using "leaveThreadCallbackToUser")
     func responseOfLeaveThread(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'LEAVE_THREAD' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -55,7 +56,7 @@ extension Chat {
         delegate?.threadEvents(model: tLastActivityEM)
         
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let threadJSON = message.content?.convertToJSON() {
                 let conversation = Conversation(messageContent: threadJSON)
                 if let _ = conversation.title {

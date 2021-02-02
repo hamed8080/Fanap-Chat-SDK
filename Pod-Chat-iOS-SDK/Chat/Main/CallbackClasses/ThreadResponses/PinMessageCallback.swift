@@ -20,6 +20,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to PpnMessage function (by using "pinMessageCallbackToUser")
     func responseOfPinMessage(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'PIN_MESSAGE' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -42,7 +43,7 @@ extension Chat {
             delegate?.threadEvents(model: threadEventModel)
         }
         
-        if enableCache {
+        if createChatModel.enableCache {
             if let thId = message.subjectId {
                 if let pinMessageJSON = message.content?.convertToJSON() {
                     Chat.cacheDB.savePinMessage(threadId: thId, withPinMessageObject: PinUnpinMessage(pinUnpinContent: pinMessageJSON))

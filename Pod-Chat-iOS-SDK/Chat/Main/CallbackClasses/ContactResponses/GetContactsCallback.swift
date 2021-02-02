@@ -68,7 +68,7 @@ extension Chat {
             if let arrayContent = response.resultAsArray as? [JSON] {
                 let content = sendParams.content?.convertToJSON()
                 
-                if Chat.sharedInstance.enableCache {
+                if Chat.sharedInstance.createChatModel?.enableCache == true {
                     var contacts = [Contact]()
                     for item in (response.resultAsArray as? [JSON]) ?? [] {
                         let myContact = Contact(messageContent: item)

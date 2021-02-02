@@ -58,7 +58,7 @@ extension Chat {
                             uniqueId:       @escaping ((String) -> ()),
                             completion:     @escaping callbackTypeAlias,
                             cacheResponse:  @escaping ((UserInfoModel) -> ())) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to get user info", context: "Chat")
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
@@ -72,17 +72,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           generalTypeCode,
+                                            typeCode:           createChatModel.typeCode,
                                             uniqueId:           theUniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -92,7 +92,7 @@ extension Chat {
                                 seenCallback:       nil)
         
         // if cache is enabled by user, first return cache result to the user
-        if (getCacheResponse ?? enableCache) {
+        if (getCacheResponse ?? createChatModel.enableCache) {
             if let cacheUserInfoResult = Chat.cacheDB.retrieveUserInfo() {
                 cacheResponse(cacheUserInfoResult)
             }
@@ -117,7 +117,7 @@ extension Chat {
     public func setProfile(inputModel setProfileInput:  UpdateChatProfileRequest,
                            uniqueId:                    @escaping ((String) -> ()),
                            completion:                  @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to set Profile", context: "Chat")
         
         uniqueId(setProfileInput.uniqueId)
@@ -130,17 +130,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           setProfileInput.typeCode ?? generalTypeCode,
+                                            typeCode:           setProfileInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           setProfileInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: nil)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -172,7 +172,7 @@ extension Chat {
     public func blockContact(inputModel blockContactsInput:    BlockRequest,
                              uniqueId:              @escaping (String) -> (),
                              completion:            @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to block user with this parameters: \n \(blockContactsInput)", context: "Chat")
         uniqueId(blockContactsInput.uniqueId)
         blockCallbackToUser = completion
@@ -184,17 +184,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           blockContactsInput.typeCode ?? generalTypeCode,
+                                            typeCode:           blockContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           blockContactsInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -225,7 +225,7 @@ extension Chat {
                                    getCacheResponse:                    Bool?,
                                    uniqueId:                @escaping (String) -> (),
                                    completion:              @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to get block users with this parameters: \n \(getBlockedContactsInput)", context: "Chat")
         uniqueId(getBlockedContactsInput.uniqueId)
         getBlockedListCallbackToUser = completion
@@ -237,17 +237,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           getBlockedContactsInput.typeCode ?? generalTypeCode,
+                                            typeCode:           getBlockedContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getBlockedContactsInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -256,7 +256,7 @@ extension Chat {
                                 deliverCallback:    nil,
                                 seenCallback:       nil)
         
-        if (getCacheResponse ?? enableCache) {
+        if (getCacheResponse ?? createChatModel.enableCache) {
             // ToDo:
         }
         
@@ -280,6 +280,7 @@ extension Chat {
     public func sendStatusPing(inputModel statusPingInput: StatusPingRequest) {
 //                               uniqueId:                @escaping (String) -> (),
 //                               completion:              @escaping callbackTypeAlias) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to send Status Ping with this parameters: \n threadId = \(statusPingInput.threadId ?? 2) \n contactId = \(statusPingInput.contactId ?? 3)", context: "Chat")
 //        uniqueId(statusPingInput.uniqueId)
 //
@@ -292,17 +293,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          nil,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           statusPingInput.typeCode ?? generalTypeCode,
+                                            typeCode:           statusPingInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           statusPingInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -332,7 +333,7 @@ extension Chat {
     public func unblockContact(inputModel unblockContactsInput:    UnblockRequest,
                                uniqueId:                @escaping (String) -> (),
                                completion:              @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to unblock user with this parameters: \n \(unblockContactsInput)", context: "Chat")
         uniqueId(unblockContactsInput.uniqueId)
         
@@ -345,17 +346,17 @@ extension Chat {
                                             repliedTo:          nil,
                                             systemMetadata:     nil,
                                             subjectId:          unblockContactsInput.blockId,
-                                            token:              token,
+                                            token:              createChatModel.token,
                                             tokenIssuer:        nil,
-                                            typeCode:           unblockContactsInput.typeCode ?? generalTypeCode,
+                                            typeCode:           unblockContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unblockContactsInput.uniqueId,
                                             uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       msgTTL,
-                                              peerName:     serverName,
-                                              priority:     msgPriority,
+                                              msgTTL:       createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority,
                                               pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -407,12 +408,12 @@ extension Chat {
     /// Outputs:
     /// - this method does not any output
     public func setToken(newToken: String) {
-        token = newToken
+        createChatModel?.token = newToken
     }
     
     // log out from async
     /// LogOut:
-    /// by calling this metho, youe all cache data will delete and then you will logout from async
+    /// by calling this metho, you  will delete all cache data and then logout from async
     ///
     /// Inputs:
     /// - this method does not any input

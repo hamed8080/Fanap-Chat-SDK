@@ -36,10 +36,12 @@ extension Chat {
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
         
+        guard let createChatModel = createChatModel else {return}
+        guard let mapApiKey = createChatModel.mapApiKey else {return}
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
-        let url = "\(SERVICE_ADDRESSES.MAP_ADDRESS)\(SERVICES_PATH.REVERSE.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.REVERSE.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
         let headers:    HTTPHeaders = ["Api-Key":   mapApiKey]
         let parameters: Parameters  = ["lat":       mapReverseInput.lat,
@@ -81,11 +83,12 @@ extension Chat {
     public func mapRouting(inputModel mapRoutingInput: MapRoutingRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
+        guard let mapApiKey = createChatModel.mapApiKey else {return}
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
-        let url = "\(SERVICE_ADDRESSES.MAP_ADDRESS)\(SERVICES_PATH.ROUTING.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.ROUTING.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
         let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
         let parameters: Parameters  = ["origin":        "\(mapRoutingInput.origin.lat),\(mapRoutingInput.origin.lng)",
@@ -127,11 +130,12 @@ extension Chat {
     public func mapSearch(inputModel mapSearchInput:   MapSearchRequest,
                           uniqueId:         @escaping (String) -> (),
                           completion:       @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
+        guard let mapApiKey = createChatModel.mapApiKey else {return}
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
-        let url = "\(SERVICE_ADDRESSES.MAP_ADDRESS)\(SERVICES_PATH.SEARCH.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.SEARCH.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
         let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
         let parameters: Parameters  = ["lat":   mapSearchInput.lat,
@@ -175,11 +179,12 @@ extension Chat {
                                uniqueId:            @escaping (String) -> (),
                                progress:            @escaping (Float) -> (),
                                completion:          @escaping callbackTypeAlias) {
-        
+        guard let createChatModel = createChatModel else {return}
+        guard let mapApiKey = createChatModel.mapApiKey else {return}
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
-        let url = "\(SERVICE_ADDRESSES.MAP_ADDRESS)\(SERVICES_PATH.STATIC_IMAGE.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.STATIC_IMAGE.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
         let parameters: Parameters  = ["key":       mapApiKey,
                                        "type":      mapStaticImageInput.type,

@@ -21,6 +21,7 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to deleteMessage function (by using "deleteMessageCallbackToUser")
     func responseOfDeleteMessage(withMessage message: ChatMessage) {
+        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'DELETE_MESSAGE' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -54,7 +55,7 @@ extension Chat {
             
         }
         
-        if enableCache {
+        if createChatModel.enableCache {
             // ToDo: check in the cache, if this message was pinMessage on the Conversation Model
             // ToDo: check in the cache, if this message was lasMessage on the Conversation Model
             Chat.cacheDB.deleteMessage(inThread: message.subjectId!, allMessages: false, withMessageIds: [Int(message.content ?? "") ?? 0])
