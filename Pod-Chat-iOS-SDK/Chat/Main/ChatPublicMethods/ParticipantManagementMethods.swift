@@ -41,24 +41,16 @@ extension Chat {
         addParticipantsCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.ADD_PARTICIPANT.intValue(),
-                                            content:            "\(addParticipantsInput.convertContentToJSONArray())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          addParticipantsInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token, content:            "\(addParticipantsInput.convertContentToJSONArray())",
+											subjectId:          addParticipantsInput.threadId,
                                             typeCode:           addParticipantsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           addParticipantsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(AddParticipantsCallback(parameters: chatMessage), addParticipantsInput.uniqueId)],
@@ -96,24 +88,15 @@ extension Chat {
         getCurrentUserRolesCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_CURRENT_USER_ROLES.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          getCurrentUserRolesInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token, subjectId:          getCurrentUserRolesInput.threadId,
                                             typeCode:           getCurrentUserRolesInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getCurrentUserRolesInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetCurrentUserRolesCallbacks(), getCurrentUserRolesInput.uniqueId)],
@@ -161,24 +144,17 @@ extension Chat {
         threadParticipantsCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.THREAD_PARTICIPANTS.intValue(),
-                                            content:            "\(getThreadParticipantsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(getThreadParticipantsInput.convertContentToJSON())",
                                             subjectId:          getThreadParticipantsInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           getThreadParticipantsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getThreadParticipantsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetThreadParticipantsCallbacks(parameters: chatMessage), getThreadParticipantsInput.uniqueId)],
@@ -227,24 +203,17 @@ extension Chat {
         removeParticipantsCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.REMOVE_PARTICIPANT.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(removeParticipantsInput.participantIds)",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          removeParticipantsInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           removeParticipantsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           removeParticipantsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(RemoveParticipantsCallback(parameters: chatMessage), removeParticipantsInput.uniqueId)],
@@ -305,24 +274,17 @@ extension Chat {
         setRoleToUserCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SET_RULE_TO_USER.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(setRoleInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          setRoleInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           setRoleInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           setRoleInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(SetRoleToUserCallback(parameters: chatMessage), setRoleInput.uniqueId)],
@@ -357,24 +319,17 @@ extension Chat {
         removeRoleFromUserCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.REMOVE_ROLE_FROM_USER.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(removeRoleInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          removeRoleInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           removeRoleInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           removeRoleInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(SetRoleToUserCallback(parameters: chatMessage), removeRoleInput.uniqueId)],

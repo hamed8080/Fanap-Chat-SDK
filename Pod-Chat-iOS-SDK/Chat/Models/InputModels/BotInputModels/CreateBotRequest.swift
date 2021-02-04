@@ -10,21 +10,17 @@ import Foundation
 
 open class CreateBotRequest {
     
-    public let botName:      String
+    public let botName:      	String
+    public let typeCode:    	String?
+    public let uniqueId:    	String
     
-    public let typeCode:    String?
-    public let uniqueId:    String
-    
-    public init(botName:    String,
-                typeCode:   String?,
-                uniqueId:   String?) {
+    public init(botName:   String,
+			  typeCode:   String? = nil,
+			  uniqueId:   String? = nil) {
         
         self.botName    = botName
-        
         self.typeCode   = typeCode
         self.uniqueId   = uniqueId ?? UUID().uuidString
     }
     
 }
-
-

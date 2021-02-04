@@ -44,24 +44,15 @@ extension Chat {
         closeThreadCallbackToUser = completion
 
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CLOSE_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          closeThreadInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          closeThreadInput.threadId,
                                             typeCode:           closeThreadInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           closeThreadInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           closeThreadInput.uniqueId)
 
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
 
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(CloseThreadCallbacks(), closeThreadInput.uniqueId)],
@@ -98,24 +89,15 @@ extension Chat {
         createThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CREATE_THREAD.intValue(),
-                                            content:            "\(createThreadInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(createThreadInput.convertContentToJSON())",
                                             typeCode:           createThreadInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           createThreadInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           createThreadInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(CreateThreadCallback(parameters: chatMessage), createThreadInput.uniqueId)],
@@ -165,24 +147,16 @@ extension Chat {
         sendCallbackToUserOnSeen    = onSeen
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CREATE_THREAD.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(creatThreadWithMessageInput.convertContentToJSON())",
-                                            messageType:        nil, //creatThreadWithMessageInput.sendMessageInput?.messageType.returnIntValue()
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           creatThreadWithMessageInput.createThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           creatThreadWithMessageInput.createThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(CreateThreadCallback(parameters: chatMessage), creatThreadWithMessageInput.createThreadInput.uniqueId)],
@@ -356,24 +330,14 @@ extension Chat {
         guard let createChatModel = createChatModel else {return}
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_THREADS.intValue(),
-                                            content:            "\(input.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
-                                            typeCode:           input.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           nil,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+											token:              createChatModel.token,
+											content:            "\(input.convertContentToJSON())",
+                                            typeCode:           input.typeCode ?? createChatModel.typeCode)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetThreadsCallbacks(parameters: chatMessage), "")],
@@ -414,24 +378,15 @@ extension Chat {
         threadsCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_THREADS.intValue(),
-                                            content:            "\(getThreadsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(getThreadsInput.convertContentToJSON())",
                                             typeCode:           getThreadsInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           getThreadsInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           getThreadsInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetThreadsCallbacks(parameters: chatMessage), getThreadsInput.uniqueId)],
@@ -487,24 +442,16 @@ extension Chat {
         isPublicThreadNameAvailableCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.IS_NAME_AVAILABLE.intValue(),
-                                            content:            "\(isNameAvailableThreadInput.uniqueName)",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(isNameAvailableThreadInput.uniqueName)",
                                             typeCode:           isNameAvailableThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           isNameAvailableThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(IsPublicThreadNameAvailableCallbacks(), isNameAvailableThreadInput.uniqueId)],
@@ -542,24 +489,16 @@ extension Chat {
         joinPublicThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.JOIN_THREAD.intValue(),
-                                            content:            joinThreadInput.uniqueName,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            joinThreadInput.uniqueName,
                                             typeCode:           joinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           joinThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(JoinPublicThreadCallbacks(), joinThreadInput.uniqueId)],
@@ -597,24 +536,17 @@ extension Chat {
         leaveThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.LEAVE_THREAD.intValue(),
-                                            content:            "\(leaveThreadInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(leaveThreadInput.convertContentToJSON())",
                                             subjectId:          leaveThreadInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           leaveThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           leaveThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(LeaveThreadCallbacks(), leaveThreadInput.uniqueId)],
@@ -730,24 +662,16 @@ extension Chat {
         muteThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.MUTE_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          muteThreadInput.subjectId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          muteThreadInput.subjectId,
                                             typeCode:           muteThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           muteThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(MuteThreadCallbacks(), muteThreadInput.uniqueId)],
@@ -783,24 +707,16 @@ extension Chat {
         unmuteThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNMUTE_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          unmuteThreadInput.subjectId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          unmuteThreadInput.subjectId,
                                             typeCode:           unmuteThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unmuteThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UnmuteThreadCallbacks(), unmuteThreadInput.uniqueId)],
@@ -836,24 +752,16 @@ extension Chat {
         pinThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.PIN_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          pinThreadInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          pinThreadInput.threadId,
                                             typeCode:           pinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           pinThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(PinThreadCallbacks(), pinThreadInput.uniqueId)],
@@ -890,24 +798,16 @@ extension Chat {
         unpinThreadCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNPIN_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          unpinThreadInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          unpinThreadInput.threadId,
                                             typeCode:           unpinThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unpinThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                                 msgTTL:       createChatModel.msgTTL,
                                                 peerName:     createChatModel.serverName,
-                                                priority:     createChatModel.msgPriority,
-                                                pushMsgType:  nil)
+                                                priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UnpinThreadCallbacks(), unpinThreadInput.uniqueId)],
@@ -944,24 +844,16 @@ extension Chat {
         spamPvThreadCallbackToUser = completions
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SPAM_PV_THREAD.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          spamPvThreadInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											subjectId:          spamPvThreadInput.threadId,
                                             typeCode:           spamPvThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           spamPvThreadInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(SpamPrivateThread(), spamPvThreadInput.uniqueId)],
@@ -1002,24 +894,16 @@ extension Chat {
         
         func sendRequest() {
             let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UPDATE_THREAD_INFO.intValue(),
-                                                content:            "\(content)",
-                                                messageType:        nil,
-                                                metadata:           nil,
-                                                repliedTo:          nil,
-                                                systemMetadata:     nil,
+												token:              createChatModel.token,
+												content:            "\(content)",
                                                 subjectId:          updateThreadInfoInput.threadId,
-                                                token:              createChatModel.token,
-                                                tokenIssuer:        nil,
                                                 typeCode:           updateThreadInfoInput.typeCode ?? createChatModel.typeCode,
-                                                uniqueId:           updateThreadInfoInput.uniqueId,
-                                                uniqueIds:          nil,
-                                                isCreateThreadAndSendMessage: nil)
+                                                uniqueId:           updateThreadInfoInput.uniqueId)
             
             let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                                   msgTTL:       createChatModel.msgTTL,
                                                   peerName:     createChatModel.serverName,
-                                                  priority:     createChatModel.msgPriority,
-                                                  pushMsgType:  nil)
+                                                  priority:     createChatModel.msgPriority)
             
             sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                     callbacks:          [(UpdateThreadInfoCallback(), updateThreadInfoInput.uniqueId)],

@@ -40,24 +40,17 @@ extension Chat {
         clearHistoryCallbackToUser = completion
           
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CLEAR_HISTORY.intValue(),
-                                            content:            "\(clearHistoryInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(clearHistoryInput.convertContentToJSON())",
                                             subjectId:          clearHistoryInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           clearHistoryInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           clearHistoryInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
           
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
 
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(ClearHistoryCallback(parameters: chatMessage), clearHistoryInput.uniqueId)],
@@ -94,18 +87,11 @@ extension Chat {
         deleteMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELETE_MESSAGE.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(deleteMessageInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          deleteMessageInput.messageId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           deleteMessageInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           deleteMessageInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -146,18 +132,9 @@ extension Chat {
         deleteMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELETE_MESSAGE.intValue(),
-                                            content:            "\(deleteMessageInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
-                                            typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           nil,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+											token:              createChatModel.token,
+											content:            "\(deleteMessageInput.convertContentToJSON())",
+                                            typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -226,18 +203,13 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: editMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.EDIT_MESSAGE.intValue(),
-                                            content:            MakeCustomTextToSend(message: editMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+											token:              createChatModel.token,
+											content:            MakeCustomTextToSend(message: editMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
                                             messageType:        editMessageInput.messageType.returnIntValue(),
-                                            metadata:           nil,
                                             repliedTo:          editMessageInput.repliedTo,
-                                            systemMetadata:     nil,
                                             subjectId:          editMessageInput.messageId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           editMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           editMessageInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           editMessageInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -304,18 +276,11 @@ extension Chat {
         sendCallbackToUserOnSeen = onSeen
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.FORWARD_MESSAGE.intValue(),
-                                            content:            "\(forwardMessageInput.messageIds)",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(forwardMessageInput.messageIds)",
                                             subjectId:          forwardMessageInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           forwardMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           nil,
-                                            uniqueIds:          forwardMessageInput.uniqueIds,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueIds:          forwardMessageInput.uniqueIds)
 
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -347,24 +312,16 @@ extension Chat {
         getAllUnreadMessagesCountCallbackToUser = completion
       
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT.intValue(),
-                                            content:            "\(inputModel.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(inputModel.convertContentToJSON())",
                                             typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           inputModel.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
     
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
       
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetAllUnreadMessagesCountCallbacks(), inputModel.uniqueId)],
@@ -422,24 +379,17 @@ extension Chat {
         getHistoryCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_HISTORY.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(getHistoryInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          getHistoryInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           getHistoryInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getHistoryInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
       
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetHistoryCallbacks(parameters: chatMessage), getHistoryInput.uniqueId)],
@@ -516,24 +466,17 @@ extension Chat {
         getMentionListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_HISTORY.intValue(),
-                                            content:            "\(getMentionInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(getMentionInput.convertContentToJSON())",
                                             subjectId:          getMentionInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           getMentionInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getMentionInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
       
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetMentionCallbacks(parameters: chatMessage), getMentionInput.uniqueId)],
@@ -575,18 +518,10 @@ extension Chat {
         getMessageDeliverListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_MESSAGE_DELEVERY_PARTICIPANTS.intValue(),
-                                            content:            "\(messageDeliveryListInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(messageDeliveryListInput.convertContentToJSON())",
                                             typeCode:           messageDeliveryListInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           messageDeliveryListInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           messageDeliveryListInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -627,18 +562,10 @@ extension Chat {
         getMessageSeenListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS.intValue(),
-                                            content:            "\(messageSeenListInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(messageSeenListInput.convertContentToJSON())",
                                             typeCode:           messageSeenListInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           messageSeenListInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           messageSeenListInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -681,24 +608,17 @@ extension Chat {
         pinMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.PIN_MESSAGE.intValue(),
-                                            content:            "\(inputModel.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(inputModel.convertContentToJSON())",
                                             subjectId:          inputModel.messageId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           inputModel.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(PinMessageCallbacks(), inputModel.uniqueId)],
@@ -732,24 +652,17 @@ extension Chat {
         unpinMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNPIN_MESSAGE.intValue(),
-                                            content:            "\(inputModel.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(inputModel.convertContentToJSON())",
                                             subjectId:          inputModel.messageId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           inputModel.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UnpinMessageCallbacks(), inputModel.uniqueId)],
@@ -813,18 +726,14 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: replyMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.MESSAGE.intValue(),
-                                            content:            MakeCustomTextToSend(message: replyMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+											token:              createChatModel.token,
+											content:            MakeCustomTextToSend(message: replyMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
                                             messageType:        replyMessageInput.messageType.returnIntValue(),
                                             metadata:           (replyMessageInput.metadata != nil) ? "\(MakeCustomTextToSend(message: replyMessageInput.metadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             repliedTo:          replyMessageInput.repliedTo,
-                                            systemMetadata:     nil,
                                             subjectId:          replyMessageInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           replyMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           replyMessageInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           replyMessageInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -860,18 +769,9 @@ extension Chat {
         log.verbose("Try to send deliver message for a message id with this parameters: \n messageId = \(deliverInput.messageId) , ownerId = \(deliverInput.ownerId)", context: "Chat")
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELIVERY.intValue(),
-                                            content:            "\(deliverInput.messageId)",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
-                                            typeCode:           deliverInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           nil,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+											token:              createChatModel.token,
+											content:            "\(deliverInput.messageId)",
+                                            typeCode:           deliverInput.typeCode ?? createChatModel.typeCode)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -905,18 +805,9 @@ extension Chat {
         log.verbose("Try to send seen message for a message id with this parameters: \n messageId = \(seenInput.messageId) , ownerId = \(seenInput.ownerId)", context: "Chat")
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SEEN.intValue(),
-                                            content:            "\(seenInput.messageId)",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
-                                            typeCode:           seenInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           nil,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+											token:              createChatModel.token,
+											content:            "\(seenInput.messageId)",
+                                            typeCode:           seenInput.typeCode ?? createChatModel.typeCode)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -969,18 +860,13 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: sendInterActiveMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.BOT_MESSAGE.intValue(),
-                                            content:            MakeCustomTextToSend(message: sendInterActiveMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
-                                            messageType:        nil,
+											token:              createChatModel.token,
+											content:            MakeCustomTextToSend(message: sendInterActiveMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
                                             metadata:           "\(MakeCustomTextToSend(message: sendInterActiveMessageInput.metadata).replaceSpaceEnterWithSpecificCharecters())",
-                                            repliedTo:          nil,
                                             systemMetadata:     (sendInterActiveMessageInput.systemMetadata != nil) ? "\(MakeCustomTextToSend(message: sendInterActiveMessageInput.systemMetadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             subjectId:          sendInterActiveMessageInput.messageId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           sendInterActiveMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           sendInterActiveMessageInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           sendInterActiveMessageInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -1402,18 +1288,15 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: sendTextMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.MESSAGE.intValue(),
+											token:              createChatModel.token,
                                             content:            MakeCustomTextToSend(message: sendTextMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
                                             messageType:        sendTextMessageInput.messageType.returnIntValue(),
                                             metadata:           (sendTextMessageInput.metadata != nil) ? "\(MakeCustomTextToSend(message: sendTextMessageInput.metadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             repliedTo:          sendTextMessageInput.repliedTo,
                                             systemMetadata:     (sendTextMessageInput.systemMetadata != nil) ? "\(MakeCustomTextToSend(message: sendTextMessageInput.systemMetadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             subjectId:          sendTextMessageInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           sendTextMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           sendTextMessageInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           sendTextMessageInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
@@ -1492,18 +1375,10 @@ extension Chat {
     func sendSignalMessage(input: SendSignalMessageRequest) {
         guard let createChatModel = createChatModel else {return}
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SYSTEM_MESSAGE.intValue(),
-                                            content:            "\(input.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(input.convertContentToJSON())",
                                             subjectId:          input.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
-                                            typeCode:           nil,
-                                            uniqueId:           input.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           input.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,

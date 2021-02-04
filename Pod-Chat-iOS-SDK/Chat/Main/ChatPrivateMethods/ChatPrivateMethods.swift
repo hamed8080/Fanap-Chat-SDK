@@ -17,22 +17,7 @@ import Sentry
 // MARK: - Private Methods:
 
 extension Chat {
-    
-    
-    func checkIfDeviceHasFreeSpace(needSpaceInMB: Int64, turnOffTheCache: Bool) -> Bool {
-        let availableSpace = DiskStatus.freeDiskSpaceInBytes
-        if availableSpace < (needSpaceInMB * 1024 * 1024) {
-            var message = "your disk space is less than \(DiskStatus.MBFormatter(DiskStatus.freeDiskSpaceInBytes))MB."
-            if turnOffTheCache {
-                message += " " + "so, the cache will be switch OFF!"
-            }
-            delegate?.chatError(errorCode: 6401, errorMessage: message, errorResult: nil)
-            return false
-        } else {
-            return true
-        }
-    }
-    
+ 
     /*
      *  Get deviceId with token:
      *
@@ -508,18 +493,7 @@ extension Chat {
             log.verbose("Try to send Ping", context: "Chat")
             
             let chatMessage = SendChatMessageVO(chatMessageVOType: ChatMessageVOTypes.PING.intValue(),
-                                                content:            nil,
-                                                messageType:        nil,
-                                                metadata:           nil,
-                                                repliedTo:          nil,
-                                                systemMetadata:     nil,
-                                                subjectId:          nil,
-                                                token:              createChatModel.token,
-                                                tokenIssuer:        nil,
-                                                typeCode:           nil,
-                                                uniqueId:           nil,
-                                                uniqueIds:          nil,
-                                                isCreateThreadAndSendMessage: nil)
+                                                token: createChatModel.token)
             
             let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                                   msgTTL:       createChatModel.msgTTL,
@@ -562,7 +536,7 @@ extension Chat {
      *
      */
     func receivedMessageHandler(withContent message: ChatMessage) {
-        log.verbose("content of received message: \n \(message.returnToJSON())", context: "Chat")
+        log.verbose("content of received message: \n \(message.convertCodableToString() ?? "")", context: "Chat")
         lastReceivedMessageTime = Date()
                 
 //        let messageContentAsString      = message.content
@@ -925,7 +899,7 @@ extension Chat {
             break
             
         default:
-            log.verbose("This type of message is not defined yet!!!\n incomes = \(message.returnToJSON())", context: "Chat")
+            log.verbose("This type of message is not defined yet!!!\n incomes = \(message.convertCodableToString() ?? "")", context: "Chat")
             break
         }
     }
@@ -937,7 +911,7 @@ extension Chat {
         // send log to Sentry 4.3.1
         if createChatModel.captureLogsOnSentry {
             let event = Event(level: SentrySeverity.error)
-            event.message = "Message of type 'ERROR' recieved: \n \(message.returnToJSON())"
+            event.message = "Message of type 'ERROR' recieved: \n \(message.convertCodableToString() ?? "")"
             Client.shared?.send(event: event, completion: { _ in })
         }
         
@@ -1090,6 +1064,3 @@ extension Chat {
     }
     
 }
-
-
-

@@ -120,7 +120,7 @@ extension Chat {
         }
 
         if (!hasFileOntheCache) || (getFileInput.serverResponse) {
-            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadFile(withInputModel: getFileInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, fileModel) in
@@ -158,7 +158,7 @@ extension Chat {
                                             type:       fileType)
 
                 if createChatModel.enableCache {
-                    if self.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myFile.count / 1024), turnOffTheCache: true) {
+                    if DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myFile.count / 1024), turnOffTheCache: true, errorDelegate: self.delegate) {
                         Chat.cacheDB.saveFileObject(fileInfo: uploadFile, fileData: myFile, toLocalPath: createChatModel.localFileCustomPath)
                     }
                 }
@@ -240,7 +240,7 @@ extension Chat {
         }
         
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadImage(withInputModel: getImageInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -288,7 +288,7 @@ extension Chat {
                                     size:       getImageInput.size,
                                     serverResponse: getImageInput.serverResponse)
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadImage(withInputModel: input, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -329,7 +329,7 @@ extension Chat {
                                               width:        nil)
                 
                 if createChatModel.enableCache {
-                    if self.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myData.count / 1024), turnOffTheCache: true) {
+                    if DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myData.count / 1024), turnOffTheCache: true , errorDelegate: self.delegate) {
                         if getImageInput.quality == 0.123 {
                             Chat.cacheDB.saveThumbnailImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: createChatModel.localImageCustomPath)
                         } else {

@@ -19,8 +19,4 @@ extension Chat {
     public func isConnectedToInternet() -> Bool {
         return NetworkReachabilityManager()!.isReachable
     }
-    
-    
-    
-    
 }

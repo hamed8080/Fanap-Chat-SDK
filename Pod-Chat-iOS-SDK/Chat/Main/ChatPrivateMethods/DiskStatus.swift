@@ -19,13 +19,6 @@ open class DiskStatus {
             } else {
                 return 0
             }
-//            do {
-//                let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory() as String)
-//                let space = (systemAttributes[FileAttributeKey.systemSize] as? NSNumber)?.int64Value
-//                return space!
-//            } catch {
-//                return 0
-//            }
         }
     }
     
@@ -37,13 +30,6 @@ open class DiskStatus {
             } else {
                 return 0
             }
-//            do {
-//                let systemAttributes = try FileManager.default.attributesOfFileSystem(forPath: NSHomeDirectory() as String)
-//                let freeSpace = (systemAttributes[FileAttributeKey.systemFreeSize] as? NSNumber)?.int64Value
-//                return freeSpace!
-//            } catch {
-//                return 0
-//            }
         }
     }
     
@@ -94,5 +80,17 @@ open class DiskStatus {
         return formatter.string(fromByteCount: bytes) as String
     }
     
-    
+    class func checkIfDeviceHasFreeSpace(needSpaceInMB: Int64, turnOffTheCache: Bool , errorDelegate:ChatErrorDelegate?) -> Bool {
+        let availableSpace = DiskStatus.freeDiskSpaceInBytes
+        if availableSpace < (needSpaceInMB * 1024 * 1024) {
+            var message = "your disk space is less than \(DiskStatus.MBFormatter(DiskStatus.freeDiskSpaceInBytes))MB."
+            if turnOffTheCache {
+                message += " " + "so, the cache will be switch OFF!"
+            }
+            errorDelegate?.chatError(errorCode: 6401, errorMessage: message, errorResult: nil)
+            return false
+        } else {
+            return true
+        }
+    }
 }
