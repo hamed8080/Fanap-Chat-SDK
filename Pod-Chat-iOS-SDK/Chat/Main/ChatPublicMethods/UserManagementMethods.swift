@@ -66,24 +66,14 @@ extension Chat {
         userInfoCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.USER_INFO.intValue(),
-                                            content:            nil,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
                                             token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           createChatModel.typeCode,
-                                            uniqueId:           theUniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           theUniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetUserInfoCallback(), theUniqueId)],
@@ -124,24 +114,15 @@ extension Chat {
         updateChatProfileCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SET_PROFILE.intValue(),
-                                            content:            setProfileInput.convertContentToJSON().toString(),
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            setProfileInput.convertContentToJSON().toString(),
                                             typeCode:           setProfileInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           setProfileInput.uniqueId,
-                                            uniqueIds:          nil,
-                                            isCreateThreadAndSendMessage: nil)
+                                            uniqueId:           setProfileInput.uniqueId)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UpdateChatProfileCallback(), setProfileInput.uniqueId)],
@@ -178,24 +159,15 @@ extension Chat {
         blockCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.BLOCK.intValue(),
-                                            content:            "\(blockContactsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(blockContactsInput.convertContentToJSON())",
                                             typeCode:           blockContactsInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           blockContactsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(BlockCallbacks(), blockContactsInput.uniqueId)],
@@ -231,24 +203,16 @@ extension Chat {
         getBlockedListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_BLOCKED.intValue(),
-                                            content:            "\(getBlockedContactsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(getBlockedContactsInput.convertContentToJSON())",
                                             typeCode:           getBlockedContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getBlockedContactsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetBlockedUsersCallbacks(parameters: chatMessage), getBlockedContactsInput.uniqueId)],
@@ -287,24 +251,16 @@ extension Chat {
 //        statusPingCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.STATUS_PING.intValue(),
-                                            content:            "\(statusPingInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(statusPingInput.convertContentToJSON())",
                                             typeCode:           statusPingInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           statusPingInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          nil,//[(StatusPingCallback(), statusPingInput.uniqueId)],
@@ -340,24 +296,17 @@ extension Chat {
         unblockUserCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNBLOCK.intValue(),
-                                            content:            "\(unblockContactsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(unblockContactsInput.convertContentToJSON())",
                                             subjectId:          unblockContactsInput.blockId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           unblockContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           unblockContactsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UnblockCallbacks(), unblockContactsInput.uniqueId)],

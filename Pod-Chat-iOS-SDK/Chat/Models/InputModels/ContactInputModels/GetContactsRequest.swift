@@ -9,111 +9,56 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
-open class GetContactsRequest {
-    
-    public let count:       Int?
-    public let offset:      Int?
-    
-    public let contactId:       Int?
-    public let cellphoneNumber: String?
-    public let email:           String?
-    public let order:           String?
-    public let query:           String?
-    public let summery:         Bool?
-    
-    public let typeCode:    String?
-    public let uniqueId:    String
-    
-    public init(count:      Int?,
-                offset:     Int?,
-                query:      String?,
-                typeCode:   String?,
-                uniqueId:   String?) {
-        
-        self.count      = count
-        self.offset     = offset
-        
-        self.contactId          = nil
-        self.cellphoneNumber    = nil
-        self.email              = nil
-        self.order              = nil
-        self.query              = query
-        self.summery            = nil
-        
-        self.typeCode   = typeCode
-        self.uniqueId   = uniqueId ?? UUID().uuidString
-    }
-    
-    init(contactId:         Int?,
-         count:             Int?,
-         cellphoneNumber:   String?,
-         email:             String?,
-         offset:            Int?,
-         order:             Ordering?,
-         query:             String?,
-         summery:           Bool?,
-         typeCode:          String?,
-         uniqueId:          String?) {
-        
-        self.count      = count
-        self.offset     = offset
-        
-        self.contactId          = contactId
-        self.cellphoneNumber    = cellphoneNumber
-        self.email              = email
-        self.order              = order?.rawValue ?? nil
-        self.query              = query
-        self.summery            = summery
-        
-        self.typeCode   = typeCode
-        self.uniqueId   = uniqueId ?? UUID().uuidString
-    }
-    
-//    public init(json: JSON) {
-//        self.count      = json["count"].int
-//        self.offset     = json["offset"].int
-//        self.query      = json["query"].string
+open class GetContactsRequest : Codable {
+	
+	public var count       		: Int = 50
+	public var offset      		: Int = 0
+	public let id       			: Int? //contact id to client app can query and find a contact in cache core data with id
+	public let cellphoneNumber 		: String?
+	public let email           	: String?
+	public let order           	: String?
+	public let query           	: String?
+	public var summery         	: Bool? = nil
+	public let typeCode    		: String?
+	public var uniqueId    		: String =  UUID().uuidString
+	
+	public init( id:           Int? = nil,
+		  count:             Int = 50,
+		  cellphoneNumber:   String? = nil,
+		  email:             String? = nil,
+		  offset:            Int = 0 ,
+		  order:             Ordering? = nil,
+		  query:             String? = nil,
+		  summery:           Bool? = nil,
+		  typeCode:          String? = nil,
+		  uniqueId:          String = UUID().uuidString) {
+		
+		self.count     		 	= count
+		self.offset     		 	= offset
+		self.id         			= id
+		self.cellphoneNumber   	= cellphoneNumber
+		self.email           	 	= email
+		self.order             	= order?.rawValue ?? nil
+		self.query             	= query
+		self.summery           	= summery
+		self.typeCode   			= typeCode
+		self.uniqueId   			= uniqueId
+		
+	}
+	
+	
+//	public func convertContentToJSON() -> JSON {
+//		var content: JSON = [:]
 //
-//        self.typeCode   = json["typeCode"].string
-//        self.uniqueId   = json["uniqueId"].string ?? UUID().uuidString
-//    }
-    
-    public func convertContentToJSON() -> JSON {
-        var content: JSON = [:]
-        
-        content["size"]     = JSON(self.count ?? 50)
-        content["offset"]   = JSON(self.offset ?? 0)
-        if let query = self.query {
-            let theQuery = MakeCustomTextToSend(message: query).replaceSpaceEnterWithSpecificCharecters()
-            content["query"] = JSON(theQuery)
-        }
-        if let contactId_ = self.contactId {
-            content["id"] = JSON(contactId_)
-        }
-        if let cellphoneNumber_ = self.cellphoneNumber {
-            content["cellphoneNumber"] = JSON(cellphoneNumber_)
-        }
-        if let email_ = self.email {
-            content["email"] = JSON(email_)
-        }
-        if let order_ = self.order {
-            content["order"] = JSON(order_)
-        }
-        if let summery_ = self.summery {
-            content["summery"] = JSON(summery_)
-        }
-        
-        return content
-    }
-    
-    public func convertContentToJSONArray() -> [JSON] {
-        return []
-    }
-    
+//		if let query = self.query {
+//			let theQuery = MakeCustomTextToSend(message: query).replaceSpaceEnterWithSpecificCharecters()
+//			content["query"] = JSON(theQuery)
+//		}
+//	}
+	
 }
 
-/// MARK: -  this class will be deprecate (use this class instead: 'GetContactsRequest')
+@available(*, unavailable,message: "the class was removed use GetContactsRequest instead")
 open class GetContactsRequestModel: GetContactsRequest {
-    
 }
 

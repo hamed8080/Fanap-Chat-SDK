@@ -121,23 +121,23 @@ public class Chat {
     var isCreateObjectFuncCalled = false
     
     // MARK: - setup properties
-    var chatFullStateObject      : ChatFullStateModel?
+    var chatFullStateObject      	: ChatFullStateModel?
     
-    var asyncClient              : Async?
-    var deviceId                 : String?
-    var peerId                   : Int?
-    var oldPeerId                : Int?
-    var userInfo                 : User?
+    var asyncClient              	: Async?
+    var deviceId                 	: String?
+    var peerId                   	: Int?
+    var oldPeerId                	: Int?
+    var userInfo                 	: User?
     
-    var getHistoryCount          : Int      = 50
-    var getUserInfoRetry         : Int      = 5
-    var getUserInfoRetryCount    : Int      = 0
-    var chatPingMessageInterval  : Int      = 20
+    var getHistoryCount          	: Int      = 50
+    var getUserInfoRetry         	: Int      = 5
+    var getUserInfoRetryCount    	: Int      = 0
+    var chatPingMessageInterval  	: Int      = 20
     
-    var lastReceivedMessageTime  : Date?
-    var lstRcvdMsgTimer          : Each?
-    var lastSentMessageTime      : Date?
-    var lstSntMsgTimer           : Each?
+    var lastReceivedMessageTime  	: Date?
+    var lstRcvdMsgTimer          	: Each?
+    var lastSentMessageTime      	: Date?
+    var lstSntMsgTimer           	: Each?
     
     var createChatModel:CreateChatModel?
     
@@ -225,7 +225,7 @@ public class Chat {
                 self.CreateAsync()
             }
         }
-        _ = checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel?.deviecLimitationSpaceMB ?? 100, turnOffTheCache: true)
+        _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel?.deviecLimitationSpaceMB ?? 100, turnOffTheCache: true, errorDelegate: delegate)
     }
     
     @available(*,deprecated, renamed: "dispose")

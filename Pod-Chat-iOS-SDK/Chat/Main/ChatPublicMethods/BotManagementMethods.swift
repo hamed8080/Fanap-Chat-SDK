@@ -42,24 +42,16 @@ extension Chat {
         createBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CREATE_BOT.intValue(),
+											token:              createChatModel.token,
                                             content:            createBotInput.botName,
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           createBotInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           createBotInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(CreateBotCallback(), createBotInput.uniqueId)],
@@ -97,24 +89,16 @@ extension Chat {
         addBotCommandCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DEFINE_BOT_COMMAND.intValue(),
-                                            content:            "\(addBotCommandsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(addBotCommandsInput.convertContentToJSON())",
                                             typeCode:           addBotCommandsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           addBotCommandsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(AddBotCommandCallback(), addBotCommandsInput.uniqueId)],
@@ -152,24 +136,17 @@ extension Chat {
         startBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.START_BOT.intValue(),
-                                            content:            "\(startBotInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
+											token:              createChatModel.token,
+											content:            "\(startBotInput.convertContentToJSON())",
                                             subjectId:          startBotInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           startBotInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           startBotInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(StartBotCallback(), startBotInput.uniqueId)],
@@ -206,24 +183,17 @@ extension Chat {
         stopBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.STOP_BOT.intValue(),
+											token:              createChatModel.token,
                                             content:            "\(stopBotInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
                                             subjectId:          stopBotInput.threadId,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
                                             typeCode:           stopBotInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           stopBotInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(StopBotCallback(), stopBotInput.uniqueId)],

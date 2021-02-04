@@ -13,24 +13,24 @@ open class CancelMessageRequest {
     
     public let textMessageUniqueId:     String?
     public let editMessageUniqueId:     String?
-    public let forwardMessageUniqueId:  String?
+    public let forwardMessageUniqueId:  	String?
     public let fileMessageUniqueId:     String?
     public let uploadImageUniqueId:     String?
     public let uploadFileUniqueId:      String?
     
-    public init(textMessageUniqueId:    String?,
+    public init(textMessageUniqueId:    	String?,
                 editMessageUniqueId:    String?,
                 forwardMessageUniqueId: String?,
                 fileMessageUniqueId:    String?,
                 uploadImageUniqueId:    String?,
                 uploadFileUniqueId:     String?) {
         
-        self.textMessageUniqueId    = textMessageUniqueId
-        self.editMessageUniqueId    = editMessageUniqueId
-        self.forwardMessageUniqueId = forwardMessageUniqueId
-        self.fileMessageUniqueId    = fileMessageUniqueId
-        self.uploadImageUniqueId    = uploadImageUniqueId
-        self.uploadFileUniqueId     = uploadFileUniqueId
+        self.textMessageUniqueId    	= textMessageUniqueId
+        self.editMessageUniqueId    	= editMessageUniqueId
+        self.forwardMessageUniqueId  	= forwardMessageUniqueId
+        self.fileMessageUniqueId    	= fileMessageUniqueId
+        self.uploadImageUniqueId    	= uploadImageUniqueId
+        self.uploadFileUniqueId     	= uploadFileUniqueId
     }
     
 }

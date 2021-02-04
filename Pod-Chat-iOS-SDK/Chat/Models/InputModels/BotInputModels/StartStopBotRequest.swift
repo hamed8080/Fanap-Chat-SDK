@@ -12,7 +12,6 @@ open class StartStopBotRequest: RequestModelDelegates {
     
     public let botName:     String
     public let threadId:    Int
-    
     public let typeCode:    String?
     public let uniqueId:    String
     
@@ -23,7 +22,6 @@ open class StartStopBotRequest: RequestModelDelegates {
         
         self.botName    = botName
         self.threadId   = threadId
-        
         self.typeCode   = typeCode
         self.uniqueId   = uniqueId ?? UUID().uuidString
     }

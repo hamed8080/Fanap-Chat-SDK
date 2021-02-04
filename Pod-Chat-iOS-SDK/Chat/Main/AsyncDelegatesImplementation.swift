@@ -172,13 +172,12 @@ extension Chat: AsyncDelegates {
          *
          */
         log.verbose("content of received message: \n \(params)", context: "Chat")
-        
-        let asyncMessage = AsyncMessage(withContent: params)
-        handleReceiveMessageFromAsync(withContent: asyncMessage)
+		guard let data = try? params.rawData() else {return}
+		if let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self,from: data){
+			handleReceiveMessageFromAsync(withContent: asyncMessage)
+		}
     }
-    
-    
-    
+
     
     /*
      * Handle AsyncReady:
@@ -259,10 +258,12 @@ extension Chat: AsyncDelegates {
 //        lastReceivedMessageTimer = RepeatingTimer(timeInterval: (Double(self.chatPingMessageInterval) * 1.5))
         
         stopLastReceivedMessageTimer()
-        lastReceivedMessageTimer(interval: (Double(self.chatPingMessageInterval) * 1.5))
-        
-        let chatMessage = ChatMessage(withContent: withContent.content.convertToJSON())
-        receivedMessageHandler(withContent: chatMessage)
+		lastReceivedMessageTimer(interval: (Double(self.chatPingMessageInterval) * 1.5))
+		if let data = withContent.content.data(using: .utf8) ,
+		   let chatMessage = try? JSONDecoder().decode(ChatMessage.self, from: data){
+			receivedMessageHandler(withContent: chatMessage)
+		}
+		
     }
     
     

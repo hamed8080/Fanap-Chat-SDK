@@ -71,7 +71,7 @@ extension Chat {
         if let ownerId = addContactsInput.ownerId {
             params["ownerId"] = JSON(ownerId)
         }
-        params["typeCode"]          = JSON(addContactsInput.typeCode ?? createChatModel.typeCode)
+		params["typeCode"]          = JSON(addContactsInput.typeCode ?? createChatModel.typeCode)
         params["uniqueId"]          = JSON(messageUniqueId)
         
         Networking.sharedInstance.requesttWithJSONresponse(from:            url,
@@ -181,7 +181,7 @@ extension Chat {
     /// - parameter completion:         (response) it will returns the response that comes from server to this request. (Any as! GetContactsModel)
     /// - parameter cacheResponse:      (response) there is another response that comes from CacheDB to the user, if user has set 'enableCache' vaiable to be true. (GetContactsModel)
     public func getContacts(inputModel getContactsInput:    GetContactsRequest,
-                            getCacheResponse:               Bool?,
+                            getCacheResponse:               Bool? = false,
                             uniqueId:           @escaping ((String) -> ()),
                             completion:         @escaping callbackTypeAlias,
                             cacheResponse:      @escaping (GetContactsModel) -> ()) {
@@ -190,26 +190,19 @@ extension Chat {
         uniqueId(getContactsInput.uniqueId)
         
         getContactsCallbackToUser = completion
-        
+		
+		
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_CONTACTS.intValue(),
-                                            content:            "\(getContactsInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(getContactsInput.convertCodableToString())",
                                             typeCode:           getContactsInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getContactsInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetContactsCallback(parameters: chatMessage), getContactsInput.uniqueId)],
@@ -225,12 +218,10 @@ extension Chat {
             }
             if let cacheContacts = Chat.cacheDB.retrieveContacts(ascending:         isAscending,
                                                                  cellphoneNumber:   nil,
-                                                                 count:             getContactsInput.count ?? 50,
+                                                                 count:             getContactsInput.count,
                                                                  email:             getContactsInput.email,
-//                                                                 firstName:         nil,
-                                                                 id:                getContactsInput.contactId,
-//                                                                 lastName:          nil,
-                                                                 offset:            getContactsInput.offset ?? 0,
+                                                                 id:                getContactsInput.id,
+                                                                 offset:            getContactsInput.offset,
                                                                  search:            getContactsInput.query,
                                                                  timeStamp:         createChatModel.cacheTimeStampInSec,
                                                                  uniqueId:          nil) {
@@ -239,7 +230,6 @@ extension Chat {
         }
         
     }
-    
     
     // MARK: - Get Contact Not Seen Duration
     /// GetContactNotSeenDuration:
@@ -267,24 +257,16 @@ extension Chat {
         getContactNotSeenDurationCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_NOT_SEEN_DURATION.intValue(),
-                                            content:            "\(notSeenDurationInput.convertContentToJSON())",
-                                            messageType:        nil,
-                                            metadata:           nil,
-                                            repliedTo:          nil,
-                                            systemMetadata:     nil,
-                                            subjectId:          nil,
-                                            token:              createChatModel.token,
-                                            tokenIssuer:        nil,
+											token:              createChatModel.token,
+											content:            "\(notSeenDurationInput.convertContentToJSON())",
                                             typeCode:           notSeenDurationInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           notSeenDurationInput.uniqueId,
-                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
         let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
                                               msgTTL:       createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
-                                              pushMsgType:  nil)
+                                              priority:     createChatModel.msgPriority)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetContactNotSeenDurationCallback(), notSeenDurationInput.uniqueId)],
@@ -384,11 +366,11 @@ extension Chat {
         
         log.verbose("Try to request to search contact with this parameters: \n \(searchContactsInput)", context: "Chat")
         
-        let getContactInput = GetContactsRequest(contactId:         searchContactsInput.contactId,
-                                                 count:             searchContactsInput.count,
+        let getContactInput = GetContactsRequest(	 id:         		searchContactsInput.contactId,
+                                                 count:             searchContactsInput.count ?? 50,
                                                  cellphoneNumber:   searchContactsInput.cellphoneNumber,
                                                  email:             searchContactsInput.email,
-                                                 offset:            searchContactsInput.offset,
+                                                 offset:            searchContactsInput.offset ?? 0,
                                                  order:             searchContactsInput.order,
                                                  query:             searchContactsInput.query,
                                                  summery:           searchContactsInput.summery,

@@ -11,22 +11,22 @@ import Foundation
 
 open class ChatFullStateModel {
     
-    var socketState:        AsyncStateType
-    var timeUntilReconnect: Int
-    var deviceRegister:     Bool
-    var serverRegister:     Bool
-    var peerId:             Int
+	var socketState        	: AsyncStateType
+	var timeUntilReconnect 	: Int
+	var deviceRegister     	: Bool
+	var serverRegister     	: Bool
+	var peerId             	: Int
     
-    public init(socketState:        AsyncStateType,
+    public init(socketState:         	AsyncStateType,
                 timeUntilReconnect: Int,
                 deviceRegister:     Bool,
                 serverRegister:     Bool,
                 peerId:             Int) {
-        self.socketState        = socketState
-        self.timeUntilReconnect = timeUntilReconnect
-        self.deviceRegister     = deviceRegister
-        self.serverRegister     = serverRegister
-        self.peerId             = peerId
+        self.socketState        	= socketState
+        self.timeUntilReconnect 	= timeUntilReconnect
+        self.deviceRegister     	= deviceRegister
+        self.serverRegister     	= serverRegister
+        self.peerId             	= peerId
     }
     
 }

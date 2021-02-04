@@ -10,13 +10,12 @@ import SwiftyJSON
 
 open class AddBotCommandRequest: RequestModelDelegates {
     
-    public let botName:         String
-    public var commandList:     [String] = []
+	public let botName			: String
+	public var commandList		: [String] = []
+	public let typeCode		: String?
+	public let uniqueId		: String
     
-    public let typeCode:    String?
-    public let uniqueId:    String
-    
-    public init(botName:        String,
+    public init(botName:         String,
                 commandList:    [String],
                 typeCode:       String?,
                 uniqueId:       String?) {

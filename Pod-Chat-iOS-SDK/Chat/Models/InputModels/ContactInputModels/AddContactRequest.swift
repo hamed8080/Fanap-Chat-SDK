@@ -21,7 +21,7 @@ open class AddContactRequest {
     public var uniqueId:           String
     
     /// Add Contact with CellPhone number
-    public init(cellphoneNumber:    String?,
+    public init(cellphoneNumber:     String?,
                 email:              String?,
                 firstName:          String?,
                 lastName:           String?,
