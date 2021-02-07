@@ -161,73 +161,91 @@ extension Chat {
         
     
     
-    // MARK: - Get Contacts
-    // ToDo: filtering by "name" works well on the Cache but not by the Server!!!
-    /// GetContacts:
-    /// it returns list of contacts
-    ///
-    /// By calling this function, a request of type 13 (GET_CONTACTS) will send throut Chat-SDK,
-    /// then the response will come back as callbacks to client whose calls this function.
-    ///
-    /// Inputs:
-    /// - you have to send your parameters as "GetContactsRequest" to this function
-    ///
-    /// Outputs:
-    /// - It has 3 callbacks as responses.
-    ///
-    /// - parameter inputModel:         (input) you have to send your parameters insid this model. (GetContactsRequest)
-    /// - parameter getCacheResponse:   (input) specify if you want to get cache response for this request (Bool?)
-    /// - parameter uniqueId:           (response) it will returns the request 'UniqueId' that will send to server. (String)
-    /// - parameter completion:         (response) it will returns the response that comes from server to this request. (Any as! GetContactsModel)
-    /// - parameter cacheResponse:      (response) there is another response that comes from CacheDB to the user, if user has set 'enableCache' vaiable to be true. (GetContactsModel)
+	@available(*,deprecated , message: "removed in future release use another getContacts method")
     public func getContacts(inputModel getContactsInput:    GetContactsRequest,
                             getCacheResponse:               Bool? = false,
                             uniqueId:           @escaping ((String) -> ()),
                             completion:         @escaping callbackTypeAlias,
-                            cacheResponse:      @escaping (GetContactsModel) -> ()) {
-        guard let createChatModel = createChatModel , let content = getContactsInput.convertCodableToString()  else {return}
-        log.verbose("Try to request to get Contacts with this parameters: \n \(getContactsInput)", context: "Chat")
-        uniqueId(getContactsInput.uniqueId)
-        
-        getContactsCallbackToUser = completion
-        let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_CONTACTS.intValue(),
-											token:              createChatModel.token,
-                                            content:            "\(content)",
-                                            typeCode:           getContactsInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           getContactsInput.uniqueId,
-                                            isCreateThreadAndSendMessage: true)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
-        
-        sendMessageWithCallback(asyncMessageVO:     asyncMessage,
-                                callbacks:          [(GetContactsCallback(parameters: chatMessage), getContactsInput.uniqueId)],
-                                sentCallback:       nil,
-                                deliverCallback:    nil,
-                                seenCallback:       nil)
-        
-        // if cache is enabled by user, it will return cache result to the user
-        if (getCacheResponse ?? createChatModel.enableCache) {
-            var isAscending = true
-            if let ord = getContactsInput.order, (ord == Ordering.descending.rawValue) {
-                isAscending = false
-            }
-            if let cacheContacts = Chat.cacheDB.retrieveContacts(ascending:         isAscending,
-                                                                 cellphoneNumber:   nil,
-                                                                 count:             getContactsInput.count,
-                                                                 email:             getContactsInput.email,
-                                                                 id:                getContactsInput.id,
-                                                                 offset:            getContactsInput.offset,
-                                                                 search:            getContactsInput.query,
-                                                                 timeStamp:         createChatModel.cacheTimeStampInSec,
-                                                                 uniqueId:          nil) {
-                cacheResponse(cacheContacts)
-            }
-        }
-        
+                            cacheResponse:      @escaping (GetContactsModel) -> () ) {
+		getContacts(inputModel: getContactsInput,
+					getCacheResponse: getCacheResponse,
+					uniqueId: getContactsInput.uniqueId,
+					completion: completion,
+					uniqueIdResult: uniqueId,
+					cacheResponse: cacheResponse)
+
     }
+	
+	// MARK: - Get Contacts
+	// ToDo: filtering by "name" works well on the Cache but not by the Server!!!
+	/// GetContacts:
+	/// it returns list of contacts
+	///
+	/// By calling this function, a request of type 13 (GET_CONTACTS) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "GetContactsRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 3 callbacks as responses.
+	///
+	/// - parameter inputModel:         (input) you have to send your parameters insid this model. (GetContactsRequest)
+	/// - parameter getCacheResponse:   (input) specify if you want to get cache response for this request (Bool?)
+	/// - parameter uniqueId:           (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter completion:         (response) it will returns the response that comes from server to this request. (Any as! GetContactsModel)
+	/// - parameter cacheResponse:      (response) there is another response that comes from CacheDB to the user, if user has set 'enableCache' vaiable to be true. (GetContactsModel)
+	public func getContacts(inputModel getContactsInput: GetContactsRequest,
+							getCacheResponse:           Bool?   = false,
+							uniqueId:					String? = nil,
+							completion:         		@escaping callbackTypeAlias,
+							uniqueIdResult:           	((String) -> ())? = nil,
+							cacheResponse:      		((GetContactsModel) -> ())? = nil ){
+		guard let createChatModel = createChatModel , let content = getContactsInput.convertCodableToString()  else {return}
+		log.verbose("Try to request to get Contacts with this parameters: \n \(getContactsInput)", context: "Chat")
+		let unqId = uniqueId ?? UUID().uuidString
+		uniqueIdResult?(unqId)
+		
+		getContactsCallbackToUser = completion
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_CONTACTS.intValue(),
+											token:              createChatModel.token,
+											content:            "\(content)",
+											typeCode:           getContactsInput.typeCode ?? createChatModel.typeCode,
+											uniqueId:           unqId,
+											isCreateThreadAndSendMessage: true)
+		
+		let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+											  msgTTL:       createChatModel.msgTTL,
+											  peerName:     createChatModel.serverName,
+											  priority:     createChatModel.msgPriority)
+		
+		sendMessageWithCallback(asyncMessageVO:     asyncMessage,
+								callbacks:          [(GetContactsCallback(parameters: chatMessage), unqId)],
+								sentCallback:       nil,
+								deliverCallback:    nil,
+								seenCallback:       nil)
+		
+		// if cache is enabled by user, it will return cache result to the user
+		if (getCacheResponse ?? createChatModel.enableCache) {
+			var isAscending = true
+			if let ord = getContactsInput.order, (ord == Ordering.descending.rawValue) {
+				isAscending = false
+			}
+			if let cacheContacts = Chat.cacheDB.retrieveContacts(ascending:         isAscending,
+																 cellphoneNumber:   nil,
+																 count:             getContactsInput.size,
+																 email:             getContactsInput.email,
+																 id:                getContactsInput.id,
+																 offset:            getContactsInput.offset,
+																 search:            getContactsInput.query,
+																 timeStamp:         createChatModel.cacheTimeStampInSec,
+																 uniqueId:          nil) {
+				cacheResponse?(cacheContacts)
+			}
+		}
+		
+		
+	}
     
     // MARK: - Get Contact Not Seen Duration
     /// GetContactNotSeenDuration:
@@ -364,7 +382,7 @@ extension Chat {
         
         log.verbose("Try to request to search contact with this parameters: \n \(searchContactsInput)", context: "Chat")
         
-        let getContactInput = GetContactsRequest(	 id:         		searchContactsInput.contactId,
+        let getContactInput = GetContactsRequest( id:         		searchContactsInput.contactId,
                                                  count:             searchContactsInput.count ?? 50,
                                                  cellphoneNumber:   searchContactsInput.cellphoneNumber,
                                                  email:             searchContactsInput.email,
