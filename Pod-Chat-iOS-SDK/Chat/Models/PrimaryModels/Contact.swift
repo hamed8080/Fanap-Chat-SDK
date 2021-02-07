@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class Contact {
+open class Contact :Codable {
     /*
      *  + ContactVO          Contact:
      *      - blocked           Bool?

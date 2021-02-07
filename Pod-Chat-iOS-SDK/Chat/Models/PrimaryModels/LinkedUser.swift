@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class LinkedUser {
+open class LinkedUser :Codable {
     /*
      * + RelatedUserVO  LinkedUser:
      *   - coreUserId:      Int?

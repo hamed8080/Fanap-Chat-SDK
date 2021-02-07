@@ -64,14 +64,14 @@ open class GetContactsRequest : Codable {
 				 typeCode:          String? = nil) {
 		
 		self.size     		 	= count
-		self.offset     		 	= offset
-		self.id         			= id
+		self.offset     		= offset
+		self.id         	    = id
 		self.cellphoneNumber   	= cellphoneNumber
 		self.email             	= email
 		self.order             	= order?.rawValue ?? nil
 		self.query             	= query
 		self.summery           	= summery
-		self.typeCode   			= typeCode
+		self.typeCode   		= typeCode
 	}
 	
 	private enum CodingKeys:String ,CodingKey{

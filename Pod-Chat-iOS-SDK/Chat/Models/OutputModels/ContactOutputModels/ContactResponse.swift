@@ -10,61 +10,40 @@ import Foundation
 import SwiftyJSON
 
 
-open class ContactModel: ResponseModel, ResponseModelDelegates {
+open class ContactResponse: ResponseModel , Decodable {
+
+    public var contentCount     : Int = 0
+    public var contacts         : [Contact] = []
     
-    public var contentCount:       Int = 0
-    public var contacts:           [Contact] = []
-    
-    public init(messageContent: JSON) {
-        
-        if let result = messageContent["result"].array {
-            for item in result {
-                let tempContact = Contact(messageContent: item)
-                self.contacts.append(tempContact)
-            }
-        }
-        self.contentCount = messageContent["count"].intValue
-        super.init(hasError:        messageContent["hasError"].bool ?? false,
-                   errorMessage:    messageContent["message"].string ?? "",
-                   errorCode:       messageContent["errorCode"].int ?? 0)
+    private enum CodingKeys:String , CodingKey{
+        case contacts     = "result"
+        case contentCount = "count"
+        case hasError     = "hasError"
+        case message      = "message"
+        case errorCode    = "errorCode"
     }
     
-    public init(contentCount:   Int,
-                messageContent: [Contact]?,
-                hasError:       Bool,
-                errorMessage:   String?,
-                errorCode:      Int?) {
+    public required init(from decoder: Decoder) throws {
+        let container     =  try  decoder.container(keyedBy: CodingKeys.self)
+        contacts          = (try? container.decode([Contact].self, forKey: .contacts)) ?? []
+        contentCount      = (try? container.decode(Int.self, forKey: .contentCount)) ?? 0
+        let errorCode     = (try? container.decode(Int.self, forKey: .errorCode)) ?? 0
+        let hasError      = (try? container.decode(Bool.self, forKey: .hasError)) ?? false
+        let message       = (try? container.decode(String.self, forKey: .message)) ?? ""
+        super.init(hasError: hasError, errorMessage: message, errorCode: errorCode)
+    }
+
+    @available(*,deprecated , message: "removed in future release dont use this contsuctor ,it's internal purpose")
+    public init(contentCount   : Int,
+                contacts       : [Contact]?,
+                hasError       : Bool,
+                errorMessage   : String?,
+                errorCode      : Int?) {
         
-        if let result = messageContent {
-            for item in result {
-                self.contacts.append(item)
-            }
-        }
+        self.contacts = contacts ?? []
         self.contentCount = contentCount
         super.init(hasError:        hasError,
                    errorMessage:    errorMessage ?? "",
                    errorCode:       errorCode ?? 0)
     }
-    
-    
-    public func returnDataAsJSON() -> JSON {
-        var contactArr = [JSON]()
-        for item in contacts {
-            contactArr.append(item.formatToJSON())
-        }
-        let result: JSON = ["contacts":     contactArr,
-                            "contentCount": contentCount]
-        
-        let finalResult: JSON = ["result":      result,
-                                 "hasError":    hasError,
-                                 "errorMessage": errorMessage,
-                                 "errorCode":   errorCode]
-        
-        return finalResult
-    }
-}
-
-
-open class ContactResponse: ContactModel {
-    
 }

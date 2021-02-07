@@ -14,10 +14,7 @@ open class ResponseModel {
     var errorMessage:   String
     var errorCode:      Int
     
-    public init(hasError: Bool,
-                errorMessage: String,
-                errorCode: Int) {
-        
+    public init(hasError: Bool, errorMessage: String, errorCode: Int) {
         self.hasError           = hasError
         self.errorMessage       = errorMessage
         self.errorCode          = errorCode

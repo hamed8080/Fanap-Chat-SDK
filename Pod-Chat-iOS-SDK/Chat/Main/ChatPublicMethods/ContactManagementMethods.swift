@@ -17,7 +17,15 @@ import Contacts
 
 extension Chat {
     
-
+    @available(*,deprecated , message: "removed in future release use another getContacts method")
+    public func addContact(inputModel addContactsInput:    AddContactRequest,
+                           uniqueId:            @escaping (String) -> (),
+                           completion:          @escaping callbackTypeAlias) {
+        addContact(inputModel: addContactsInput,
+                   uniqueId: addContactsInput.uniqueId,
+                   completion: completion)
+    }
+    
     // MARK: - Add Contact
     /// AddContact:
     /// it will add a contact
@@ -35,16 +43,17 @@ extension Chat {
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ContactModel)
     public func addContact(inputModel addContactsInput:    AddContactRequest,
-                           uniqueId:            @escaping (String) -> (),
-                           completion:          @escaping callbackTypeAlias) {
+                           uniqueId:                     String? = nil,
+                           completion:                   @escaping callbackTypeAlias,
+                           uniqueIdResult:               ((String) -> ())? = nil) {
 
         log.verbose("Try to request to add contact with this parameters: \n \(addContactsInput)", context: "Chat")
-        uniqueId(addContactsInput.uniqueId)
-        
+        let unqId = uniqueId ?? UUID().uuidString
+        uniqueIdResult?(unqId)
         sendAddContactRequest(withInputModel:   addContactsInput,
-                              messageUniqueId:  addContactsInput.uniqueId)
+                              messageUniqueId:  unqId)
         { (addContactModel) in
-            self.addContactOnCache(withInputModel: addContactModel as! ContactModel)
+            self.addContactOnCache(withInputModel: addContactModel as! ContactResponse)
             completion(addContactModel)
         }
         
@@ -79,8 +88,9 @@ extension Chat {
                                                            withHeaders:     headers,
                                                            withParameters:  params)
         { (jsonResponse) in
-            let contactsModel = ContactModel(messageContent: jsonResponse as! JSON)
-            completion(contactsModel)
+            if let json = jsonResponse as? JSON ,let contactModel  = try? JSONDecoder().decode(ContactResponse.self, from: json.rawData()){
+                completion(contactModel)
+            }
         }
     }
     
@@ -108,7 +118,7 @@ extension Chat {
         
         sendAddContactsRequest(withInputModel: addContactsInput)
         { (addContactModel) in
-            self.addContactOnCache(withInputModel: addContactModel as! ContactModel)
+            self.addContactOnCache(withInputModel: addContactModel as! ContactResponse)
             completion(addContactModel)
         }
     }
@@ -146,20 +156,19 @@ extension Chat {
                                                            withHeaders:     headers,
                                                            withParameters:  nil)
         { (jsonResponse) in
-            let contactsModel = ContactModel(messageContent: jsonResponse as! JSON)
-            completion(contactsModel)
+            if let json = jsonResponse as? JSON ,let contactModel  = try? JSONDecoder().decode(ContactResponse.self, from: json.rawData()){
+                completion(contactModel)
+            }
         }
     }
     
     
-    private func addContactOnCache(withInputModel contactModel: ContactModel) {
+    private func addContactOnCache(withInputModel contactModel: ContactResponse) {
         guard let createChatModel = createChatModel else {return}
         if createChatModel.enableCache {
             Chat.cacheDB.saveContact(withContactObjects: contactModel.contacts)
         }
     }
-        
-    
     
 	@available(*,deprecated , message: "removed in future release use another getContacts method")
     public func getContacts(inputModel getContactsInput:    GetContactsRequest,
@@ -495,9 +504,10 @@ extension Chat {
                                                            withMethod:      method,
                                                            withHeaders:     headers,
                                                            withParameters:  params)
-        { (response) in
-            let contactModel = ContactModel(messageContent: response as! JSON)
-            completion(contactModel)
+        { (jsonResponse) in
+            if let json = jsonResponse as? JSON ,let contactModel  = try? JSONDecoder().decode(ContactResponse.self, from: json.rawData()){
+                completion(contactModel)
+            }
         }
     }
     
@@ -609,7 +619,7 @@ extension Chat {
                 completion(myResponse)
             }
         } else {
-            let contactModel = ContactModel(contentCount: 0, messageContent: [], hasError: false, errorMessage: "", errorCode: 0)
+            let contactModel = ContactResponse(contentCount: 0, contacts: [], hasError: false, errorMessage: "", errorCode: 0)
             completion(contactModel)
         }
         
@@ -643,7 +653,7 @@ extension Chat {
         
         sendUpdateContactRequest(withInputModel: updateContactsInput, andUniqueId: updateContactsInput.uniqueId)
         { (contactModel) in
-            self.addContactOnCache(withInputModel: contactModel as! ContactModel)
+            self.addContactOnCache(withInputModel: contactModel as! ContactResponse)
             completion(contactModel)
         }
         

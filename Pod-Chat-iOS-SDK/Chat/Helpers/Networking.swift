@@ -12,6 +12,7 @@ import Alamofire
 import SwiftyJSON
 import SwiftyBeaver
 
+struct VoidRequest:Codable{}
 
 class Networking {
     
@@ -154,7 +155,7 @@ class Networking {
         
     }
     
-    
+    @available(*,deprecated  , renamed:"request" , message:"use request method instead")
     func requesttWithJSONresponse(from urlStr:      String,
                                   withMethod:       HTTPMethod,
                                   withHeaders:      HTTPHeaders?,
@@ -181,6 +182,28 @@ class Networking {
                                         "errorEvent": error.localizedDescription]
                     completion(myJson)
                 }
+            }
+        }
+    }
+    
+    class func request<D:Codable>(ofType:D.Type,
+                                  from urlStr:      String,
+                                  withMethod:       HTTPMethod,
+                                  withHeaders:      HTTPHeaders?,
+                                  withParameters:   Parameters?,
+                                  completion:       ((D?)->())? = nil ) {
+        
+        guard let url = URL(string: urlStr) else { print("could not open url, it was nil"); return }
+        Alamofire.request(url,
+                          method:       withMethod,
+                          parameters:   withParameters,
+                          headers:      withHeaders)
+            .responseData { (myResponse) in
+            if myResponse.result.isSuccess , let data = myResponse.result.value , let codable = try? JSONDecoder().decode(D.self, from: data){
+                    completion?(codable)
+            }else if let error = myResponse.error {
+                    //FIXME: add error
+                    completion?(nil)
             }
         }
     }

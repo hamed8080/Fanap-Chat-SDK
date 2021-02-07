@@ -10,24 +10,25 @@ import Foundation
 
 open class AddContactRequest {
     
-    public var cellphoneNumber:    String?
-    public var email:              String?
-    public var firstName:          String?
-    public var lastName:           String?
-    public var ownerId:            Int?
-    public var username:           String?
-
-    public var typeCode:           String?
-    public var uniqueId:           String
+    public var cellphoneNumber    : String?
+    public var email              : String?
+    public var firstName          : String?
+    public var lastName           : String?
+    public var ownerId            : Int?
+    public var username           : String?
+    public var typeCode           : String
     
-    /// Add Contact with CellPhone number
-    public init(cellphoneNumber:     String?,
-                email:              String?,
-                firstName:          String?,
-                lastName:           String?,
-                ownerId:            Int?,
-                typeCode:           String?,
-                uniqueId:           String?) {
+    @available(*,deprecated , message: "removed in future release use uniqueId In addContact or addContacts method params")
+    public var uniqueId:           String = UUID().uuidString
+    
+    @available(*,deprecated , message: "removed in future release use uniqueId In addContact or addContacts method params")
+    public init(cellphoneNumber    : String? = nil,
+                email              : String? = nil,
+                firstName          : String? = nil,
+                lastName           : String? = nil,
+                ownerId            : Int?    = nil,
+                typeCode           : String? = "default",
+                uniqueId           : String? = nil) {
         
         self.cellphoneNumber    = cellphoneNumber
         self.email              = email
@@ -35,35 +36,29 @@ open class AddContactRequest {
         self.lastName           = lastName
         self.ownerId            = ownerId
         self.username           = nil
-
-        self.typeCode           = typeCode
+        self.typeCode           = typeCode ?? "default"
         self.uniqueId           = uniqueId ?? UUID().uuidString
     }
     
-    /// Add Contact with username
-    public init(email:      String?,
-                firstName:  String?,
-                lastName:   String?,
-                ownerId:    Int?,
-                username:   String?,
-                typeCode:   String?,
-                uniqueId:   String?) {
+    public init(cellphoneNumber    : String? = nil,
+                email              : String? = nil,
+                firstName          : String? = nil,
+                lastName           : String? = nil,
+                ownerId            : Int?    = nil,
+                typeCode           : String? = "default") {
         
-        self.cellphoneNumber    = nil
+        self.cellphoneNumber    = cellphoneNumber
         self.email              = email
         self.firstName          = firstName
         self.lastName           = lastName
         self.ownerId            = ownerId
-        self.username           = username
-
-        self.typeCode           = typeCode
-        self.uniqueId           = uniqueId ?? UUID().uuidString
+        self.username           = nil
+        self.typeCode           = typeCode ?? "default"
     }
-    
 }
 
 
-/// MARK: -  this class will be deprecate.  (use this class instead: 'AddContactRequest')
+@available(*, unavailable,message: "the class was removed use AddContactRequest instead")
 open class AddContactRequestModel: AddContactRequest {
     
 }
