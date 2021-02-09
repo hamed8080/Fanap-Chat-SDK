@@ -33,6 +33,11 @@ open class MapRoutingModel: ResponseModel, ResponseModelDelegates {
                    errorCode:       errorCode ?? 0)
     }
     
+	
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
+	
     
     public func returnDataAsJSON() -> JSON {
         let finalResult: JSON = ["result":          result.formatToJSON(),

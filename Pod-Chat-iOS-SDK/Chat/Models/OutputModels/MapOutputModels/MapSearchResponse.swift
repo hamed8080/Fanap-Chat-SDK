@@ -34,6 +34,10 @@ open class MapSearchModel: ResponseModel, ResponseModelDelegates {
     }
     
     
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
+	
     public func returnDataAsJSON() -> JSON {
         let theResult: JSON = ["reverse":   result.formatToJSON()]
         let finalResult: JSON = ["result":          theResult,

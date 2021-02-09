@@ -29,6 +29,11 @@ open class AddBotCommandResponse: ResponseModel, ResponseModelDelegates  {
         self.botInfo  = BotInfoVO(messageContent: messageContent)
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
+	
+	
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
 
     public func returnDataAsJSON() -> JSON {
         let botInfoJSON: JSON = ["botInfoVO":   botInfo.formatToJSON()]

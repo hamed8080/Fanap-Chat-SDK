@@ -190,20 +190,23 @@ class Networking {
                                   from urlStr:      String,
                                   withMethod:       HTTPMethod,
                                   withHeaders:      HTTPHeaders?,
-                                  withParameters:   Parameters?,
-                                  completion:       ((D?)->())? = nil ) {
+                                  encodableRequest:   Encodable?,
+                                  completion:       @escaping ((D?)->())
+								  ) {
         
         guard let url = URL(string: urlStr) else { print("could not open url, it was nil"); return }
         Alamofire.request(url,
                           method:       withMethod,
-                          parameters:   withParameters,
+						  parameters:   (try? encodableRequest?.asDictionary()) ?? [:],
                           headers:      withHeaders)
             .responseData { (myResponse) in
             if myResponse.result.isSuccess , let data = myResponse.result.value , let codable = try? JSONDecoder().decode(D.self, from: data){
-                    completion?(codable)
+                    completion(codable)
             }else if let error = myResponse.error {
-                    //FIXME: add error
-                    completion?(nil)
+				let model = ResponseModel(hasError: true,
+										  errorMessage: "\(ChatErrors.err6200.stringValue()) \(error)",
+										  errorCode: 6200)
+				completion(model as? D)
             }
         }
     }

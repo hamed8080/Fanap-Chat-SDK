@@ -30,7 +30,11 @@ open class BlockedUserModel: ResponseModel, ResponseModelDelegates {
         self.blockedContact     = theBlockedContact
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-    
+	
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
+	
     public func returnDataAsJSON() -> JSON {
         let result: JSON = ["blockedContact":   blockedContact.formatToJSON()]
         let resultAsJSON: JSON = ["result":     result,

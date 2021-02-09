@@ -17,13 +17,13 @@ import Contacts
 
 extension Chat {
     
-    @available(*,deprecated , message: "removed in future release use another getContacts method")
+	@available(*,deprecated , message: "this method removed in future release use another addContact method")
     public func addContact(inputModel addContactsInput:    AddContactRequest,
                            uniqueId:            @escaping (String) -> (),
                            completion:          @escaping callbackTypeAlias) {
-        addContact(inputModel: addContactsInput,
-                   uniqueId: addContactsInput.uniqueId,
-                   completion: completion)
+		addContact(addContactsInput,
+				   completion: completion,
+				   uniqueIdResult: uniqueId)
     }
     
     // MARK: - Add Contact
@@ -38,78 +38,33 @@ extension Chat {
     ///
     /// Outputs:
     /// - It has 3 callbacks as responses.
-    ///
-    /// - parameter inputModel: (input) you have to send your parameters insid this model. (AddContactRequest)
-    /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
+    /// - parameter addContactRequest: (input) you have to send your parameters insid this model. (AddContactRequest)
+    /// - parameter uniqueIdResult:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ContactModel)
-    public func addContact(inputModel addContactsInput:    AddContactRequest,
-                           uniqueId:                     String? = nil,
+	/// - warning: if user finded with matched details the user updated and not added.
+    public func addContact(_ addContactRequest:    AddContactRequest,
                            completion:                   @escaping callbackTypeAlias,
                            uniqueIdResult:               ((String) -> ())? = nil) {
 
-        log.verbose("Try to request to add contact with this parameters: \n \(addContactsInput)", context: "Chat")
-        let unqId = uniqueId ?? UUID().uuidString
-        uniqueIdResult?(unqId)
-        sendAddContactRequest(withInputModel:   addContactsInput,
-                              messageUniqueId:  unqId)
-        { (addContactModel) in
-            self.addContactOnCache(withInputModel: addContactModel as! ContactResponse)
-            completion(addContactModel)
-        }
-        
+        log.verbose("Try to request to add contact with this parameters: \n \(addContactRequest)", context: "Chat")
+		uniqueIdResult?(addContactRequest.uniqueId)
+		guard let createChatModel = createChatModel else {return}
+		let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
+		let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+		Networking.request(ofType: ContactResponse.self,
+						   from: url,
+						   withMethod: .post,
+						   withHeaders: headers,
+						   encodableRequest: addContactRequest,
+						   completion: { addContactModel in
+							if let addContactModel = addContactModel {
+								self.addContactOnCache(addContactModel.contacts)
+								completion(addContactModel)
+							}
+						   })
     }
     
-    private func sendAddContactRequest(withInputModel addContactsInput:    AddContactRequest,
-                                       messageUniqueId:     String,
-                                       completion:          @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
-        let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
-        let method: HTTPMethod      = HTTPMethod.post
-        let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-        
-        var params: Parameters      = [:]
-        params["firstName"]         = JSON(addContactsInput.firstName ?? "")
-        params["lastName"]          = JSON(addContactsInput.lastName ?? "")
-        params["email"]             = JSON(addContactsInput.email ?? "")
-        if let username = addContactsInput.username {
-            params["username"] = JSON(username)
-        }
-        if let cellphoneNumber = addContactsInput.cellphoneNumber {
-            params["cellphoneNumber"] = JSON(cellphoneNumber)
-        }
-        if let ownerId = addContactsInput.ownerId {
-            params["ownerId"] = JSON(ownerId)
-        }
-		params["typeCode"]          = JSON(addContactsInput.typeCode ?? createChatModel.typeCode)
-        params["uniqueId"]          = JSON(messageUniqueId)
-        
-        Networking.sharedInstance.requesttWithJSONresponse(from:            url,
-                                                           withMethod:      method,
-                                                           withHeaders:     headers,
-                                                           withParameters:  params)
-        { (jsonResponse) in
-            if let json = jsonResponse as? JSON ,let contactModel  = try? JSONDecoder().decode(ContactResponse.self, from: json.rawData()){
-                completion(contactModel)
-            }
-        }
-    }
-    
-    
-    /// AddContacts:
-    /// it will add an array of contacts in one request
-    ///
-    /// By calling this function, HTTP request of type (ADD_CONTACTS) will send throut Chat-SDK,
-    /// then the response will come back as callbacks to client whose calls this function.
-    ///
-    /// Inputs:
-    /// - you have to send your parameters as "AddContactsRequest" to this function
-    ///
-    /// Outputs:
-    /// - It has 3 callbacks as responses.
-    ///
-    /// - parameter inputModel: (input) you have to send your parameters insid this model. (AddContactsRequest)
-    /// - parameter uniqueIds:   (response) it will returns the request 'UniqueId' that will send to server. (String)
-    /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ContactModel)
+	@available(*,deprecated ,message: "remove from future release use another addContacts")
     public func addContacts(inputModel addContactsInput:    AddContactsRequest,
                             uniqueIds:           @escaping ([String]) -> (),
                             completion:          @escaping callbackTypeAlias) {
@@ -118,18 +73,19 @@ extension Chat {
         
         sendAddContactsRequest(withInputModel: addContactsInput)
         { (addContactModel) in
-            self.addContactOnCache(withInputModel: addContactModel as! ContactResponse)
+			self.addContactOnCache((addContactModel as! ContactResponse).contacts)
             completion(addContactModel)
         }
     }
     
+	@available(*,deprecated , message: "this method removed from release when deleted deprecated addContacts method")
     private func sendAddContactsRequest(withInputModel addContactsInput:    AddContactsRequest,
                                         completion:          @escaping callbackTypeAlias) {
         guard let createChatModel = createChatModel else {return}
         var url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
         let method: HTTPMethod      = HTTPMethod.post
         let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-        
+
         url += "?"
         let contactCount = addContactsInput.cellphoneNumbers.count
         for (index, _) in addContactsInput.cellphoneNumbers.enumerated() {
@@ -137,8 +93,7 @@ extension Chat {
             url += "&lastName=\(addContactsInput.lastNames[index])"
             url += "&email=\(addContactsInput.emails[index])"
             url += "&uniqueId=\(addContactsInput.uniqueIds[index])"
-//            url += "&cellphoneNumber=\(addContactsInput.cellphoneNumbers[index])"
-            
+
             if (addContactsInput.cellphoneNumbers.count > 0) {
                 url += "&cellphoneNumber=\(addContactsInput.cellphoneNumbers[index])"
             } else if (addContactsInput.usernames.count > 0) {
@@ -148,8 +103,7 @@ extension Chat {
                 url += "&"
             }
         }
-        url += "&typeCode=\(addContactsInput.typeCode ?? createChatModel.typeCode)"
-        
+        url += "&typeCode=\(addContactsInput.typeCode ?? createChatModel.typeCode ?? "defualt")"
         let textAppend = url.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? url
         Networking.sharedInstance.requesttWithJSONresponse(from:            textAppend,
                                                            withMethod:      method,
@@ -162,11 +116,57 @@ extension Chat {
         }
     }
     
+	/// AddContacts:
+	/// it will add an array of contacts in one request
+	///
+	/// By calling this function, HTTP request of type (ADD_CONTACTS) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "AddContactsRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 3 callbacks as responses.
+	///
+	/// - parameter inputModel: (input) you have to send your parameters insid this model. (AddContactsRequest)
+	/// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ContactModel)
+	public func addContacts(_ contacts:[AddContactRequest] , completion: @escaping callbackTypeAlias){
+		guard let createChatModel = createChatModel else {return}
+		var url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
+		url += "?"
+		for (index , contact) in contacts.enumerated(){
+			url += "firstName=\(contact.firstName ?? "")"
+			url += "&lastName=\(contact.lastName ?? "")"
+			url += "&email=\(contact.email ?? "")"
+			url += "&uniqueId=\(contact.uniqueId)"
+			if let cellPhoneNumber = contact.cellphoneNumber {
+				url += "&cellphoneNumber=\(cellPhoneNumber)"
+			}
+			if let userName = contact.username{
+				url += "&username=\(userName)"
+			}
+			if (index != contacts.count - 1) {
+				url += "&"
+			}
+		}
+		url += "&typeCode=\(contacts.first?.typeCode ?? "default")"
+		url = url.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? url
+		let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+		Networking.request(ofType: ContactResponse.self,
+						   from: url,
+						   withMethod: .post,
+						   withHeaders: headers,
+						   encodableRequest: nil,
+						   completion: { result in
+							if let result = result {
+								completion(result)
+							}
+						   })
+	}
     
-    private func addContactOnCache(withInputModel contactModel: ContactResponse) {
-        guard let createChatModel = createChatModel else {return}
-        if createChatModel.enableCache {
-            Chat.cacheDB.saveContact(withContactObjects: contactModel.contacts)
+	private func addContactOnCache(_ contacts:[Contact]) {
+		if createChatModel?.enableCache == true {
+            Chat.cacheDB.saveContact(withContactObjects: contacts)
         }
     }
     
@@ -201,7 +201,7 @@ extension Chat {
 	///
 	/// - parameter inputModel:         (input) you have to send your parameters insid this model. (GetContactsRequest)
 	/// - parameter getCacheResponse:   (input) specify if you want to get cache response for this request (Bool?)
-	/// - parameter uniqueId:           (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter uniqueIdResult:     (response) it will returns the request 'UniqueId' that will send to server. (String)
 	/// - parameter completion:         (response) it will returns the response that comes from server to this request. (Any as! GetContactsModel)
 	/// - parameter cacheResponse:      (response) there is another response that comes from CacheDB to the user, if user has set 'enableCache' vaiable to be true. (GetContactsModel)
 	public func getContacts(inputModel getContactsInput: GetContactsRequest,
@@ -272,34 +272,47 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (GetNotSeenDurationRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! NotSeenDurationModel)
-    public func contactNotSeenDuration(inputModel notSeenDurationInput: GetNotSeenDurationRequest,
-                                       uniqueId:        @escaping (String) -> (),
-                                       completion:      @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
-        log.verbose("Try to request to get  user notSeenDuration with this parameters: \n \(notSeenDurationInput)", context: "Chat")
-        uniqueId(notSeenDurationInput.uniqueId)
-        
-        getContactNotSeenDurationCallbackToUser = completion
-        
-        let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_NOT_SEEN_DURATION.intValue(),
+	
+	@available(*,deprecated , message: "use another contactNotSeenDuration method with uniqueId and uniqueIdResult In Parameter")
+	public func contactNotSeenDuration(inputModel notSeenDurationInput: GetNotSeenDurationRequest,
+									   uniqueId:        @escaping (String) -> (),
+									   completion:      @escaping callbackTypeAlias) {
+		contactNotSeenDuration(notSeenDurationInput,
+							   uniqueId: notSeenDurationInput.uniqueId,
+							   uniqueIdResult: uniqueId,
+							   completion: completion)
+	}
+	
+	
+	public func contactNotSeenDuration(_ notSeenRequest: GetNotSeenDurationRequest,
+									   uniqueId:					String? = nil,
+									   uniqueIdResult:           	((String) -> ())? = nil,
+									   typeCode:String? = nil,
+									   completion:      @escaping callbackTypeAlias){
+		guard let createChatModel = createChatModel , let content = notSeenRequest.convertCodableToString() else {return}
+		log.verbose("Try to request to get  user notSeenDuration with this parameters: \n \(notSeenRequest)", context: "Chat")
+		let unqId = uniqueId ?? UUID().uuidString
+		uniqueIdResult?(unqId)
+		getContactNotSeenDurationCallbackToUser = completion
+		
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_NOT_SEEN_DURATION.intValue(),
 											token:              createChatModel.token,
-											content:            "\(notSeenDurationInput.convertContentToJSON())",
-                                            typeCode:           notSeenDurationInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           notSeenDurationInput.uniqueId,
-                                            isCreateThreadAndSendMessage: true)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
-        
-        sendMessageWithCallback(asyncMessageVO:     asyncMessage,
-                                callbacks:          [(GetContactNotSeenDurationCallback(), notSeenDurationInput.uniqueId)],
-                                sentCallback:       nil,
-                                deliverCallback:    nil,
-                                seenCallback:       nil)
-    }
-    
+											content:            "\(content)",
+											typeCode:           typeCode ?? "default",
+											uniqueId:           unqId,
+											isCreateThreadAndSendMessage: true)
+		
+		let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+											  msgTTL:       createChatModel.msgTTL,
+											  peerName:     createChatModel.serverName,
+											  priority:     createChatModel.msgPriority)
+		
+		sendMessageWithCallback(asyncMessageVO:     asyncMessage,
+								callbacks:          [(GetContactNotSeenDurationCallback(), unqId)],
+								sentCallback:       nil,
+								deliverCallback:    nil,
+								seenCallback:       nil)
+	}
     
     
     // MARK: - Remove Contact
@@ -408,79 +421,7 @@ extension Chat {
         }) { (cache) in
             cacheResponse(cache)
         }
-        
-        
-//        uniqueId(searchContactsInput.uniqueId)
-//        if (getCacheResponse ?? enableCache) {
-//            if let cacheContacts = Chat.cacheDB.retrieveContacts(ascending:         true,
-//                                                                 cellphoneNumber:   searchContactsInput.cellphoneNumber,
-//                                                                 count:             searchContactsInput.size ?? 50,
-//                                                                 email:             searchContactsInput.email,
-//                                                                 firstName:         searchContactsInput.firstName,
-//                                                                 id:                searchContactsInput.id,
-//                                                                 lastName:          searchContactsInput.lastName,
-//                                                                 offset:            searchContactsInput.offset ?? 0,
-//                                                                 search:            searchContactsInput.query,
-//                                                                 timeStamp:         cacheTimeStamp,
-//                                                                 uniqueId:          nil) {
-//                cacheResponse(cacheContacts)
-//            }
-//        }
-//
-//        sendSearchContactRequest(withInputModel: searchContactsInput)
-//        { (contactModel) in
-//            self.addContactOnCache(withInputModel: contactModel as! ContactModel)
-//            let contactEventModel = ContactEventModel(type: ContactEventTypes.CONTACTS_SEARCH_RESULT_CHANGE, contacts: (contactModel as! ContactModel).contacts, contactsLastSeenDuration: nil)
-//            self.delegate?.contactEvents(model: contactEventModel)
-//            completion(contactModel)
-//        }
-        
     }
-    
-//    private func sendSearchContactRequest(withInputModel searchContactsInput:  SearchContactsRequest,
-//                                          completion:           @escaping callbackTypeAlias) {
-//
-//        let url = "\(SERVICE_ADDRESSES.PLATFORM_ADDRESS)\(SERVICES_PATH.SEARCH_CONTACTS.rawValue)"
-//        let method: HTTPMethod = HTTPMethod.post
-//        let headers: HTTPHeaders = ["_token_": token, "_token_issuer_": "1"]
-//        var params: Parameters = [:]
-//        params["size"] = JSON(searchContactsInput.size ?? 50)
-//        params["offset"] = JSON(searchContactsInput.offset ?? 0)
-//        params["typeCode"] = JSON(searchContactsInput.typeCode ?? generalTypeCode)
-//        if let firstName = searchContactsInput.firstName {
-//            params["firstName"] = JSON(firstName)
-//        }
-//        if let lastName = searchContactsInput.lastName {
-//            params["lastName"] = JSON(lastName)
-//        }
-//        if let cellphoneNumber = searchContactsInput.cellphoneNumber {
-//            params["cellphoneNumber"] = JSON(cellphoneNumber)
-//        }
-//        if let email = searchContactsInput.email {
-//            params["email"] = JSON(email)
-//        }
-//        if let query_ = searchContactsInput.query {
-//            params["q"] = JSON(query_)
-//        }
-//        if let ownerId = searchContactsInput.ownerId {
-//            params["ownerId"] = JSON(ownerId)
-//        }
-//        if let id = searchContactsInput.id {
-//            params["id"] = JSON(id)
-//        }
-//
-//        Networking.sharedInstance.requesttWithJSONresponse(from:            url,
-//                                                           withMethod:      method,
-//                                                           withHeaders:     headers,
-//                                                           withParameters:  params)
-//        { (response) in
-//            let contactModel = ContactModel(messageContent: response as! JSON)
-//            completion(contactModel)
-//        }
-//
-//    }
-    
-    
     
     private func sendUpdateContactRequest(withInputModel updateContactsInput:  UpdateContactsRequest,
                                           andUniqueId:          String,
@@ -604,7 +545,7 @@ extension Chat {
         }
         
         if cellPhones.count > 0 {
-            let addContactsModel = AddContactsRequestModel(cellphoneNumbers:    cellPhones,
+            let addContactsModel = AddContactsRequest(cellphoneNumbers:    cellPhones,
                                                            emails:              emails,
                                                            firstNames:          firstNames,
                                                            lastNames:           lastNames,
@@ -619,7 +560,11 @@ extension Chat {
                 completion(myResponse)
             }
         } else {
-            let contactModel = ContactResponse(contentCount: 0, contacts: [], hasError: false, errorMessage: "", errorCode: 0)
+            let contactModel = ContactResponse(contentCount: 0,
+											   contacts: [],
+											   hasError: false,
+											   errorMessage: "",
+											   errorCode: 0)
             completion(contactModel)
         }
         
@@ -653,13 +598,11 @@ extension Chat {
         
         sendUpdateContactRequest(withInputModel: updateContactsInput, andUniqueId: updateContactsInput.uniqueId)
         { (contactModel) in
-            self.addContactOnCache(withInputModel: contactModel as! ContactResponse)
+			self.addContactOnCache((contactModel as! ContactResponse).contacts)
             completion(contactModel)
         }
         
     }
-    
-    
-    
+
 }
 

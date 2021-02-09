@@ -58,8 +58,9 @@ extension Chat {
                 if Chat.sharedInstance.createChatModel?.enableCache == true {
                     var contacts = [Contact]()
                     for item in (response.resultAsArray as? [JSON]) ?? [] {
-                        let myContact = Contact(messageContent: item)
-                        contacts.append(myContact)
+						if let myContact = try? JSONDecoder().decode(Contact.self, from: item.rawData()){
+							contacts.append(myContact)
+						}
                     }
                     
 //                    handleServerAndCacheDifferential(sendParams: sendParams, serverResponse: contacts)

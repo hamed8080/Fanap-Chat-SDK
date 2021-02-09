@@ -35,8 +35,10 @@ open class GetContactsModel: ResponseModel, ResponseModelDelegates {
         self.nextOffset = offset + messageLength
         
         for item in messageContent {
-            let cont = Contact(messageContent: item)
-            contacts.append(cont)
+			if let contact = try? JSONDecoder().decode(Contact.self, from: item.rawData()){
+				contacts.append(contact)
+			}
+            
         }
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
@@ -63,12 +65,17 @@ open class GetContactsModel: ResponseModel, ResponseModelDelegates {
         }
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-    
+	
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
+	
     
     public func returnDataAsJSON() -> JSON {
         var contactArr = [JSON]()
         for item in contacts {
-            contactArr.append(item.formatToJSON())
+				let contactJson = JSON(item)
+				contactArr.append(contactJson)
         }
         let result: JSON = ["contentCount": contentCount,
                             "hasNext":      hasNext,

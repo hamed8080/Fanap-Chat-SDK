@@ -169,7 +169,7 @@ extension Cache {
         }
     }
     
-    public func savePhoneBookContacts(contacts myContacts: AddContactsRequestModel) {
+    public func savePhoneBookContacts(contacts myContacts: AddContactsRequest) {
         for (index, _) in myContacts.cellphoneNumbers.enumerated() {
             let addContactInput = AddContactRequest(cellphoneNumber: myContacts.cellphoneNumbers[index],
                                                     email:          myContacts.emails[index],

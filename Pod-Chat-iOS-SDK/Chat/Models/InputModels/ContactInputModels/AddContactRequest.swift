@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class AddContactRequest {
+open class AddContactRequest :Encodable {
     
     public var cellphoneNumber    : String?
     public var email              : String?
@@ -17,11 +17,8 @@ open class AddContactRequest {
     public var ownerId            : Int?
     public var username           : String?
     public var typeCode           : String
+	public var uniqueId:           String = UUID().uuidString // uniqueId needed in request model sened to server
     
-    @available(*,deprecated , message: "removed in future release use uniqueId In addContact or addContacts method params")
-    public var uniqueId:           String = UUID().uuidString
-    
-    @available(*,deprecated , message: "removed in future release use uniqueId In addContact or addContacts method params")
     public init(cellphoneNumber    : String? = nil,
                 email              : String? = nil,
                 firstName          : String? = nil,
@@ -38,22 +35,6 @@ open class AddContactRequest {
         self.username           = nil
         self.typeCode           = typeCode ?? "default"
         self.uniqueId           = uniqueId ?? UUID().uuidString
-    }
-    
-    public init(cellphoneNumber    : String? = nil,
-                email              : String? = nil,
-                firstName          : String? = nil,
-                lastName           : String? = nil,
-                ownerId            : Int?    = nil,
-                typeCode           : String? = "default") {
-        
-        self.cellphoneNumber    = cellphoneNumber
-        self.email              = email
-        self.firstName          = firstName
-        self.lastName           = lastName
-        self.ownerId            = ownerId
-        self.username           = nil
-        self.typeCode           = typeCode ?? "default"
     }
 }
 

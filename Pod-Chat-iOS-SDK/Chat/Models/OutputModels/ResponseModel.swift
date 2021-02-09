@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class ResponseModel {
+open class ResponseModel :Codable {
     
     var hasError:       Bool
     var errorMessage:   String
@@ -21,4 +21,3 @@ open class ResponseModel {
     }
     
 }
-

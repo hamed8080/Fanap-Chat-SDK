@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class ContactResponse: ResponseModel , Decodable {
+open class ContactResponse: ResponseModel {
 
     public var contentCount     : Int = 0
     public var contacts         : [Contact] = []
@@ -25,11 +25,11 @@ open class ContactResponse: ResponseModel , Decodable {
     
     public required init(from decoder: Decoder) throws {
         let container     =  try  decoder.container(keyedBy: CodingKeys.self)
-        contacts          = (try? container.decode([Contact].self, forKey: .contacts)) ?? []
-        contentCount      = (try? container.decode(Int.self, forKey: .contentCount)) ?? 0
-        let errorCode     = (try? container.decode(Int.self, forKey: .errorCode)) ?? 0
-        let hasError      = (try? container.decode(Bool.self, forKey: .hasError)) ?? false
-        let message       = (try? container.decode(String.self, forKey: .message)) ?? ""
+        contacts          = try container.decodeIfPresent([Contact].self, forKey: .contacts) ?? []
+        contentCount       = try container.decodeIfPresent(Int.self, forKey: .contentCount) ?? 0
+        let errorCode     = try container.decodeIfPresent(Int.self, forKey: .errorCode) ?? 0
+        let hasError      = try container.decodeIfPresent(Bool.self, forKey: .hasError) ?? false
+        let message       = try container.decodeIfPresent(String.self, forKey: .message) ?? ""
         super.init(hasError: hasError, errorMessage: message, errorCode: errorCode)
     }
 
