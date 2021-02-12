@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19H2" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CMBlockedContact" representedClassName=".CMBlockedContact" syncable="YES">
         <attribute name="firstName" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
@@ -19,7 +19,7 @@
         <attribute name="time" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uniqueId" optional="YES" attributeType="String"/>
         <attribute name="userId" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
-        <relationship name="linkedUser" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="CMLinkedUser" inverseName="dummyContact" inverseEntity="CMLinkedUser"/>
+        <relationship name="linkedUser" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CMLinkedUser" inverseName="dummyContact" inverseEntity="CMLinkedUser"/>
     </entity>
     <entity name="CMConversation" representedClassName=".CMConversation" syncable="YES">
         <attribute name="admin" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
@@ -289,7 +289,7 @@
     </entity>
     <elements>
         <element name="CMBlockedContact" positionX="-461.90234375" positionY="-78.6953125" width="128" height="105"/>
-        <element name="CMContact" positionX="-307.48828125" positionY="-144.9375" width="128" height="238"/>
+        <element name="CMContact" positionX="-307.48828125" positionY="-144.9375" width="128" height="224"/>
         <element name="CMConversation" positionX="30.32421875" positionY="-129.10546875" width="128" height="628"/>
         <element name="CMCurrentUserRoles" positionX="387" positionY="189" width="128" height="73"/>
         <element name="CMFile" positionX="-462.546875" positionY="425.40625" width="128" height="103"/>

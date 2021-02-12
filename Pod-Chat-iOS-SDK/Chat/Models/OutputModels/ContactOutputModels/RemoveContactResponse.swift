@@ -7,48 +7,26 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-open class RemoveContactModel: ResponseModel, ResponseModelDelegates {
+open class RemoveContactResponse: ResponseModel {
     
     public var result:  Bool
     
-    public init(messageContent: JSON) {
-        
-        self.result = messageContent["result"].boolValue
-        super.init(hasError:        messageContent["hasError"].boolValue,
-                   errorMessage:    messageContent["message"].string ?? "",
-                   errorCode:       messageContent["errorCode"].int ?? 0)
+    private enum CodingKeys: String , CodingKey{
+        case result       = "result"
+        case hasError     = "hasError"
+        case message      = "message"
+        case errorCode    = "errorCode"
     }
     
-    public init(hasError:       Bool,
-                errorMessage:   String?,
-                errorCode:      Int?,
-                result:         Bool) {
-        
-        self.result = result
-        super.init(hasError:        hasError,
-                   errorMessage:    errorMessage ?? "",
-                   errorCode:       errorCode ?? 0)
-    }
-	
-	
 	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let hasError = try container.decodeIfPresent(Bool.self, forKey: .hasError)
+        let message = try container.decodeIfPresent(String.self, forKey: .message)
+        let errorCode = try container.decodeIfPresent(Int.self, forKey: .errorCode)
+        self.result = try container.decodeIfPresent(Bool.self, forKey: .result) ?? false
+        super.init(hasError: hasError ?? false, errorMessage: message ?? "", errorCode: errorCode ?? 0 )
 	}
-    
-    public func returnDataAsJSON() -> JSON {
-        let finalResult: JSON = ["result":          result,
-                                 "hasError":        hasError,
-                                 "errorMessage":    errorMessage,
-                                 "errorCode":       errorCode]
-        
-        return finalResult
-    }
-}
-
-
-open class RemoveContactResponse: RemoveContactModel {
     
 }
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class UpdateContactsRequest {
+open class UpdateContactRequest :Encodable {
     
     public let cellphoneNumber: String
     public let email:           String
@@ -26,8 +26,8 @@ open class UpdateContactsRequest {
                 id:                 Int,
                 lastName:           String,
                 username:           String,
-                typeCode:           String?,
-                uniqueId:           String?) {
+                typeCode:           String? = "default" ,
+                uniqueId:           String? = nil) {
         
         self.cellphoneNumber    = cellphoneNumber
         self.email              = email
@@ -42,8 +42,5 @@ open class UpdateContactsRequest {
     
 }
 
-/// MARK: -  this class will be deprecate (use this class instead: 'UpdateContactsRequest')
-open class UpdateContactsRequestModel: UpdateContactsRequest {
-    
-}
-
+@available(*,unavailable,message: "use UpdateContactRequest class")
+open class UpdateContactsRequestModel{}

@@ -8,24 +8,26 @@
 
 import Foundation
 
-open class MapReverseRequest {
+open class MapReverseRequest :Encodable {
     
     public let lat:     Double
     public let lng:     Double
+    public var uniqueId = UUID().uuidString
     
     public init(lat:    Double,
-                lng:    Double) {
+                lng:    Double,
+                uniqueId:String = UUID().uuidString
+    ) {
         
-        self.lat    = lat
-        self.lng    = lng
+        self.lat      = lat
+        self.lng      = lng
+        self.uniqueId = uniqueId
     }
     
 }
 
-
-open class MapReverseRequestModel: MapReverseRequest {
-    
-}
+@available(*,unavailable , message:"use MapReverseRequest class")
+open class MapReverseRequestModel: MapReverseRequest {}
 
 
 

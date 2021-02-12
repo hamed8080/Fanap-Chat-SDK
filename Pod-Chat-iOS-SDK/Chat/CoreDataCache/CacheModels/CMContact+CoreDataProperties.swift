@@ -13,10 +13,6 @@ import CoreData
 
 extension CMContact {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<CMContact> {
-        return NSFetchRequest<CMContact>(entityName: "CMContact")
-    }
-
     @NSManaged public var blocked:          NSNumber?
     @NSManaged public var cellphoneNumber:  String?
     @NSManaged public var email:            String?
@@ -31,5 +27,4 @@ extension CMContact {
     @NSManaged public var userId:           NSNumber?
     
     @NSManaged public var linkedUser:       CMLinkedUser?
-
 }

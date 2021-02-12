@@ -9,49 +9,24 @@
 import Foundation
 import SwiftyJSON
 
-open class MapRoutingModel: ResponseModel, ResponseModelDelegates {
+open class MapRoutingResponse: ResponseModel {
     
-    public var result:  MapRouting
-    
-    public init(messageContent: JSON,
-                hasError:       Bool,
-                errorMessage:   String,
-                errorCode:      Int) {
-        
-        self.result = MapRouting(messageContent: messageContent)
-        super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
-    }
-    
-    public init(routsObject:    MapRouting,
-                hasError:       Bool,
-                errorMessage:   String?,
-                errorCode:      Int?) {
-        
-        self.result = routsObject
-        super.init(hasError:        hasError,
-                   errorMessage:    errorMessage ?? "",
-                   errorCode:       errorCode ?? 0)
-    }
-    
+    public var routes:  [Route]? = nil
 	
+    private enum CodingKeys : String , CodingKey{
+        case routes       = "routes"
+        case hasError     = "hasError"
+        case errorMessage = "errorMessage"
+        case errorCode    = "errorCode"
+    }
+    
 	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.routes = try container.decodeIfPresent([Route].self, forKey: .routes) ?? nil
+        let hasError = (try container.decodeIfPresent(Bool.self, forKey: .hasError)) ?? false
+        let errorMessage = (try container.decodeIfPresent(String.self, forKey: .errorMessage)) ?? ""
+        let errorCode = (try container.decodeIfPresent(Int.self, forKey: .errorCode)) ?? 0
+        super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
 	}
-	
-    
-    public func returnDataAsJSON() -> JSON {
-        let finalResult: JSON = ["result":          result.formatToJSON(),
-                                 "hasError":        hasError,
-                                 "errorMessage":    errorMessage,
-                                 "errorCode":       errorCode]
-        
-        return finalResult
-    }
-    
-}
-
-
-open class MapRoutingResponses: MapRoutingModel {
-    
 }
 

@@ -17,6 +17,20 @@ import Alamofire
 
 extension Chat {
     
+    @available(*,deprecated , message: "use the another mapReverse method , removed in future release.")
+    public func mapReverse(inputModel mapReverseInput: MapReverseRequest,
+                           uniqueId:        @escaping (String) -> (),
+                           completion:      @escaping callbackTypeAlias) {
+        
+    
+        mapReverseInput.uniqueId =  generateUUID()
+        mapReverse(mapReverseInput,
+                   completion: completion,
+                   uniqueIdResult: uniqueId)
+        
+    }
+    
+    
     /// MapRevers:
     /// get location details from client location.
     ///
@@ -29,41 +43,35 @@ extension Chat {
     /// Outputs:
     /// - It has 2 callbacks as responses.
     ///
-    /// - parameter inputModel: (input) you have to send your parameters insid this model. (MapReverseRequest)
-    /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
+    /// - parameter _ : (input) you have to send your parameters insid this model. (MapReverseRequest)
+    /// - parameter uniqueIdResult:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! MapReverseModel)
-    public func mapReverse(inputModel mapReverseInput: MapReverseRequest,
-                           uniqueId:        @escaping (String) -> (),
-                           completion:      @escaping callbackTypeAlias) {
-        
+    public func mapReverse(_ mapReverseRequest:MapReverseRequest ,
+                           completion:@escaping callbackTypeAlias,
+                           uniqueIdResult:((String)->())? = nil ){
         guard let createChatModel = createChatModel else {return}
         guard let mapApiKey = createChatModel.mapApiKey else {return}
-        let theUniqueId = generateUUID()
-        uniqueId(theUniqueId)
-        
+        uniqueIdResult?(mapReverseRequest.uniqueId)
         let url = "\(createChatModel.mapServer)\(SERVICES_PATH.REVERSE.rawValue)"
-        let method:     HTTPMethod  = HTTPMethod.get
-        let headers:    HTTPHeaders = ["Api-Key":   mapApiKey]
-        let parameters: Parameters  = ["lat":       mapReverseInput.lat,
-                                       "lng":       mapReverseInput.lng,
-                                       "uniqueId":  theUniqueId]
-        
-        Networking.sharedInstance.requesttWithJSONresponse(from:            url,
-                                                           withMethod:      method,
-                                                           withHeaders:     headers,
-                                                           withParameters:  parameters)
-        { (jsonResponse) in
-            if let theResponse = jsonResponse as? JSON {
-                let mapReverseModel = MapReverseModel(messageContent:   theResponse,
-                                                      hasError:         false,
-                                                      errorMessage:     "",
-                                                      errorCode:        0)
-                completion(mapReverseModel)
+        let headers:  HTTPHeaders = ["Api-Key":   mapApiKey]
+        Networking.request(ofType: MapReverse.self,
+                           from: url,
+                           withMethod: .get,
+                           withHeaders: headers,
+                           encodableRequest: mapReverseRequest) { mapReverseResponse in
+            if let mapReverseResponse = mapReverseResponse {
+                completion(mapReverseResponse)
             }
         }
-        
     }
     
+    @available(*, deprecated , message: "use another mapRouting method with uniqueIdresult.this removed in future release.")
+    public func mapRouting(inputModel mapRoutingInput: MapRoutingRequest,
+                           uniqueId:        @escaping (String) -> (),
+                           completion:      @escaping callbackTypeAlias) {
+      
+        mapRouting(mapRoutingInput, completion: completion, uniqueIdResult: uniqueId)
+    }
     
     /// MapRouting:
     /// send 2 locations, and then give routing suggesston.
@@ -80,37 +88,24 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (MapRoutingRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! MapRoutingModel)
-    public func mapRouting(inputModel mapRoutingInput: MapRoutingRequest,
-                           uniqueId:        @escaping (String) -> (),
-                           completion:      @escaping callbackTypeAlias) {
+    public func mapRouting(_ mapRoutingRequest:MapRoutingRequest , completion: @escaping callbackTypeAlias , uniqueIdResult: ((String)->())? = nil){
         guard let createChatModel = createChatModel else {return}
         guard let mapApiKey = createChatModel.mapApiKey else {return}
-        let theUniqueId = generateUUID()
-        uniqueId(theUniqueId)
+        uniqueIdResult?(generateUUID())
         
         let url = "\(createChatModel.mapServer)\(SERVICES_PATH.ROUTING.rawValue)"
-        let method:     HTTPMethod  = HTTPMethod.get
+//        let url = "https://api.neshan.org/v3/direction?parameters"
         let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
-        let parameters: Parameters  = ["origin":        "\(mapRoutingInput.origin.lat),\(mapRoutingInput.origin.lng)",
-            "destination":   "\(mapRoutingInput.destination.lat),\(mapRoutingInput.destination.lng)",
-                                       "alternative":   mapRoutingInput.alternative]
-        
-        Networking.sharedInstance.requesttWithJSONresponse(from:            url,
-                                                           withMethod:      method,
-                                                           withHeaders:     headers,
-                                                           withParameters:  parameters)
-        { (jsonResponse) in
-            if let theResponse = jsonResponse as? JSON {
-                let mapRoutingModel = MapRoutingModel(messageContent:   theResponse,
-                                                      hasError:         false,
-                                                      errorMessage:     "",
-                                                      errorCode:        0)
-                completion(mapRoutingModel)
+        Networking.request(ofType: MapRoutingResponse.self,
+                           from: url,
+                           withMethod: .get,
+                           withHeaders: headers,
+                           encodableRequest: mapRoutingRequest) { mapRoutingresponse in
+            if let mapRoutingresponse = mapRoutingresponse {
+                completion(mapRoutingresponse)
             }
         }
-        
     }
-    
     
     /// MapSearch:
     /// search near thing inside the map, whoes where close to the client location.

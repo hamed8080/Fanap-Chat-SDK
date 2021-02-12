@@ -26,7 +26,7 @@ open class ContactResponse: ResponseModel {
     public required init(from decoder: Decoder) throws {
         let container     =  try  decoder.container(keyedBy: CodingKeys.self)
         contacts          = try container.decodeIfPresent([Contact].self, forKey: .contacts) ?? []
-        contentCount       = try container.decodeIfPresent(Int.self, forKey: .contentCount) ?? 0
+        contentCount      = try container.decodeIfPresent(Int.self, forKey: .contentCount) ?? 0
         let errorCode     = try container.decodeIfPresent(Int.self, forKey: .errorCode) ?? 0
         let hasError      = try container.decodeIfPresent(Bool.self, forKey: .hasError) ?? false
         let message       = try container.decodeIfPresent(String.self, forKey: .message) ?? ""
