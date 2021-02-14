@@ -38,7 +38,7 @@ public struct CreateChatModel {
 	var deviecLimitationSpaceMB   		: Int64  = 100
 	var getDeviceIdFromToken      		: Bool   = false
 	var showDebuggingLogLevel     		: LogLevel = LogLevel.error
-    
+    var deviceId                        : String? = nil
     
     //Memberwise Initializer
     public init(socketAddress				: String,

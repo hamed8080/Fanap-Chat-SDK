@@ -172,8 +172,7 @@ extension Chat: AsyncDelegates {
          *
          */
         log.verbose("content of received message: \n \(params)", context: "Chat")
-		guard let data = try? params.rawData() else {return}
-		if let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self,from: data){
+		if let data = try? params.rawData() , let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self,from: data){
 			handleReceiveMessageFromAsync(withContent: asyncMessage)
 		}
     }

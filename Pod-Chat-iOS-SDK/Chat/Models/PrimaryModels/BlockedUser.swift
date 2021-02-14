@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class BlockedUser {
+open class BlockedUser :Decodable {
     
     public var id:          Int?
     public var coreUserId:  Int?
