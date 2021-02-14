@@ -564,5 +564,172 @@ extension Chat {
             }
         }
     }
+	
+
+	@available(*,deprecated , message: "use another searchContacts method with uniqueId and uniqueIdResult In Parameter")
+	public func blockContact(inputModel blockContactsInput:    BlockRequest,
+							 uniqueId:              @escaping (String) -> (),
+							 completion:            @escaping callbackTypeAlias) {
+		blockContact(blockContactsInput,
+					 uniqueId: blockContactsInput.uniqueId,
+					 completion: completion,
+					 uniqueIdResult: uniqueId)
+	}
+	
+	/// BlockContact:
+	/// block a contact by its contactId.
+	///
+	/// By calling this function, a request of type 7 (BLOCK) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "BlockRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 3 callbacks as responses.
+	///
+	/// - parameter blockRequest: (input) you have to send your parameters insid this model. (BlockRequest)
+	/// - parameter uniqueIdResult:   (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! BlockedUserModel)
+	public func blockContact(_ blockRequest:BlockRequest ,
+						uniqueId:String? = nil,
+						typeCode:String? = nil,
+						completion:@escaping callbackTypeAlias,
+						uniqueIdResult:((String) -> ())? = nil ){
+		guard let createChatModel = createChatModel , let content = blockRequest.convertCodableToString() else {return}
+		log.verbose("Try to request to block user with this parameters: \n \(blockRequest)", context: "Chat")
+		let unqId = uniqueId ?? UUID().uuidString
+		uniqueIdResult?(unqId)
+		blockCallbackToUser = completion
+		
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.BLOCK.intValue(),
+											token:              createChatModel.token,
+											content:            "\(content)",
+											typeCode:           typeCode ?? createChatModel.typeCode ?? "defualt",
+											isCreateThreadAndSendMessage: true)
+		
+		let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+											  msgTTL:       createChatModel.msgTTL,
+											  peerName:     createChatModel.serverName,
+											  priority:     createChatModel.msgPriority)
+		
+		sendMessageWithCallback(asyncMessageVO:     asyncMessage,
+								callbacks:          [(BlockCallbacks(),unqId)],
+								sentCallback:       nil,
+								deliverCallback:    nil,
+								seenCallback:       nil)
+		
+	}
+	
+	
+	/// GetBlockContactsList:
+	/// it returns a list of the blocked contacts.
+	///
+	/// By calling this function, a request of type 25 (GET_BLOCKED) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "GetBlockedListRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 3 callbacks as responses.
+	///
+	/// - parameter inputModel:         (input) you have to send your parameters insid this model. (GetBlockedListRequest)
+	/// - parameter getCacheResponse:   (input) specify if you want to get cache response for this request (Bool?)
+	/// - parameter uniqueId:           (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter completion:         (response) it will returns the response that comes from server to this request. (Any as! GetBlockedUserListModel)
+	@available(*,deprecated , message: "use blockedContacts method with uniqueId and uniqueIdResult In Parameter")
+	public func getBlockedContacts(inputModel getBlockedContactsInput:  BlockedListRequest,
+								   getCacheResponse:                    Bool?,
+								   uniqueId:                @escaping (String) -> (),
+								   completion:              @escaping callbackTypeAlias) {
+	
+		blockedContacts(getBlockedContactsInput,
+						   typeCode: getBlockedContactsInput.typeCode,
+						   uniqueId: getBlockedContactsInput.uniqueId,
+						   getCacheResponse: getCacheResponse,
+						   completion: completion,
+						   uniqueIdResult: uniqueId)
+	}
+	
+	public func blockedContacts(_ blockedListRequest:BlockedListRequest,
+								   typeCode:String? = nil,
+								   uniqueId:String? = nil,
+								   getCacheResponse: Bool? = false,
+								   completion:@escaping callbackTypeAlias,
+								   uniqueIdResult:((String)->())? = nil
+								   ){
+		guard let createChatModel = createChatModel , let content = blockedListRequest.convertCodableToString() else {return}
+		log.verbose("Try to request to get block users with this parameters: \n \(blockedListRequest)", context: "Chat")
+		let unqId = uniqueId ?? UUID().uuidString
+		uniqueIdResult?(unqId)
+		getBlockedListCallbackToUser = completion
+		
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_BLOCKED.intValue(),
+											token:              createChatModel.token,
+											content:            "\(content)",
+											typeCode:           typeCode ?? createChatModel.typeCode ?? "default",
+											uniqueId:           unqId,
+											isCreateThreadAndSendMessage: true)
+		
+		let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+											  msgTTL:       createChatModel.msgTTL,
+											  peerName:     createChatModel.serverName,
+											  priority:     createChatModel.msgPriority)
+		
+		sendMessageWithCallback(asyncMessageVO:     asyncMessage,
+								callbacks:          [(GetBlockedUsersCallbacks(parameters: chatMessage), unqId)],
+								sentCallback:       nil,
+								deliverCallback:    nil,
+								seenCallback:       nil)
+		
+		if (getCacheResponse ?? createChatModel.enableCache) {
+			// ToDo: get blocked contacts from cache
+		}
+	}
+		
+	/// UnblockContact:
+	/// unblock a contact from blocked list.
+	///
+	/// By calling this function, a request of type 8 (UNBLOCK) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "UnblockRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 3 callbacks as responses.
+	///
+	/// - parameter inputModel: (input) you have to send your parameters insid this model. (UnblockRequest)
+	/// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! BlockedUserModel)
+	public func unblockContact(inputModel unblockContactsInput:    UnblockRequest,
+							   uniqueId:                @escaping (String) -> (),
+							   completion:              @escaping callbackTypeAlias) {
+		guard let createChatModel = createChatModel else {return}
+		log.verbose("Try to request to unblock user with this parameters: \n \(unblockContactsInput)", context: "Chat")
+		uniqueId(unblockContactsInput.uniqueId)
+		
+		unblockUserCallbackToUser = completion
+		
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNBLOCK.intValue(),
+											token:              createChatModel.token,
+											content:            "\(unblockContactsInput.convertContentToJSON())",
+											subjectId:          unblockContactsInput.blockId,
+											typeCode:           unblockContactsInput.typeCode ?? createChatModel.typeCode,
+											uniqueId:           unblockContactsInput.uniqueId,
+											isCreateThreadAndSendMessage: true)
+		
+		let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+											  msgTTL:       createChatModel.msgTTL,
+											  peerName:     createChatModel.serverName,
+											  priority:     createChatModel.msgPriority)
+		
+		sendMessageWithCallback(asyncMessageVO:     asyncMessage,
+								callbacks:          [(UnblockCallbacks(), unblockContactsInput.uniqueId)],
+								sentCallback:       nil,
+								deliverCallback:    nil,
+								seenCallback:       nil)
+	}
 }
 

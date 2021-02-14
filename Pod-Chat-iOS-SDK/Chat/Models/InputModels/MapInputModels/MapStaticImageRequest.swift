@@ -8,45 +8,51 @@
 
 import Foundation
 
-open class MapStaticImageRequest {
+open class MapStaticImageRequest : Encodable {
+	
+	
     
-    public let center:  (lat: Double, lng: Double)
-    public let height:  Int
-    public let type:    String
-    public let width:   Int
-    public let zoom:    Int
+	public var key    : String
+    public var center : (lat : Double, lng : Double)
+    public var height : Int      = 500
+    public var type   : String = "standard-night"
+    public var width  : Int     = 800
+    public var zoom   : Int    = 15
     
-    public init(center: (Double, Double),
-                height: Int?,
-                type:   String?,
-                width:  Int?,
-                zoom:   Int?) {
-        
-        self.center = center
-        self.height = height ?? 500
-        self.type   = type ?? "standard-night"
-        self.width  = width ?? 800
-        self.zoom   = zoom ?? 15
-    }
-    
-    public init(centerLat:  Double,
-                centerLng:  Double,
-                height:     Int?,
-                type:       String?,
-                width:      Int?,
-                zoom:       Int?) {
-        
-        self.center = (centerLat, centerLng)
-        self.height = height ?? 500
-        self.type   = type ?? "standard-night"
-        self.width  = width ?? 800
-        self.zoom   = zoom ?? 15
-    }
-    
-}
-
-
-open class MapStaticImageRequestModel: MapStaticImageRequest {
+	public init(centerLat :Double ,
+				centerLng:Double ,
+				key:String? = nil,
+				height:Int = 500,
+				width:Int = 800,
+				zoom:Int = 15,
+				type:String = "standard-night"
+	) {
+		self.center = (centerLat , centerLng)
+		self.type = type
+		self.height = height
+		self.width = width
+		self.zoom = zoom
+		self.key = key ?? ""
+	}
+	
+	private enum CodingKeys : String  ,CodingKey{
+		case key
+		case center
+		case type
+		case width
+		case height
+		case zoom
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var  container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encode("\(center.lat),\(center.lng)", forKey: .center)
+		try? container.encode(key, forKey: .key)
+		try? container.encode(width, forKey: .width)
+		try? container.encode(height, forKey: .height)
+		try? container.encode(zoom, forKey: .zoom)
+		try? container.encode(type, forKey: .type)
+	}
     
 }
 

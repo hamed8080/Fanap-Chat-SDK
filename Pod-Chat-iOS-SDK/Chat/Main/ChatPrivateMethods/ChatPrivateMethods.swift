@@ -376,6 +376,7 @@ extension Chat {
         
         let chatMessageVO = SendChatMessageVO(content: asyncMessageVO.content.convertToJSON())
         
+	
         if let myCallbacks = callbacks {
             for item in myCallbacks {
                 if (asyncMessageVO.content.convertToJSON()["chatMessageVOType"].intValue == 41) {

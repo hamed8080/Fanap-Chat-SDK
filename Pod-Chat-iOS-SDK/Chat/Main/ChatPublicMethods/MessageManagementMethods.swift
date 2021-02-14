@@ -911,12 +911,13 @@ extension Chat {
                                     onSent:                     @escaping callbackTypeAlias,
                                     onDelivere:                 @escaping callbackTypeAlias,
                                     onSeen:                     @escaping callbackTypeAlias) {
-        let mapStaticImageInput = MapStaticImageRequestModel(centerLat: sendLocationMessageRequest.mapCenter.lat,
+        let mapStaticImageInput = MapStaticImageRequest(centerLat: sendLocationMessageRequest.mapCenter.lat,
                                                              centerLng: sendLocationMessageRequest.mapCenter.lng,
+															 key: createChatModel?.mapApiKey,
                                                              height:    sendLocationMessageRequest.mapHeight,
-                                                             type:      sendLocationMessageRequest.mapType,
                                                              width:     sendLocationMessageRequest.mapWidth,
-                                                             zoom:      sendLocationMessageRequest.mapZoom)
+                                                             zoom:      sendLocationMessageRequest.mapZoom,
+															 type:      sendLocationMessageRequest.mapType)
         
         mapStaticImage(inputModel: mapStaticImageInput,
                        uniqueId: { _ in },

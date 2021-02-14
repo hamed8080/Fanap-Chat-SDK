@@ -107,51 +107,50 @@ extension Chat {
         }
     }
     
-    /// MapSearch:
-    /// search near thing inside the map, whoes where close to the client location.
-    ///
-    /// By calling this function, HTTP request of type (SEARCH to the MAP_ADDRESS) will send throut Chat-SDK,
-    /// then the response will come back as callbacks to client whose calls this function.
-    ///
-    /// Inputs:
-    /// - you have to send your parameters as "MapSearchRequest" to this function
-    ///
-    /// Outputs:
-    /// - It has 2 callbacks as responses.
-    ///
-    /// - parameter inputModel: (input) you have to send your parameters insid this model. (MapSearchRequest)
-    /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
-    /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! MapSearchModel)
+    
+	@available(*, deprecated , message: "use another mapSearch method with uniqueIdresult.this removed in future release.")
     public func mapSearch(inputModel mapSearchInput:   MapSearchRequest,
                           uniqueId:         @escaping (String) -> (),
                           completion:       @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
-        guard let mapApiKey = createChatModel.mapApiKey else {return}
-        let theUniqueId = generateUUID()
-        uniqueId(theUniqueId)
-        
-        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.SEARCH.rawValue)"
-        let method:     HTTPMethod  = HTTPMethod.get
-        let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
-        let parameters: Parameters  = ["lat":   mapSearchInput.lat,
-                                       "lng":   mapSearchInput.lng,
-                                       "term":  mapSearchInput.term]
-        
-        Networking.sharedInstance.requesttWithJSONresponse(from:            url,
-                                                           withMethod:      method,
-                                                           withHeaders:     headers,
-                                                           withParameters:  parameters)
-        { (jsonResponse) in
-            if let theResponse = jsonResponse as? JSON {
-                let mapSearchModel = MapSearchModel(messageContent: theResponse,
-                                                    hasError:       false,
-                                                    errorMessage:   "",
-                                                    errorCode:      0)
-                completion(mapSearchModel)
-            }
-        }
-        
+		mapSearch(mapSearchInput, completion: completion, uniqueIdResult: uniqueId)
     }
+	
+	/// MapSearch:
+	/// search near thing inside the map, whoes where close to the client location.
+	///
+	/// By calling this function, HTTP request of type (SEARCH to the MAP_ADDRESS) will send throut Chat-SDK,
+	/// then the response will come back as callbacks to client whose calls this function.
+	///
+	/// Inputs:
+	/// - you have to send your parameters as "MapSearchRequest" to this function
+	///
+	/// Outputs:
+	/// - It has 2 callbacks as responses.
+	///
+	/// - parameter inputModel: (input) you have to send your parameters insid this model. (MapSearchRequest)
+	/// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
+	/// - parameter uniqueIdResult: (response) it will returns the response that comes from server to this request. (Any as! MapSearchModel)
+	public func mapSearch(_ mapSearchRequest:MapSearchRequest ,
+						  completion: @escaping callbackTypeAlias,
+						  uniqueIdResult:((String)->())? = nil)
+	{
+		guard let createChatModel = createChatModel else {return}
+		guard let mapApiKey = createChatModel.mapApiKey else {return}
+		let theUniqueId = generateUUID()
+		uniqueIdResult?(theUniqueId)
+		
+		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.SEARCH.rawValue)"
+		let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
+		Networking.request(ofType: MapSearchResponse.self,
+						   from: url,
+						   withMethod: .get,
+						   withHeaders: headers,
+						   encodableRequest: mapSearchRequest) { mapSearchResponse in
+			if let mapSearchResponse = mapSearchResponse{
+				completion(mapSearchResponse)
+			}
+		}
+	}
     
     
     /// MapStaticImage:
@@ -170,37 +169,36 @@ extension Chat {
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter progress:   (response)  it will returns the progress of the downloading request by a value between 0 and 1. (Float)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! Data)
+	@available(*, deprecated , message: "use another mapStaticImage method with uniqueIdresult.this removed in future release.")
     public func mapStaticImage(inputModel mapStaticImageInput: MapStaticImageRequest,
                                uniqueId:            @escaping (String) -> (),
                                progress:            @escaping (Float) -> (),
                                completion:          @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
-        guard let mapApiKey = createChatModel.mapApiKey else {return}
-        let theUniqueId = generateUUID()
-        uniqueId(theUniqueId)
-        
-        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.STATIC_IMAGE.rawValue)"
-        let method:     HTTPMethod  = HTTPMethod.get
-        let parameters: Parameters  = ["key":       mapApiKey,
-                                       "type":      mapStaticImageInput.type,
-                                       "zoom":      mapStaticImageInput.zoom,
-                                       "center":    "\(mapStaticImageInput.center.lat),\(mapStaticImageInput.center.lng)",
-                                       "width":     mapStaticImageInput.width,
-                                       "height":    mapStaticImageInput.height]
-        
-        Networking.sharedInstance.download(fromUrl:         url,
-                                           withMethod:      method,
-                                           withHeaders:     nil,
-                                           withParameters:  parameters
-        , progress: { (downloadProgress) in
-            progress(downloadProgress)
-        }) { (myResponse, jsonResponse) in
-            guard let image = myResponse else { print("Value is empty!!!"); return }
-            completion(image)
-        }
-        
+        mapStaticImage(mapStaticImageInput, completion: completion ,downloadProgress: progress, uniqueIdResult: uniqueId)
     }
     
-    
-    
+	
+	public func mapStaticImage(_ mapStaticImageRequest :MapStaticImageRequest,
+							   completion: @escaping callbackTypeAlias,
+							   downloadProgress:((Float) -> ())? = nil,
+							   uniqueIdResult:((String)->())? = nil
+							   ){
+		guard let createChatModel = createChatModel else {return}
+		guard let mapApiKey = createChatModel.mapApiKey else {return}
+		mapStaticImageRequest.key = mapApiKey
+		let theUniqueId = generateUUID()
+		uniqueIdResult?(theUniqueId)
+		
+		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.STATIC_IMAGE.rawValue)"
+		Networking.sharedInstance.download(fromUrl:         url,
+										   withMethod:      .get,
+										   withHeaders:     nil,
+										   withParameters: try! mapStaticImageRequest.asDictionary(),
+										   progress: { progress in
+											downloadProgress?(progress)
+										   }) { (myResponse, jsonResponse) in
+			guard let image = myResponse else { print("Value is empty!!!"); return }
+			completion(image)
+		}
+	}
 }
