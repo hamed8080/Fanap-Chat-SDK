@@ -10,24 +10,22 @@ import FanapPodAsyncSDK
 import Alamofire
 import SwiftyJSON
 
-enum CallbacksType :Int {
+enum CallbackType : Int{
     case BlockedContacts = 0
 }
 
 class CallbacksManager{
     
-    private var blockedContactsCallbacks : [String :MyCallback<Any>] = [:]
+    private var blockedContactsCallBacks : [String : (BlockedContacts)->()] = [:]
     
-    func addCallback(type:CallbacksType , uniqueId:String , callBack:@escaping MyCallback<Any>){
+    func addCallback<T:Decodable>(type:CallbackType ,uniqueId:String , callBack:@escaping (T)->() ) {
         switch type {
         case .BlockedContacts:
-            blockedContactsCallbacks[uniqueId] = callBack
+            blockedContactsCallBacks[uniqueId] = (callBack as! (BlockedContacts) ->())
             break
         }
     }
 }
-
-public typealias MyCallback<T> = (T)->()
 
 public class NewChat {
    
@@ -66,14 +64,14 @@ public class NewChat {
         getDeviceId()
 	}
 	
-    public func getBlockedContacts(_ blockedContactRequest : BlockedListRequest,
+    public func getBlockedContacts<T:BlockedContacts>(_ blockedContactRequest : BlockedListRequest,
 								   typeCode:String? = nil,
 								   uniqueId:String? = nil,
-                                   completion: @escaping MyCallback<BlockedContacts>,
+                                   completion: @escaping (T)->(),
 								   uniqueIdResult:((String)->())? = nil){
 		
         guard let createChatModel = createChatModel , let content = blockedContactRequest.convertCodableToString() else {return}
-        callbacksManager.addCallback(type: .BlockedContacts, uniqueId: uniqueId ?? "test", callBack: completion)
+        callbacksManager.addCallback(type:.BlockedContacts , uniqueId: uniqueId ?? "test", callBack: completion)
 //        blockedContactsCallbacks[uniqueId ?? "terst"] = completion
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_BLOCKED.intValue(),
                                             token:              createChatModel.token,
