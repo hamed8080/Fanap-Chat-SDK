@@ -1,13 +1,28 @@
+import FanapPodAsyncSDK
+import Sentry
+import Foundation
+import Alamofire
+import SwiftyJSON
 
-
-
+public enum CallbackType{
+	case BlockedContacts
+}
+public struct ChatError:Decodable{
+	let code:Int?
+	let message:String?
+	let content:String?
+}
+public class ChatResponse<T>{
+	public var result:T?
+	public var error:ChatError?
+}
 class CallbacksManager{
 	
 	var errorCallbacks :[String :(ChatError)->()] = [:]
 	var blockedContactsCallBacks : [String : (BlockedContacts)->()] = [:]
 	var contactsCallBacks : [String : (Contact , ChatError)->()] = [:]
 	
-	var callbacc :[String : MyCallback] = [:]
+	var callbacks:[String:(ChatResponse<Any>)->()] = [:]
 	
 	func addCallback<T:Decodable>(type:CallbackType , uniqueId:String , callback:((T)->())? ,errorResult: ((ChatError)->())? = nil) {
 		
@@ -23,8 +38,8 @@ class CallbacksManager{
 		}
 	}
 	
-	func addTest(completion:@escaping MyCallback){
-		callbacc["erf"] = completion
+	func addTest(completion:@escaping (ChatResponse<Any>)->()){
+		callbacks["hsd"] = completion
 	}
 	
 	func removeError(uniqueId:String ){
@@ -87,6 +102,10 @@ public class NewChat {
 						   completion: completion,
 						   errorResult:errorResult
 						   )
+	}
+	
+	public func addtest(completions:@escaping (ChatResponse<BlockedContacts>)->()){
+		callbacksManager.addTest(completion: completions)
 	}
 	
 	
