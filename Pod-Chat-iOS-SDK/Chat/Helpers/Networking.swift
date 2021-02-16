@@ -214,6 +214,35 @@ class Networking {
     }
     
     
+    class func request<D:Decodable>(_ ofType:D.Type,
+                                  from urlStr:      String,
+                                  withMethod:       HTTPMethod,
+                                  withHeaders:      HTTPHeaders?,
+                                  encodableRequest:   Encodable?,
+                                  completion:       @escaping ((ChatResponse)->())
+                                  ) {
+        
+        guard let url = URL(string: urlStr) else { print("could not open url, it was nil"); return }
+        Alamofire.request(url,
+                          method:       withMethod,
+                          parameters:   (try? encodableRequest?.asDictionary()) ?? [:],
+                          headers:      withHeaders)
+            .responseData { (myResponse) in
+            if myResponse.result.isSuccess , let data = myResponse.result.value , let codable = try? JSONDecoder().decode(D.self, from: data){
+                let chatResponse = ChatResponse(result: codable)
+                if (codable as? ResponseModel)?.hasError == false{
+                    completion(chatResponse)
+                } else if let errorModel = codable as? ResponseModel , errorModel.hasError == true{
+                    let error = ChatResponse(error: .init(code: errorModel.errorCode, message: "\(errorModel.errorMessage)", content: nil))
+                    completion(error)
+                }
+            } else if let error = myResponse.error {
+                let error = ChatResponse(error: .init(code: 6200, message: "\(ChatErrors.err6200.stringValue()) \(error)", content: nil))
+                completion(error)
+            }
+        }
+    }
+    
     func requestWithStringResponse(from urlStr:     String,
                                    withMethod:      HTTPMethod,
                                    withHeaders:     HTTPHeaders?,

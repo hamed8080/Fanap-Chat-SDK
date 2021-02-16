@@ -24,8 +24,7 @@ class ErrorResponseHandler  : ResponseHandler{
 		}
 		
 		
-		//let callback = chat.callbacksManager.getCallback(uniqueId)
-		if let errorCallback = chat.callbacksManager.errorCallbacks[chatMessage.uniqueId]{
+		if let callback = chat.callbacksManager.callbacks[chatMessage.uniqueId]{
 			let code:Int
 			let message:String
 			let content:String
@@ -39,10 +38,11 @@ class ErrorResponseHandler  : ResponseHandler{
 				content = asyncMessage.convertCodableToString() ?? ""
 				message = chatMessage.message ??  ""
 			}
-			errorCallback(.init(code: code, message: message, content: content))
-			chat.delegate?.chatError(errorCode:   code   ,
-								errorMessage: message ,
-								errorResult:    content)
+            
+            callback(.init(error: .init(code: code, message: message, content: content)))
+			chat.delegate?.chatError(code:   code   ,
+								message: message ,
+								content:    content)
 			chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
 		}
 	}

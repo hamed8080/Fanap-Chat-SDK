@@ -18,8 +18,24 @@ open class ContactNotSeenDurationRespoonse: ResponseModel {
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
     
+    private enum CodingKeys : String ,CodingKey{
+        case hasError     = "hasError"
+        case message      = "message"
+        case errorCode    = "errorCode"
+    }
+
     public required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        if let unkeyedContainer = try? decoder.singleValueContainer() , let dictionary = try? unkeyedContainer.decode([String:Int?].self){
+            notSeenDuration = dictionary.map{UserLastSeenDuration(userId: Int($0) ?? 0, time: $1 ?? 0)}
+            super.init(hasError: false, errorMessage: "", errorCode: 0)
+        }else{
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let hasError = try container.decodeIfPresent(Bool.self, forKey: .hasError) ?? false
+            let code = try container.decodeIfPresent(Int.self, forKey: .errorCode) ?? 0
+            let message = try container.decodeIfPresent(String.self, forKey: .message) ?? ""
+            notSeenDuration = []
+            super.init(hasError: hasError, errorMessage: message, errorCode: code)
+        }
     }
 }
 
