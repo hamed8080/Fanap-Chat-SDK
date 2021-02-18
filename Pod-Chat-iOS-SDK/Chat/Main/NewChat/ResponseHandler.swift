@@ -7,5 +7,5 @@
 
 import Foundation
 protocol ResponseHandler {
-	static func handle(_ chat:NewChat , _ chatMessage:NewChatMessage ,_ asyncMessage:AsyncMessage)
+	static func handle(_ chat:Chat , _ chatMessage:NewChatMessage ,_ asyncMessage:AsyncMessage)
 }

@@ -8,7 +8,8 @@
 
 import SwiftyJSON
 
-open class UnblockRequest {
+open class UnblockRequest :Encodable{
+	
     
     public let blockId:     Int?
     public let contactId:   Int?
@@ -16,6 +17,7 @@ open class UnblockRequest {
     public let userId:      Int?
     
     public let typeCode:    String?
+	@available(*,deprecated ,message: "removed in future release.")
     public let uniqueId:    String
     
     public init(blockId:    Int?,
@@ -33,7 +35,22 @@ open class UnblockRequest {
         self.typeCode   = typeCode
         self.uniqueId   = uniqueId ?? UUID().uuidString
     }
-    
+	
+	public init(blockId: Int? = nil,
+				  contactId: Int? = nil,
+				  threadId: Int? = nil,
+				  userId: Int? = nil,
+				  typeCode: String? = nil) {
+		self.blockId = blockId
+		self.contactId = contactId
+		self.threadId = threadId
+		self.userId = userId
+		self.typeCode = typeCode
+		
+		//removed after remove property in this class
+		self.uniqueId = UUID().uuidString
+	}
+
     func convertContentToJSON() -> JSON {
         var content: JSON = [:]
         if let contactId = self.contactId {
@@ -49,11 +66,22 @@ open class UnblockRequest {
         return content
     }
     
+	private enum CodingKeys :String , CodingKey{
+		case contactId = "contactId"
+		case threadId = "threadId"
+		case userId = "userId"
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encodeIfPresent(contactId, forKey: .contactId)
+		try container.encodeIfPresent(threadId, forKey: .threadId)
+		try container.encodeIfPresent(userId, forKey: .userId)
+		
+	}
 }
 
 
-/// MARK: -  this class will be deprecate.  (use this class instead: 'UnblockRequest')
-open class UnblockContactsRequestModel: UnblockRequest {
-    
-}
+@available(*, unavailable, message: "use UnblockRequest class")
+open class UnblockContactsRequestModel: UnblockRequest {}
 

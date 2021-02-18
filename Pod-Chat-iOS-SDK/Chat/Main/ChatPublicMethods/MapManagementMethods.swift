@@ -52,7 +52,7 @@ extension Chat {
         guard let createChatModel = createChatModel else {return}
         guard let mapApiKey = createChatModel.mapApiKey else {return}
         uniqueIdResult?(mapReverseRequest.uniqueId)
-        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.REVERSE.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
         let headers:  HTTPHeaders = ["Api-Key":   mapApiKey]
         Networking.request(ofType: MapReverse.self,
                            from: url,
@@ -93,7 +93,7 @@ extension Chat {
         guard let mapApiKey = createChatModel.mapApiKey else {return}
         uniqueIdResult?(generateUUID())
         
-        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.ROUTING.rawValue)"
+        let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_ROUTING.rawValue)"
 //        let url = "https://api.neshan.org/v3/direction?parameters"
         let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
         Networking.request(ofType: MapRoutingResponse.self,
@@ -139,7 +139,7 @@ extension Chat {
 		let theUniqueId = generateUUID()
 		uniqueIdResult?(theUniqueId)
 		
-		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.SEARCH.rawValue)"
+		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
 		let headers:    HTTPHeaders = ["Api-Key": mapApiKey]
 		Networking.request(ofType: MapSearchResponse.self,
 						   from: url,
@@ -189,7 +189,7 @@ extension Chat {
 		let theUniqueId = generateUUID()
 		uniqueIdResult?(theUniqueId)
 		
-		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.STATIC_IMAGE.rawValue)"
+		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_STATIC_IMAGE.rawValue)"
 		Networking.sharedInstance.download(fromUrl:         url,
 										   withMethod:      .get,
 										   withHeaders:     nil,

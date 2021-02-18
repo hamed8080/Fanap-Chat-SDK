@@ -5,64 +5,16 @@ import Alamofire
 import SwiftyJSON
 
 
-public struct ChatError:Decodable{
-	let code:Int?
-	let message:String?
-	let content:String?
-}
-
 public struct ChatResponse{
 	public var result:Any?
     public var cacheResponse:Any?
 	public var error:ChatError?
 }
 
-public enum RequestBuilder {
-    case GetContacts(req:GetContactsRequest , messageType:NewChatMessageVOTypes = .GET_CONTACTS)
-    case GetBlockedContacts(req:BlockedListRequest , messageType:NewChatMessageVOTypes = .GET_BLOCKED)
-    case AddContact(req:AddContactRequest)
-    case AddContacts(req:[AddContactRequest])
-    case ContactNotSeenDuration(req:GetNotSeenDurationRequest , messageType:NewChatMessageVOTypes = .GET_NOT_SEEN_DURATION)
-}
 
-class CallbacksManager{
-	
-	var callbacks:[String:(ChatResponse)->()] = [:]
-	
-    func addCallback(uniqueId:String , callback:@escaping (ChatResponse)->()) {
-        callbacks[uniqueId] = callback
-    }
-	
-	func removeError(uniqueId:String ){
-		callbacks.removeValue(forKey: uniqueId)
-	}
-}
-
-public class NewChat {
+//this extension merged after removed all deprecated method in Chat class
+public extension Chat {
    
-	private init(){}
-	public static var shared = NewChat()
-
-	var createChatModel:CreateChatModel?
-	var isCreateObjectFuncCalled = false
-	var asyncClient              	: Async?
-	lazy var asyncDelegate:AsyncDelegateImplementaion = { return AsyncDelegateImplementaion(self) }()
-    var callbacksManager = CallbacksManager()
-	
-	public weak var delegate: NewChatDelegate?{
-		didSet{
-			if(!isCreateObjectFuncCalled){
-				print("Please call createChatObject func before set delegate")
-			}
-		}
-	}
-	
-	
-	public func createChatObject(object:CreateChatModel){
-		createChatModel = object
-		initialize(getDeviceIdFromToken: object.getDeviceIdFromToken)
-	}
-	
 	private func initialize(getDeviceIdFromToken:Bool){
 		if createChatModel?.captureLogsOnSentry == true {
 			//startCrashAnalytics()
@@ -73,7 +25,7 @@ public class NewChat {
 		}
 	}
     
-    public func request(_ builder :RequestBuilder ,
+	func request(_ builder :RequestBuilder ,
                         typeCode:String? = nil,
                         uniqueId:String? = nil,
                         getCacheResponse: Bool?   = false,
@@ -93,18 +45,62 @@ public class NewChat {
         case .AddContact(req: let req):
             let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
             let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restRequest(req, decodeType: ContactResponse.self,url: url , headers: headers , typeCode: typeCode, completion: completion)
+			restApiRequest(req, decodeType: ContactResponse.self,url: url , headers: headers , typeCode: typeCode, completion: completion)
             return
         case .AddContacts(req: let req):
             let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
             let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+			restApiRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
             return
             
-        case .ContactNotSeenDuration(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        }
+			case .ContactNotSeenDuration(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .RemoveContact(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
+				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: RemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .SearchContact(req: let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .SyncContacts:
+				SyncContactsRequestHandler.handle(self, completion: completion)
+				return
+				
+			case .UpdateContact(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.UPDATE_CONTACTS.rawValue)"
+				let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .BlockContact(req: let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .UnBlockContact(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .MapReverse(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapReverse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapSearch(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapSearchResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapRouting(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_ROUTING.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapRoutingResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapStaticImage(req: let req):
+				DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
+				return
+		}
         prepareToSendAsync(req: tuple.request,
                            clientSpecificUniqueId: uniqueId,
                            typeCode: typeCode ,
@@ -113,10 +109,9 @@ public class NewChat {
                            completion: completion)
 
     }
-    
-    
+	
     // REST API Request
-    private func restRequest<T:Decodable>(_ encodableRequest:Encodable? ,
+    private func restApiRequest<T:Decodable>(_ encodableRequest:Encodable? ,
                              decodeType:T.Type,
                              url:String,
                              method:HTTPMethod = .get,
@@ -126,14 +121,22 @@ public class NewChat {
                              uniqueIdResult: ((String)->())? = nil,
                              completion:  @escaping ((ChatResponse)->())
                              ){
-        Networking.request(decodeType,
-                           from: url,
-                           withMethod: method,
-                           withHeaders: headers,
-                           encodableRequest: encodableRequest,
-                           completion: completion)
-    }
-    
+		Networking.request(decodeType,
+						   from: url,
+						   withMethod: method,
+						   withHeaders: headers,
+						   encodableRequest: encodableRequest,
+						   completion: { [weak self] result in
+							guard let weakSelf = self else{return}
+							if let error = result.error {
+								weakSelf.delegate?.chatError(errorCode: error.code ?? 0 ,
+															 errorMessage: error.message ?? "",
+															 errorResult: error.content)
+							}
+							completion(result)
+						   })
+	}
+	
     // SOCKET Request
 	private func prepareToSendAsync(req:Encodable ,
 															   clientSpecificUniqueId:String? ,
@@ -147,15 +150,17 @@ public class NewChat {
         uniqueIdResult?(uniqueId)
         let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
 		guard let content = req.convertCodableToString() else {return}
-		let chatMessage = NewSendChatMessageVO(chatMessageVOType:  messageType.rawValue,
+		let chatMessage = SendChatMessageVO(chatMessageVOType:  messageType.rawValue,
 											token:              createChatModel.token,
 											content:            "\(content)",
 											typeCode:           typeCode,
 											uniqueId:           uniqueId,
 											isCreateThreadAndSendMessage: true)
 		
-		let asyncMessage = NewSendAsyncMessageVO(content:      chatMessage.convertCodableToString() ?? "",
-											  ttl:       createChatModel.msgTTL,
+		guard let chatMessageContent = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:     chatMessageContent,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
 											  peerName:     createChatModel.serverName,
 											  priority:     createChatModel.msgPriority
 											  )
@@ -165,99 +170,28 @@ public class NewChat {
 		sendToAsync(asyncMessageVO: asyncMessage)
 	}
 	
-	private func sendToAsync(asyncMessageVO:NewSendAsyncMessageVO){
+	private func sendToAsync(asyncMessageVO:SendAsyncMessageVO){
 		guard let content = asyncMessageVO.convertCodableToString() else { return }
-		asyncClient?.pushSendData(type: asyncMessageVO.pushMsgType, content: content)
+		asyncClient?.pushSendData(type: asyncMessageVO.pushMsgType ?? 3, content: content)
 //		runSendMessageTimer()
 	}
 	
-	private func CreateAsync() {
+	private func getDeviceId(){
 		guard let createChatModel = createChatModel else{return}
-		asyncClient = Async(socketAddress:               createChatModel.socketAddress,
-							serverName:                 createChatModel.serverName,
-                            deviceId:                   createChatModel.deviceId,
-							appId:                      nil,
-							peerId:                     nil,
-							messageTtl:                 createChatModel.messageTtl,
-							connectionRetryInterval:    createChatModel.connectionRetryInterval,
-							maxReconnectTimeInterval:   createChatModel.maxReconnectTimeInterval,
-							reconnectOnClose:           createChatModel.reconnectOnClose,
-							showDebuggingLogLevel:      createChatModel.showDebuggingLogLevel)
-		asyncClient?.delegate = asyncDelegate
-		asyncClient?.createSocket()
-	}
-    
-    private func getDeviceId(){
-        guard let createChatModel = createChatModel else{return}
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
-        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
-        Networking.request(ofType: DevicesResposne.self,
-                           from: url,
-                           withMethod: .get,
-                           withHeaders: headers,
-                           encodableRequest: nil) { [weak self] devicesResponse in
-            if let device = devicesResponse?.devices?.first(where: {$0.current == true}){
-                self?.createChatModel?.deviceId = device.uid
-            }
-        }
-    }
-    
-    public func setToken(_ newToken:String){
-        createChatModel?.token = newToken
-    }
-}
-
-class AsyncDelegateImplementaion:AsyncDelegates{
-    
-	let chat:NewChat
-	
-	init(_ chat:NewChat) {
-		self.chat = chat
-	}
-    func asyncSendMessage(params: Any) {
-        print("asyncSendMessage is sended with data: \(params)")
-    }
-    
-    func asyncConnect(newPeerID: Int) {
-		print("async Connected with peerId: \(newPeerID)")
-    }
-    
-    func asyncDisconnect() {
-		print("async disconnected")
-    }
-    
-    func asyncReconnect(newPeerID: Int) {
-		print("async reconnected")
-    }
-    
-    func asyncReceiveMessage(params: JSON) {
-		print("async recivedMeaage with data \(params)")
-		if let data = try? params.rawData(){
-			ReciveMessageFactory.invokeCallback(data: data , chat: chat)
+		let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
+		let url = createChatModel.ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
+		Networking.request(ofType: DevicesResposne.self,
+						   from: url,
+						   withMethod: .get,
+						   withHeaders: headers,
+						   encodableRequest: nil) { [weak self] devicesResponse in
+			if let device = devicesResponse?.devices?.first(where: {$0.current == true}){
+				self?.createChatModel?.deviceId = device.uid
+			}
 		}
-    }
-    
-    func asyncReady() {
-        print("async Ready called")
-    }
-    
-    func asyncStateChanged(socketState: SocketStateType, timeUntilReconnect: Int, deviceRegister: Bool, serverRegister: Bool, peerId: Int) {
-        print("asyncStateChanged called sockeState: \(socketState)")
-    }
-    
-    func asyncError(errorCode: Int, errorMessage: String, errorEvent: Any?) {
-        print("asyncError called - errorCode:\(errorCode) - errorMessage:\(errorMessage) - errorEvent : \(errorEvent ?? "")")
-    }
-    
+	}
 }
 
-
-class DevicesResposne : Codable{
-    let devices: [Device]?
-    let offset : Int?
-    let size   : Int?
-    let total  : Int?
-}
 class Device : Codable {
     var agent          : String?
     var browser        : String?
@@ -272,229 +206,6 @@ class Device : Codable {
     var uid            : String?
 }
 
-struct NewSendChatMessageVO:Encodable {
-	
-	let chatMessageVOType    : Int
-	let token               : String
-	var content            : String? = nil
-	var messageType:        Int? = nil
-	var metadata:           String? = nil
-	var repliedTo:          Int?    = nil
-	var systemMetadata:     String?  = nil
-	var subjectId:          Int?    = nil
-	var tokenIssuer:        Int?    = nil
-	var typeCode:           String? = nil
-	var uniqueId:           String? = nil
-	var uniqueIds:          [String]? = nil
-	var isCreateThreadAndSendMessage: Bool = false
-	
-	private enum CodingKeys : String ,CodingKey{
-		case type
-		case tokenIssuer
-		case token
-		
-		case content
-		case messageType
-		case metadata
-		case repliedTo
-		case subjectId
-		case systemMetadata
-		case typeCode
-		case uniqueId
-	}
-	
-	func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try? container.encodeIfPresent(chatMessageVOType, forKey: .type)
-		try? container.encodeIfPresent(token, forKey: .token)
-		try? container.encodeIfPresent(tokenIssuer ?? 1, forKey: .tokenIssuer)
-		try? container.encodeIfPresent(content, forKey: .content)
-		try? container.encodeIfPresent(messageType, forKey: .messageType)
-		try? container.encodeIfPresent(metadata, forKey: .metadata)
-		try? container.encodeIfPresent(repliedTo, forKey: .repliedTo)
-		try? container.encodeIfPresent(subjectId, forKey: .subjectId)
-		try? container.encodeIfPresent(systemMetadata, forKey: .systemMetadata)
-		try? container.encodeIfPresent(typeCode, forKey: .typeCode)
-		if let uniqueIds = uniqueIds {
-			try? container.encodeIfPresent("\(uniqueIds)", forKey: .uniqueId)
-		}else{
-			try? container.encodeIfPresent(uniqueId, forKey: .uniqueId)
-		}
-	}
-	
-}
-
-struct NewSendAsyncMessageVO :Encodable {
-	var content     :        String
-	let ttl         :         Int
-	let peerName    :       String
-	let priority    :       Int
-	var pushMsgType :     Int = 3
-	
-	
-	private enum CodingKeys: String , CodingKey{
-		case content
-		case peerName
-		case priority
-		case ttl
-	}
-	
-	func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try? container.encodeIfPresent(content, forKey: .content)
-		try? container.encodeIfPresent(peerName, forKey: .peerName)
-		try? container.encodeIfPresent(priority, forKey: .priority)
-		try? container.encodeIfPresent(ttl, forKey: .ttl)
-	}
-}
-
-
-class ReciveMessageFactory{
-	
-	class func invokeCallback(data:Data , chat:NewChat) {
-		guard let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self, from: data) else {return}
-		guard let chatMessageData  = asyncMessage.content.data(using: .utf8) else{return}
-		guard let chatMessage =  try? JSONDecoder().decode(NewChatMessage.self, from: chatMessageData) else{return}
-		print("asyncMessage decoded: \(chatMessage)")
-		
-		switch chatMessage.type {
-			
-			case .ADD_PARTICIPANT:
-				break
-			case .ALL_UNREAD_MESSAGE_COUNT:
-				break
-			case .BLOCK:
-				break
-			case .BOT_MESSAGE:
-				break
-			case .CHANGE_TYPE:
-				break
-			case .CLEAR_HISTORY:
-				break
-			case .CLOSE_THREAD:
-				break
-			case .CONTACTS_LAST_SEEN:
-				break
-			case .CONTACT_SYNCED:
-				break
-			case .CREATE_BOT:
-				break
-			case .CREATE_THREAD:
-				break
-			case .DEFINE_BOT_COMMAND:
-				break
-			case .DELETE_MESSAGE:
-				break
-			case .DELIVERY:
-				break
-			case .EDIT_MESSAGE:
-				break
-			case .ERROR:
-				ErrorResponseHandler.handle(chat, chatMessage , asyncMessage)
-				break
-			case .FORWARD_MESSAGE:
-				break
-			case .GET_BLOCKED:
-                BlockedResponseHandler.handle(chat , chatMessage , asyncMessage)
-				break
-			case .GET_CONTACTS:
-                ContactsResponseHandler.handle(chat , chatMessage , asyncMessage)
-				break
-			case .GET_CURRENT_USER_ROLES:
-				break
-			case .GET_HISTORY:
-				break
-			case .GET_MESSAGE_DELEVERY_PARTICIPANTS:
-				break
-			case .GET_MESSAGE_SEEN_PARTICIPANTS:
-				break
-			case .GET_NOT_SEEN_DURATION:
-                ContactNotSeenDurationHandler.handle(chat , chatMessage , asyncMessage)
-				break
-			case .GET_REPORT_REASONS:
-				break
-			case .GET_STATUS:
-				break
-			case .GET_THREADS:
-				break
-			case .IS_NAME_AVAILABLE:
-				break
-			case .JOIN_THREAD:
-				break
-			case .LAST_SEEN_UPDATED:
-				break
-			case .LEAVE_THREAD:
-				break
-			case .LOGOUT:
-				break
-			case .MESSAGE:
-				break
-			case .MUTE_THREAD:
-				break
-			case .PING:
-				break
-			case .PIN_MESSAGE:
-				break
-			case .PIN_THREAD:
-				break
-			case .RELATION_INFO:
-				break
-			case .REMOVED_FROM_THREAD:
-				break
-			case .REMOVE_PARTICIPANT:
-				break
-			case .REMOVE_ROLE_FROM_USER:
-				break
-			case .RENAME:
-				break
-			case .REPORT_MESSAGE:
-				break
-			case .REPORT_THREAD:
-				break
-			case .REPORT_USER:
-				break
-			case .SEEN:
-				break
-			case .SENT:
-				break
-			case .SET_PROFILE:
-				break
-			case .SET_RULE_TO_USER:
-				break
-			case .SPAM_PV_THREAD:
-				break
-			case .START_BOT:
-				break
-			case .STATUS_PING:
-				break
-			case .STOP_BOT:
-				break
-			case .SYSTEM_MESSAGE:
-				break
-			case .THREAD_INFO_UPDATED:
-				break
-			case .THREAD_PARTICIPANTS:
-				break
-			case .UNBLOCK:
-				break
-			case .UNMUTE_THREAD:
-				break
-			case .UNPIN_MESSAGE:
-				break
-			case .UNPIN_THREAD:
-				break
-			case .UPDATE_THREAD_INFO:
-				break
-			case .USER_INFO:
-				break
-			case .USER_STATUS:
-				break
-			@unknown default :
-				print("a message recived with unknowned type value. investigate to fix or leave that.")
-		}
-		
-	}
-}
 
 struct NewChatMessage : Decodable {
 	

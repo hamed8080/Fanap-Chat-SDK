@@ -46,9 +46,10 @@ extension Chat {
                                             typeCode:           clearHistoryInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           clearHistoryInput.uniqueId,
                                             isCreateThreadAndSendMessage: true)
-          
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:    content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
 
@@ -92,9 +93,10 @@ extension Chat {
                                             subjectId:          deleteMessageInput.messageId,
                                             typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           deleteMessageInput.uniqueId)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -135,9 +137,10 @@ extension Chat {
 											token:              createChatModel.token,
 											content:            "\(deleteMessageInput.convertContentToJSON())",
                                             typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -210,9 +213,10 @@ extension Chat {
                                             subjectId:          editMessageInput.messageId,
                                             typeCode:           editMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           editMessageInput.uniqueId)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -281,9 +285,10 @@ extension Chat {
                                             subjectId:          forwardMessageInput.threadId,
                                             typeCode:           forwardMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueIds:          forwardMessageInput.uniqueIds)
-
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -317,9 +322,10 @@ extension Chat {
                                             typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           inputModel.uniqueId,
                                             isCreateThreadAndSendMessage: true)
-    
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
       
@@ -386,8 +392,10 @@ extension Chat {
                                             uniqueId:           getHistoryInput.uniqueId,
                                             isCreateThreadAndSendMessage: true)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
       
@@ -472,9 +480,10 @@ extension Chat {
                                             typeCode:           getMentionInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           getMentionInput.uniqueId,
                                             isCreateThreadAndSendMessage: true)
-      
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+		guard let content = chatMessage.convertCodableToString() else{return}
+        let asyncMessage = SendAsyncMessageVO(content:      content,
                                               msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
         
@@ -523,8 +532,10 @@ extension Chat {
                                             typeCode:           messageDeliveryListInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           messageDeliveryListInput.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -567,8 +578,10 @@ extension Chat {
                                             typeCode:           messageSeenListInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           messageSeenListInput.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -615,8 +628,10 @@ extension Chat {
                                             uniqueId:           inputModel.uniqueId,
                                             isCreateThreadAndSendMessage: true)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
         
@@ -659,8 +674,10 @@ extension Chat {
                                             uniqueId:           inputModel.uniqueId,
                                             isCreateThreadAndSendMessage: true)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
         
@@ -735,8 +752,10 @@ extension Chat {
                                             typeCode:           replyMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           replyMessageInput.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -772,9 +791,11 @@ extension Chat {
 											token:              createChatModel.token,
 											content:            "\(deliverInput.messageId)",
                                             typeCode:           deliverInput.typeCode ?? createChatModel.typeCode)
-        
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  3)
@@ -809,8 +830,10 @@ extension Chat {
 											content:            "\(seenInput.messageId)",
                                             typeCode:           seenInput.typeCode ?? createChatModel.typeCode)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  3)
@@ -868,8 +891,10 @@ extension Chat {
                                             typeCode:           sendInterActiveMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           sendInterActiveMessageInput.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -1299,8 +1324,10 @@ extension Chat {
                                             typeCode:           sendTextMessageInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           sendTextMessageInput.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let content = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:      content,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)
@@ -1381,8 +1408,10 @@ extension Chat {
                                             subjectId:          input.threadId,
                                             uniqueId:           input.uniqueId)
         
-        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                              msgTTL:       createChatModel.msgTTL,
+		guard let chatMessageContent = chatMessage.convertCodableToString() else{return}
+		let asyncMessage = SendAsyncMessageVO(content:     chatMessageContent,
+											  msgTTL:       createChatModel.msgTTL,
+											  ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority,
                                               pushMsgType:  4)

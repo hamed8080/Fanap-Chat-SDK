@@ -12,7 +12,7 @@ class ErrorResponseHandler  : ResponseHandler{
 	
 	private init(){}
 	
-	static func handle(_ chat: NewChat , _ chatMessage:NewChatMessage , _ asyncMessage:AsyncMessage) {
+	static func handle(_ chat: Chat , _ chatMessage:NewChatMessage , _ asyncMessage:AsyncMessage) {
 		guard let createChatModel = chat.createChatModel else {return}
 		print("Message of type 'ERROR' recieved")
 		
@@ -24,7 +24,7 @@ class ErrorResponseHandler  : ResponseHandler{
 		}
 		
 		
-		if let callback = chat.callbacksManager.callbacks[chatMessage.uniqueId]{
+		if let callback = chat.callbacksManager.getCallBack(chatMessage.uniqueId){
 			let code:Int
 			let message:String
 			let content:String
@@ -40,9 +40,9 @@ class ErrorResponseHandler  : ResponseHandler{
 			}
             
             callback(.init(error: .init(code: code, message: message, content: content)))
-			chat.delegate?.chatError(code:   code   ,
-								message: message ,
-								content:    content)
+			chat.delegate?.chatError(errorCode:   code,
+									 errorMessage: message ,
+									 errorResult:    content)
 			chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
 		}
 	}

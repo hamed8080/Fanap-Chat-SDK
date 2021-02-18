@@ -27,5 +27,4 @@ public protocol ChatDelegates: class, ChatErrorDelegate {
     func systemEvents(model: SystemEventModel)
     func threadEvents(model: ThreadEventModel)
     func userEvents(model: UserEventModel)
-    
 }

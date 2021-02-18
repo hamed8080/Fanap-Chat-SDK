@@ -7,107 +7,52 @@
 //
 
 import Foundation
-import SwiftyJSON
 
-
-struct SendAsyncMessageVO {
+struct SendAsyncMessageVO : Codable{
 	
 	var content:        String
+	@available(*,deprecated , renamed: "ttl")
 	let msgTTL:         Int
+	let ttl : Int
 	let peerName:       String
 	let priority:       Int
 	var pushMsgType:    Int? = nil
 	
-	init(content 		: String,
-		 msgTTL  		: Int,
-		 peerName 		: String,
-		 priority 		: Int,
-		 pushMsgType 	: Int? = nil) {
+	
+	public init(content: String, msgTTL: Int, ttl: Int, peerName: String, priority: Int, pushMsgType: Int? = nil) {
+		self.content = content
+		self.msgTTL = msgTTL
+		self.ttl = ttl
+		self.peerName = peerName
+		self.priority = priority
+		self.pushMsgType = pushMsgType
+	}
+	
+	private enum CodingKeys : String ,CodingKey {
+		case content = "content"
+		case ttl  = "ttl"
+		case peerName = "peerName"
+		case priority = "priority"
+		case pushMsgType = "pushMsgType"
+	}
+	
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		content = try container.decode(String.self, forKey: .content)
+		ttl = try container.decode(Int.self, forKey: .ttl)
+		//removed when removed property
+		msgTTL = ttl
+		peerName = try container.decode(String.self, forKey: .peerName)
+		priority = try container.decodeIfPresent(Int.self, forKey: .priority) ?? 1
+		pushMsgType = try container.decodeIfPresent(Int.self, forKey: .pushMsgType)
+	}
 
-		self.content        	= content
-		self.msgTTL         	= msgTTL
-		self.peerName       	= peerName
-		self.priority        	= priority
-		self.pushMsgType     	= pushMsgType
-	}
-	
-	init(content: JSON) {
-		self.content        	= content["content"].stringValue
-		self.msgTTL         	= content["ttl"].intValue
-		self.peerName       	= content["peerName"].stringValue
-		self.priority       	= content["priority"].int ?? 1
-		self.pushMsgType    	= content["pushMsgType"].intValue
-	}
-	
-	func convertModelToJSON() -> JSON {
-		let messageVO: JSON = ["content":   content,
-							   "peerName":  peerName,
-							   "priority":  priority,
-							   "ttl":       msgTTL]
-		
-		return messageVO
-	}
-	
-	func convertModelToString() -> String {
-		if let stringValue = convertModelToJSON().toString() {
-			return stringValue
-		} else {
-			return "\(convertModelToJSON())"
-		}
-		//        let model = convertModelToJSON()
-		//        let stringModel = "\(model)"
-		//        let str = String(stringModel.filter { !" \n\t\r".contains($0) })
-		//        return str
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encodeIfPresent(content, forKey: .content)
+		try? container.encodeIfPresent(peerName, forKey: .peerName)
+		try? container.encodeIfPresent(priority, forKey: .priority)
+		try? container.encodeIfPresent(ttl, forKey: .ttl)
 	}
 	
 }
-
-//class SendAsyncMessageVO {
-//
-//    var content:        String
-//    let msgTTL:         Int
-//    let peerName:       String
-//    let priority:       Int
-//    let pushMsgType:    Int?
-//
-//    init(content: String, msgTTL: Int, peerName: String, priority: Int, pushMsgType: Int?) {
-//        self.content        = content
-//        self.msgTTL         = msgTTL
-//        self.peerName       = peerName
-//        self.priority       = priority
-//        self.pushMsgType    = pushMsgType
-//    }
-//
-//    init(content: JSON) {
-//        self.content        = content["content"].stringValue
-//        self.msgTTL         = content["ttl"].intValue
-//        self.peerName       = content["peerName"].stringValue
-//        self.priority       = content["priority"].int ?? 1
-//        self.pushMsgType    = content["pushMsgType"].intValue
-//    }
-//
-//    func convertModelToJSON() -> JSON {
-//        let messageVO: JSON = ["content":   content,
-//                               "peerName":  peerName,
-//                               "priority":  priority,
-//                               "ttl":       msgTTL]
-//
-//        return messageVO
-//    }
-//
-//    func convertModelToString() -> String {
-//        if let stringValue = convertModelToJSON().toString() {
-//            return stringValue
-//        } else {
-//            return "\(convertModelToJSON())"
-//        }
-////        let model = convertModelToJSON()
-////        let stringModel = "\(model)"
-////        let str = String(stringModel.filter { !" \n\t\r".contains($0) })
-////        return str
-//    }
-//
-//
-//}
-
-

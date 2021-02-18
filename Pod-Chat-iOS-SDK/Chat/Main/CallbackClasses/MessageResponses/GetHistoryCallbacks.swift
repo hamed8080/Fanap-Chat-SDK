@@ -72,7 +72,8 @@ extension Chat {
                     }
                     
                     handleServerAndCacheDifferential(sendParams: sendParams, serverResponse: messages)
-                    Chat.cacheDB.saveMessageObjects(messages: messages, getHistoryParams: sendParams.convertModelToJSON())
+					guard let content = sendParams.convertCodableToString() else{return}					
+                    Chat.cacheDB.saveMessageObjects(messages: messages, getHistoryParams: JSON(stringLiteral: content))
                 }
                 
                 let getHistoryModel = GetHistoryResponse(messageContent:    arrayContent,

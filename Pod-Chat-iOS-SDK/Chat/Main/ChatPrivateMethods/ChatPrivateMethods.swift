@@ -373,8 +373,8 @@ extension Chat {
                                  sentCallback:      (call: CallbackProtocolWith3Calls, uniques: [String])?,
                                  deliverCallback:   (call: CallbackProtocolWith3Calls, uniques: [String])?,
                                  seenCallback:      (call: CallbackProtocolWith3Calls, uniques: [String])?) {
-        
-        let chatMessageVO = SendChatMessageVO(content: asyncMessageVO.content.convertToJSON())
+		
+		guard let chatMessageVO = try? JSONDecoder().decode(SendChatMessageVO.self, from: asyncMessageVO.content.data(using: .utf8)!) else {return}
         
 	
         if let myCallbacks = callbacks {
@@ -419,7 +419,7 @@ extension Chat {
         log.verbose("map onDeliver json: \n \(Chat.mapOnDeliver)", context: "Chat")
         log.verbose("map onSeen json: \n \(Chat.mapOnSeen)", context: "Chat")
         
-        let contentToSend = asyncMessageVO.convertModelToString()
+		guard let contentToSend = asyncMessageVO.convertCodableToString() else{return}
         
         log.verbose("AsyncMessageContent of type JSON (to send to socket): \n \(contentToSend)", context: "Chat")
         
@@ -496,8 +496,10 @@ extension Chat {
             let chatMessage = SendChatMessageVO(chatMessageVOType: ChatMessageVOTypes.PING.intValue(),
                                                 token: createChatModel.token)
             
-            let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
-                                                  msgTTL:       createChatModel.msgTTL,
+			guard let content = chatMessage.convertCodableToString() else{return}
+			let asyncMessage = SendAsyncMessageVO(content:      content,
+												  msgTTL:       createChatModel.msgTTL,
+												  ttl: createChatModel.msgTTL,
                                                   peerName:     createChatModel.serverName,
                                                   priority:     createChatModel.msgPriority,
                                                   pushMsgType:  5)

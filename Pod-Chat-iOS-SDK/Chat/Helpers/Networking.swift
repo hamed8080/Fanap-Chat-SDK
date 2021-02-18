@@ -230,7 +230,7 @@ class Networking {
             .responseData { (myResponse) in
             if myResponse.result.isSuccess , let data = myResponse.result.value , let codable = try? JSONDecoder().decode(D.self, from: data){
                 let chatResponse = ChatResponse(result: codable)
-                if (codable as? ResponseModel)?.hasError == false{
+                if ((codable as? ResponseModel)?.hasError ?? false) == false{
                     completion(chatResponse)
                 } else if let errorModel = codable as? ResponseModel , errorModel.hasError == true{
                     let error = ChatResponse(error: .init(code: errorModel.errorCode, message: "\(errorModel.errorMessage)", content: nil))

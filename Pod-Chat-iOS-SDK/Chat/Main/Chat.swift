@@ -19,8 +19,9 @@ public class Chat {
     
     // MARK: - Chat Private initializer
     private init() {}
+	
+	
     private static var instance: Chat?
-    
     
     open class var sharedInstance: Chat {
         if instance == nil {
@@ -92,7 +93,7 @@ public class Chat {
     var sendRequestQueue:       [(type: Int, content: String)]          = []
     public var uploadRequest:   [(upload: Request, uniqueId: String)]   = []
     public var downloadRequest: [(download: Request, uniqueId: String)] = []
-
+	var callbacksManager = CallbacksManager()
     var isChatReady = false {
         didSet {
             if isChatReady {
@@ -372,5 +373,6 @@ public class Chat {
     public func getGetUserInfoRetry() -> Int {
         return getUserInfoRetry
     }
+	
 
 }
