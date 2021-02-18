@@ -191,7 +191,8 @@ class Networking {
                                   withMethod:       HTTPMethod,
                                   withHeaders:      HTTPHeaders?,
                                   encodableRequest:   Encodable?,
-                                  completion:       @escaping ((D?)->())
+                                  completion:       @escaping ((D?)->()),
+                                  errorResult: ((ResponseModel)->())? = nil
 								  ) {
         
         guard let url = URL(string: urlStr) else { print("could not open url, it was nil"); return }
@@ -199,17 +200,21 @@ class Networking {
                           method:       withMethod,
 						  parameters:   (try? encodableRequest?.asDictionary()) ?? [:],
                           headers:      withHeaders)
+            .validate(statusCode: 200...300)
             .responseData { (myResponse) in
             if myResponse.result.isSuccess , let data = myResponse.result.value , let codable = try? JSONDecoder().decode(D.self, from: data){
                     completion(codable)
             }else if let error = myResponse.error {
+                if let data  = myResponse.data , let stringResponseData = String(data: data, encoding: .utf8){
+                    let model = ResponseModel(hasError: true, errorMessage: stringResponseData, errorCode: myResponse.response?.statusCode ?? 6200)
+                    errorResult?(model)
+                    return
+                }
 				let model = ResponseModel(hasError: true,
-										  errorMessage: "\(ChatErrors.err6200.stringValue()) \(error)",
-										  errorCode: 6200)
+										  errorMessage:  "\(ChatErrors.err6200.stringValue()) \(error)",
+                                          errorCode: myResponse.response?.statusCode ?? 6200)
 				completion(model as? D)
             }
-                
-                
         }
     }
     

@@ -15,15 +15,7 @@ public struct ChatResponse{
 //this extension merged after removed all deprecated method in Chat class
 public extension Chat {
    
-	private func initialize(getDeviceIdFromToken:Bool){
-		if createChatModel?.captureLogsOnSentry == true {
-			//startCrashAnalytics()
-		}
-        getDeviceId()
-		if createChatModel?.getDeviceIdFromToken == false{
-			CreateAsync()
-		}
-	}
+
     
 	func request(_ builder :RequestBuilder ,
                         typeCode:String? = nil,
@@ -176,7 +168,7 @@ public extension Chat {
 //		runSendMessageTimer()
 	}
 	
-	private func getDeviceId(){
+	internal func getDeviceIdAndCreateAsync(){
 		guard let createChatModel = createChatModel else{return}
 		let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
 		let url = createChatModel.ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
@@ -184,11 +176,17 @@ public extension Chat {
 						   from: url,
 						   withMethod: .get,
 						   withHeaders: headers,
-						   encodableRequest: nil) { [weak self] devicesResponse in
+						   encodableRequest: nil
+        ) { [weak self] devicesResponse in
 			if let device = devicesResponse?.devices?.first(where: {$0.current == true}){
 				self?.createChatModel?.deviceId = device.uid
-			}
-		}
+                self?.CreateAsync()
+            }else{
+                
+            }
+        }errorResult:{ responseModel in
+            self.delegate?.chatError(errorCode: responseModel.errorCode, errorMessage: responseModel.errorMessage, errorResult: nil)
+        }
 	}
 }
 

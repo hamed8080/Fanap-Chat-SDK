@@ -144,8 +144,9 @@ public class Chat {
     
     
     public func createChatObject(object:CreateChatModel){
+        isCreateObjectFuncCalled = true
         createChatModel = object
-        initialize(getDeviceIdFromToken: object.getDeviceIdFromToken)
+        initialize()
     }
 
     @available(*,deprecated, message: "use createChatObject(object:CreateChatModel) this method removed in future realese")
@@ -204,28 +205,20 @@ public class Chat {
                         getDeviceIdFromToken : getDeviceIdFromToken,
                         showDebuggingLogLevel: showDebuggingLogLevel?.logLevel() ?? LogLevel.error
         )
-        initialize(getDeviceIdFromToken: getDeviceIdFromToken)
+        initialize()
     }
     
-    func initialize(getDeviceIdFromToken:Bool){
+    func initialize(){
         if createChatModel?.captureLogsOnSentry == true {
             startCrashAnalytics()
         }
         
-        if getDeviceIdFromToken {
-            getDeviceIdWithToken { (deviceIdStr) in
-                self.deviceId = deviceIdStr
-                log.info("get deviceId successfully = \(self.deviceId ?? "error!!")", context: "Chat")
-
-                DispatchQueue.main.async {
-                    self.CreateAsync()
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.CreateAsync()
-            }
+        if createChatModel?.getDeviceIdFromToken == false{
+            getDeviceIdAndCreateAsync()
+        }else{
+            CreateAsync()
         }
+        
         _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel?.deviecLimitationSpaceMB ?? 100, turnOffTheCache: true, errorDelegate: delegate)
     }
     
