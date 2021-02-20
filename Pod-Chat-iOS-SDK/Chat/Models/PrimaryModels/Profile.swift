@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class Profile {
+open class Profile : Codable {
     
     public var bio:         String?
     public var metadata:    String?
@@ -37,4 +37,13 @@ open class Profile {
         return result
     }
     
+	private enum CodingKeys: String ,CodingKey{
+		case bio  = "bio"
+		case metadata = "metadata"
+	}
+	public required init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		self.bio  = try container.decodeIfPresent(String.self, forKey: .bio)
+		self.metadata  = try container.decodeIfPresent(String.self, forKey: .metadata)
+	}
 }

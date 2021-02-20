@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class ForwardInfo {
+open class ForwardInfo : Codable {
     /*
      * + forwardInfo        ForwardInfo:
      *   - conversation         Conversation?
@@ -56,4 +56,16 @@ open class ForwardInfo {
         return result
     }
     
+	
+	private enum CodingKeys: String ,CodingKey{
+		case conversation  = "conversation"
+		case participant = "participant"
+	}
+	
+	public required init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		self.conversation  = try container.decodeIfPresent(Conversation.self, forKey: .conversation)
+		self.participant = try container.decodeIfPresent(Participant.self, forKey: .participant)
+	}
+	
 }

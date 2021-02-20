@@ -48,7 +48,7 @@ extension Chat {
 											subjectId:          closeThreadInput.threadId,
                                             typeCode:           closeThreadInput.typeCode ?? createChatModel.typeCode,
                                             uniqueId:           closeThreadInput.uniqueId)
-		guard let content = chatMessage.convertCodableToString() else{return}
+		guard let content = chatMessage.convertCodableToString() else {return}
         let asyncMessage = SendAsyncMessageVO(content:      content,
 											  msgTTL:       createChatModel.msgTTL,
 											  ttl: createChatModel.msgTTL,

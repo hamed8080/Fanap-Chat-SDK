@@ -92,6 +92,15 @@ public extension Chat {
 			case .MapStaticImage(req: let req):
 				DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
 				return
+			case .Threads(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .IsThreadNamePublic(req:let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .MuteThread(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
 		}
         prepareToSendAsync(req: tuple.request,
                            clientSpecificUniqueId: uniqueId,

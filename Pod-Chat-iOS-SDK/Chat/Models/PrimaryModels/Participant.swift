@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class Participant {
+open class Participant : Codable {
     
     public var admin:               Bool?
     public var auditor:             Bool?
@@ -190,4 +190,57 @@ open class Participant {
         return result
     }
     
+	private enum CodingKeys: String ,CodingKey{
+		case admin  = "admin"
+		case auditor = "auditor"
+		case blocked = "blocked"
+		case cellphoneNumber = "cellphoneNumber"
+		case contactFirstName = "contactFirstName"
+		case contactId = "contactId"
+		case contactName = "contactName"
+		case contactLastName = "contactLastName"
+		case coreUserId = "coreUserId"
+		case email = "email"
+		case firstName = "firstName"
+		case id = "id"
+		case image = "image"
+		case keyId = "keyId"
+		case lastName = "lastName"
+		case myFriend = "myFriend"
+		case name = "name"
+		case notSeenDuration = "notSeenDuration"
+		case online = "online"
+		case receiveEnable = "receiveEnable"
+		case sendEnable = "sendEnable"
+		case username = "username"
+		case chatProfileVO = "chatProfileVO"
+		case roles = "roles"
+	}
+	public required init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		self.admin  = try container.decodeIfPresent(Bool.self, forKey: .admin)
+		self.auditor              =  try container.decodeIfPresent(Bool.self, forKey: .auditor)
+		self.blocked              =  try container.decodeIfPresent(Bool.self, forKey: .blocked)
+		self.cellphoneNumber              =  try container.decodeIfPresent(String.self, forKey: .cellphoneNumber)
+		self.contactFirstName              =  try container.decodeIfPresent(String.self, forKey: .contactFirstName)
+		self.contactId              =  try container.decodeIfPresent(Int.self, forKey: .contactId)
+		self.contactName              =  try container.decodeIfPresent(String.self, forKey: .contactName)
+		self.contactLastName              =  try container.decodeIfPresent(String.self, forKey: .contactLastName)
+		self.coreUserId              =  try container.decodeIfPresent(Int.self, forKey: .coreUserId)
+		self.email              =  try container.decodeIfPresent(String.self, forKey: .email)
+		self.firstName              =  try container.decodeIfPresent(String.self, forKey: .firstName)
+		self.id              =  try container.decodeIfPresent(Int.self, forKey: .id)
+		self.image              =  try container.decodeIfPresent(String.self, forKey: .image)
+		self.keyId              =  try container.decodeIfPresent(String.self, forKey: .keyId)
+		self.lastName              =  try container.decodeIfPresent(String.self, forKey: .lastName)
+		self.myFriend              =  try container.decodeIfPresent(Bool.self, forKey: .myFriend)
+		self.name              =  try container.decodeIfPresent(String.self, forKey: .name)
+		self.notSeenDuration              =  try container.decodeIfPresent(Int.self, forKey: .notSeenDuration)
+		self.online              =  try container.decodeIfPresent(Bool.self, forKey: .online)
+		self.receiveEnable              =  try container.decodeIfPresent(Bool.self, forKey: .receiveEnable)
+		self.sendEnable              =  try container.decodeIfPresent(Bool.self, forKey: .sendEnable)
+		self.username              =  try container.decodeIfPresent(String.self, forKey: .username)
+		self.chatProfileVO         =  try container.decodeIfPresent(Profile.self, forKey: .chatProfileVO)
+		self.roles         =  try container.decodeIfPresent([String].self, forKey: .roles)
+	}
 }

@@ -1,5 +1,5 @@
 //
-//  ReciveMessageFactory.swift
+//  ReceiveMessageFactory.swift
 //  FanapPodChatSDK
 //
 //  Created by Hamed Hosseini on 2/17/21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ReciveMessageFactory{
+class ReceiveMessageFactory{
 	
 	class func invokeCallback(data:Data , chat:Chat) {
 		guard let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self, from: data) else {return}
@@ -75,8 +75,10 @@ class ReciveMessageFactory{
 			case .GET_STATUS:
 				break
 			case .GET_THREADS:
+				ThreadsResponseHandler.handle(chat ,chatMessage , asyncMessage)
 				break
 			case .IS_NAME_AVAILABLE:
+				IsPublicThreadNameAvailableResponseHandler.handle(chat ,chatMessage , asyncMessage)
 				break
 			case .JOIN_THREAD:
 				break
@@ -89,6 +91,7 @@ class ReciveMessageFactory{
 			case .MESSAGE:
 				break
 			case .MUTE_THREAD:
+				MuteThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .PING:
 				break

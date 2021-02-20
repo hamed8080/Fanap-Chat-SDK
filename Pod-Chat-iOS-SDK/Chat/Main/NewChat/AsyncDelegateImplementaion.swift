@@ -36,7 +36,7 @@ class AsyncDelegateImplementaion : AsyncDelegates{
 	func asyncReceiveMessage(params: JSON) {
 		print("async recivedMeaage with data \(params)")
 		if let data = try? params.rawData(){
-			ReciveMessageFactory.invokeCallback(data: data , chat: chat)
+			ReceiveMessageFactory.invokeCallback(data: data , chat: chat)
 		}
 	}
 	

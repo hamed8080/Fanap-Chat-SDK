@@ -23,4 +23,7 @@ public enum RequestBuilder {
 	case MapSearch(req:MapSearchRequest)
 	case MapRouting(req:MapRoutingRequest)
 	case MapStaticImage(req:MapStaticImageRequest)
+	case Threads(req:ThreadsRequest ,  messageType:NewChatMessageVOTypes = .GET_THREADS)
+	case IsThreadNamePublic(req:IsThreadNamePublicRequest ,  messageType:NewChatMessageVOTypes = .IS_NAME_AVAILABLE)
+	case MuteThread(req:MuteThreadRequest ,  messageType:NewChatMessageVOTypes = .MUTE_THREAD)
 }

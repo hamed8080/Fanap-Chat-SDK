@@ -175,6 +175,13 @@ extension Chat: AsyncDelegates {
 		if let data = try? params.rawData() , let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self,from: data){
 			handleReceiveMessageFromAsync(withContent: asyncMessage)
 		}
+		
+		
+		
+		//Only code needed in new Version release
+		if let data = try? params.rawData(){
+			ReceiveMessageFactory.invokeCallback(data: data , chat: self)
+		}
     }
 
     

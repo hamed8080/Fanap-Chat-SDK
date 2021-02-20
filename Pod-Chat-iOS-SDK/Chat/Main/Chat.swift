@@ -142,7 +142,7 @@ public class Chat {
     
     var createChatModel:CreateChatModel?
     
-    
+	
     public func createChatObject(object:CreateChatModel){
         isCreateObjectFuncCalled = true
         createChatModel = object
@@ -345,7 +345,7 @@ public class Chat {
         guard let createChatModel = createChatModel else{return}
         asyncClient = Async(socketAddress:              createChatModel.socketAddress,
                             serverName:                 createChatModel.serverName,
-                            deviceId:                   deviceId,
+							deviceId:                   createChatModel.deviceId,
                             appId:                      nil,
                             peerId:                     nil,
                             messageTtl:                 createChatModel.messageTtl,

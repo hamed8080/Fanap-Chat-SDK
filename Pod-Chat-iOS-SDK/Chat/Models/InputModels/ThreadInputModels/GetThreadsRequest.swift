@@ -9,6 +9,8 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
+
+@available(*,deprecated , message: "this removed in future release .use  in request method.")
 open class GetThreadsRequest: RequestModelDelegates {
     
     public let count:                   Int?    // count of threads to be received (default value is 50)
@@ -21,7 +23,10 @@ open class GetThreadsRequest: RequestModelDelegates {
     public let threadIds:               [Int]?  // An array of thread ids to be received
     public let threadName:              String? // Search term to look up in thread Titles
     
+	
+
     public let typeCode:                String?
+	
     public let uniqueId:                String
     
     public init(count:                  Int?,
@@ -130,7 +135,7 @@ open class GetThreadsRequest: RequestModelDelegates {
 }
 
 
-
+@available(*,deprecated , message: "this removed in future release .use in request method.")
 open class GetThreadsRequestModel: GetThreadsRequest {
     
 }
