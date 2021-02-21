@@ -26,7 +26,9 @@ public extension Chat {
 
         guard let createChatModel = createChatModel else{return}
         
-        let tuple :(request:Encodable ,messageType:NewChatMessageVOTypes)
+        let tuple :(request:Encodable? ,messageType:NewChatMessageVOTypes)
+        var subjectId:Int? = nil
+        
         switch builder {
         case .GetContacts(req: let req, messageType: let messageType):
             tuple = (req , messageType)
@@ -99,12 +101,14 @@ public extension Chat {
 				tuple = (req , messageType)
 				break
 			case .MuteThread(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+				tuple = (nil , messageType)
+                subjectId = req.threadId
 				break
 		}
         prepareToSendAsync(req: tuple.request,
                            clientSpecificUniqueId: uniqueId,
                            typeCode: typeCode ,
+                           subjectId: subjectId,
                            messageType: tuple.messageType,
                            uniqueIdResult: uniqueIdResult,
                            completion: completion)
@@ -139,9 +143,11 @@ public extension Chat {
 	}
 	
     // SOCKET Request
-	private func prepareToSendAsync(req:Encodable ,
+	private func prepareToSendAsync(req:Encodable? = nil ,
 															   clientSpecificUniqueId:String? ,
 															   typeCode:String? ,
+                                                               //this sometimes use to send threadId with subjectId Key must fix from server to get threadId
+                                                               subjectId:Int? = nil,
 															   messageType:NewChatMessageVOTypes ,
                                                                uniqueIdResult:((String)->())? = nil,
                                                                completion: @escaping ((ChatResponse)->())
@@ -150,10 +156,11 @@ public extension Chat {
         let uniqueId = clientSpecificUniqueId ?? UUID().uuidString
         uniqueIdResult?(uniqueId)
         let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
-		guard let content = req.convertCodableToString() else {return}
+        let content = req?.convertCodableToString()
 		let chatMessage = SendChatMessageVO(chatMessageVOType:  messageType.rawValue,
 											token:              createChatModel.token,
-											content:            "\(content)",
+                                            content:            content  != nil ? "\(content!)" : nil,
+                                            subjectId: subjectId,
 											typeCode:           typeCode,
 											uniqueId:           uniqueId,
 											isCreateThreadAndSendMessage: true)
@@ -174,7 +181,7 @@ public extension Chat {
 	private func sendToAsync(asyncMessageVO:SendAsyncMessageVO){
 		guard let content = asyncMessageVO.convertCodableToString() else { return }
 		asyncClient?.pushSendData(type: asyncMessageVO.pushMsgType ?? 3, content: content)
-//		runSendMessageTimer()
+        runSendMessageTimer()
 	}
 	
 	internal func getDeviceIdAndCreateAsync(){
