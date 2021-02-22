@@ -9,7 +9,7 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
-open class UpdateThreadInfoRequest: RequestModelDelegates {
+open class UpdateThreadInfoRequest: RequestModelDelegates  , Encodableb{
     
     public let description:     String? // Description for thread
 //    public let image:           String? // URL og thread image to be set
@@ -65,6 +65,12 @@ open class UpdateThreadInfoRequest: RequestModelDelegates {
     public func convertContentToJSONArray() -> [JSON] {
         return []
     }
+	
+	private enum CodingKeys : String , CodingKey{
+		case description = "description"
+		case name = "name"
+		case metadata = "metadata"
+	}
     
 }
 

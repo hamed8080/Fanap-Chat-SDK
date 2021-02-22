@@ -100,9 +100,46 @@ public extension Chat {
 			case .IsThreadNamePublic(req:let req , messageType: let messageType):
 				tuple = (req , messageType)
 				break
-			case .MuteThread(req: let req, messageType: let messageType):
+			case .MuteThread(threadId:let threadId, messageType: let messageType):
 				tuple = (nil , messageType)
-                subjectId = req.threadId
+                subjectId = threadId
+				break
+			case .UnMuteThread(threadId:let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .PinThread(threadId:let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .UnPinThread(threadId:let threadId , messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .CreateThread(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .AddParticipant(threadId: let threadId , req: let req, messageType: let messageType):
+				tuple = ([req] , messageType)
+				subjectId = threadId
+				break
+			case .AddParticipants(threadId:let threadId, req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = threadId
+				break
+			case .RemoveParticipant(threadId:let threadId, participantId: let participantId, messageType: let messageType):
+				tuple = ([participantId] , messageType)
+				subjectId = threadId
+				break
+			case .RemoveParticipants(threadId:let threadId, participantIds: let participantIds, messageType: let messageType):
+				tuple = (participantIds , messageType)
+				subjectId = threadId
+				break
+			case .JoinThread(uniqueName: let uniqueName, messageType: let messageType):
+				tuple = (uniqueName , messageType)
+				break
+			case .CloseThread(threadId: let threadId, messageType: let messageType):
+				tuple = (threadId , messageType)
 				break
 		}
         prepareToSendAsync(req: tuple.request,

@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftyJSON
-
+import FanapPodAsyncSDK
 
 extension String {
     subscript (bounds: CountableClosedRange<Int>) -> String {
@@ -46,5 +46,10 @@ extension String {
             return []
         }
     }
+	
+	func getCustomTextToSendWithRemoveSpaceAndEnter()-> String {
+		let customTextToSend = MakeCustomTextToSend(message: self)
+		return customTextToSend.replaceSpaceEnterWithSpecificCharecters()
+	}
 	
 }

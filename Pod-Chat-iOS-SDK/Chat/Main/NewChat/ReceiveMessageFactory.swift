@@ -18,6 +18,7 @@ class ReceiveMessageFactory{
 		switch chatMessage.type {
 			
 			case .ADD_PARTICIPANT:
+				AddParticipantResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .ALL_UNREAD_MESSAGE_COUNT:
 				break
@@ -31,6 +32,7 @@ class ReceiveMessageFactory{
 			case .CLEAR_HISTORY:
 				break
 			case .CLOSE_THREAD:
+				CloseThreadResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .CONTACTS_LAST_SEEN:
 				break
@@ -39,6 +41,7 @@ class ReceiveMessageFactory{
 			case .CREATE_BOT:
 				break
 			case .CREATE_THREAD:
+				CreateThreadResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .DEFINE_BOT_COMMAND:
 				break
@@ -81,6 +84,7 @@ class ReceiveMessageFactory{
 				IsPublicThreadNameAvailableResponseHandler.handle(chat ,chatMessage , asyncMessage)
 				break
 			case .JOIN_THREAD:
+				JoinThreadResponseHandler.handle(chat ,chatMessage , asyncMessage)
 				break
 			case .LAST_SEEN_UPDATED:
 				break
@@ -98,12 +102,14 @@ class ReceiveMessageFactory{
 			case .PIN_MESSAGE:
 				break
 			case .PIN_THREAD:
+				PinThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .RELATION_INFO:
 				break
 			case .REMOVED_FROM_THREAD:
 				break
 			case .REMOVE_PARTICIPANT:
+				RemoveParticipantResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .REMOVE_ROLE_FROM_USER:
 				break
@@ -141,10 +147,14 @@ class ReceiveMessageFactory{
 				UnBlockResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .UNMUTE_THREAD:
+				//same as Mute response no neeed new class to handle it
+				MuteThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UNPIN_MESSAGE:
 				break
 			case .UNPIN_THREAD:
+				//same as Pin response no neeed new class to handle it
+				PinThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UPDATE_THREAD_INFO:
 				break

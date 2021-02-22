@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 
-open class Invitee {
+open class Invitee : Encodable{
     /*
      * + InviteeVO       {object}
      *    - id           {string}

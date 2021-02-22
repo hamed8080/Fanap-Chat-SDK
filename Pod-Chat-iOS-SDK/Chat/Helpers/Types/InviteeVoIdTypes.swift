@@ -9,13 +9,13 @@
 import Foundation
 
 
-public enum InviteeVoIdTypes {
+public enum InviteeVoIdTypes : Int , Encodable {
     
-    case TO_BE_USER_SSO_ID
-    case TO_BE_USER_CONTACT_ID
-    case TO_BE_USER_CELLPHONE_NUMBER
-    case TO_BE_USER_USERNAME
-    case TO_BE_USER_ID
+    case TO_BE_USER_SSO_ID = 1
+    case TO_BE_USER_CONTACT_ID = 2
+    case TO_BE_USER_CELLPHONE_NUMBER = 3
+    case TO_BE_USER_USERNAME = 4
+    case TO_BE_USER_ID = 5
     
     public func stringValue() -> String {
         switch self {

@@ -44,7 +44,7 @@ open class CreateThreadWithMessageRequest: RequestModelDelegates {
         if let uniqueName_ = self.createThreadInput.uniqueName {
             content["uniqueName"] = JSON(uniqueName_)
         }
-        content["type"] = JSON(self.createThreadInput.type?.intValue() ?? 0)
+        content["type"] = JSON(self.createThreadInput.type?.rawValue ?? 0)
         
         if let message_ = sendMessageInput {
             content["message"] = message_.convertContentToJSON()

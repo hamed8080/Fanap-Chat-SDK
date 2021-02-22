@@ -9,7 +9,7 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
-open class CreateThreadRequest: RequestModelDelegates {
+open class CreateThreadRequest: Encodable , RequestModelDelegates {
     
     public let description: String?
     public let image:       String?
@@ -17,9 +17,12 @@ open class CreateThreadRequest: RequestModelDelegates {
     public let metadata:    String?
     public let title:       String
     public let type:        ThreadTypes?
-    public let uniqueName:  String?
+    public let uniqueName:  String? //only for public thread
     
+	
+	@available(*,deprecated , message: "removed in future release. use in request method")
     public let typeCode:    String?
+	@available(*,deprecated ,  message: "removed in future release. use in request method")
     public let uniqueId:    String
     
     public init(description:    String?,
@@ -44,7 +47,7 @@ open class CreateThreadRequest: RequestModelDelegates {
         self.uniqueId       = uniqueId ?? UUID().uuidString
     }
     
-    
+	// TODO: removed in futur release afetre remove typeCode and uniqueId
     public func convertContentToJSON() -> JSON {
         var content: JSON = [:]
         content["title"] = JSON(MakeCustomTextToSend(message: self.title).replaceSpaceEnterWithSpecificCharecters())
@@ -70,7 +73,7 @@ open class CreateThreadRequest: RequestModelDelegates {
         if let typeCode_ = self.typeCode {
             content["typeCode"] = JSON(typeCode_)
         }
-        content["type"] = JSON(self.type?.intValue() ?? 0)
+        content["type"] = JSON(self.type?.rawValue ?? 0)
         content["uniqueId"] = JSON(self.uniqueId)
         
         return content
@@ -79,11 +82,34 @@ open class CreateThreadRequest: RequestModelDelegates {
     public func convertContentToJSONArray() -> [JSON] {
         return []
     }
+	
+	
+	private enum CodingKeys: String ,CodingKey{
+		case title       = "title"
+		case image       = "image"
+		case description = "description"
+		case metadata    = "metadata"
+		case uniqueName  = "uniqueName"
+		case type        = "type"
+		case invitees    = "invitees"
+	}
+	
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encodeIfPresent(title.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .title)
+		try container.encodeIfPresent(image, forKey: .image)
+		try container.encodeIfPresent(description?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .description)
+		try container.encodeIfPresent(metadata?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .metadata)
+		try container.encodeIfPresent(uniqueName, forKey: .uniqueName)
+		try container.encodeIfPresent(type, forKey: .type)
+		try container.encodeIfPresent(invitees, forKey: .invitees)
+	}
     
 }
 
 
 /// MARK: -  this class will be deprecate (use this class instead: 'CreateThreadRequest')
+@available(*,deprecated , message: "use CreateThreadRequest removed in future release.")
 open class CreateThreadRequestModel: CreateThreadRequest {
     
 }

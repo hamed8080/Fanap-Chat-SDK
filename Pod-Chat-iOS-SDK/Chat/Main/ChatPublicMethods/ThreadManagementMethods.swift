@@ -660,6 +660,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (MuteUnmuteThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! MuteUnmuteThreadModel)
+	@available(*, deprecated , message: "removed in future release . use request method")
     public func muteThread(inputModel muteThreadInput: MuteUnmuteThreadRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
@@ -707,6 +708,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (MuteUnmuteThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! MuteUnmuteThreadModel)
+	@available(*, deprecated , message: "removed in future release . use request method")
     public func unmuteThread(inputModel unmuteThreadInput: MuteUnmuteThreadRequest,
                              uniqueId:          @escaping (String) -> (),
                              completion:        @escaping callbackTypeAlias) {
@@ -752,6 +754,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (PinUnpinThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! PinUnpinThreadModel)
+	@available(*, deprecated , message: "removed in future release . use request method")
     public func pinThread(inputModel pinThreadInput: PinUnpinThreadRequest,
                            uniqueId:        @escaping (String) -> (),
                            completion:      @escaping callbackTypeAlias) {
@@ -799,6 +802,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (PinUnpinThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! PinUnpinThreadModel)
+	@available(*, deprecated , message: "removed in future release . use request method")
     public func unpinThread(inputModel unpinThreadInput: PinUnpinThreadRequest,
                             uniqueId:       @escaping (String) -> (),
                             completion:     @escaping callbackTypeAlias) {
@@ -964,15 +968,6 @@ extension Chat {
         
         
     }
-    
-    
-    
-    
-    
-    
-
-    
-    
     
 }
 

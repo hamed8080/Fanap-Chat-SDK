@@ -9,3 +9,5 @@ import Foundation
 public struct MuteThreadResponse : Decodable {
 	public var threadId:Int? = nil
 }
+
+public typealias UnMuteThreadResponse = MuteThreadResponse
