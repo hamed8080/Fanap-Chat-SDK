@@ -66,7 +66,7 @@ public class QueueOfFileMessages: NSManagedObject {
         
         func createQueueOfWaitFileMessagesModel() -> QueueOfWaitFileMessagesModel {
             let queueOfWaitFileMessagesModel = QueueOfWaitFileMessagesModel(textMessage:        self.textMessage,
-                                                                            messageType:    MessageType.getType(from: messageType ?? 1),
+                                                                            messageType:    MessageType(rawValue: messageType ?? 1) ?? .TEXT,
                                                                             fileExtension:  self.fileExtension,
                                                                             fileName:       self.fileName,
                                                                             isPublic:       isPublic,

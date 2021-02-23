@@ -25,15 +25,15 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
 	@available(*,deprecated ,  message: "removed in future release. use in request method")
     public let uniqueId:    String
     
-    public init(description:    String?,
-                image:          String?,
+    public init(description:    String? = nil,
+                image:          String? = nil,
                 invitees:       [Invitee],
-                metadata:       String?,
+                metadata:       String? = nil,
                 title:          String,
-                type:           ThreadTypes?,
-                uniqueName:     String?,
-                typeCode:       String?,
-                uniqueId:       String?) {
+                type:           ThreadTypes? = nil,
+                uniqueName:     String? = nil,
+                typeCode:       String? = nil,
+                uniqueId:       String? = nil) {
         
         self.description    = description
         self.image          = image

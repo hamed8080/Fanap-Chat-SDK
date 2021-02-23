@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-open class LeaveThreadRequest {
+open class LeaveThreadRequest : Encodable {
     
     public let threadId:        Int
     public let clearHistory:    Bool?
@@ -19,8 +19,8 @@ open class LeaveThreadRequest {
     
     public init(threadId:       Int,
                 clearHistory:   Bool?,
-                typeCode:       String?,
-                uniqueId:       String?) {
+                typeCode:       String? = nil,
+                uniqueId:       String? = nil) {
         
         self.threadId       = threadId
         self.clearHistory   = clearHistory
@@ -37,9 +37,18 @@ open class LeaveThreadRequest {
         return content
     }
     
+    private enum CodingKeys : String , CodingKey {
+        case clearHistory = "clearHistory"
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(clearHistory, forKey: .clearHistory)
+    }
+    
 }
 
-
+@available(*,deprecated , message: "this remoed in future release use request method.")
 open class LeaveThreadRequestModel: LeaveThreadRequest {
     
 }

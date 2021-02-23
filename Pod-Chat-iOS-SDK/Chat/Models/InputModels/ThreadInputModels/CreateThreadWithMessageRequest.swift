@@ -61,7 +61,7 @@ open class CreateThreadWithMessageRequest: RequestModelDelegates {
 }
 
 
-/// MARK: -  this class will be deprecate (use this class instead: 'ClearHistoryRequest')
+@available(*, deprecated , message: "removed in future release.")
 open class CreateThreadWithMessageRequestModel: CreateThreadWithMessageRequest {
     
 }

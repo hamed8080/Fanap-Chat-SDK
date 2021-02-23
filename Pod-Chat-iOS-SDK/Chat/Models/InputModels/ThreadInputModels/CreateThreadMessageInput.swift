@@ -89,7 +89,7 @@ open class CreateThreadMessageInput: RequestModelDelegates {
             let theSystemMeta = MakeCustomTextToSend(message: systemMetadata_).replaceSpaceEnterWithSpecificCharecters()
             content["systemMetadata"] = JSON(theSystemMeta)
         }
-        content["messageType"] = JSON(messageType.returnIntValue())
+        content["messageType"] = JSON(messageType.rawValue)
         content["uniqueId"] = JSON(self.uniqueId)
         
         return content

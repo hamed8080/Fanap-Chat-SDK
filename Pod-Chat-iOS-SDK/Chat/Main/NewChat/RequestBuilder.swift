@@ -36,6 +36,7 @@ public enum RequestBuilder {
 	case RemoveParticipants(threadId:Int , participantIds: [Int] ,  messageType:NewChatMessageVOTypes = .REMOVE_PARTICIPANT)
 	case JoinThread(uniqueName:String ,  messageType:NewChatMessageVOTypes = .JOIN_THREAD)
 	case CloseThread(threadId:Int ,  messageType:NewChatMessageVOTypes = .CLOSE_THREAD)
-	case UpdateThreadInfo(req:UpdateThreadInfoRequest ,  messageType:NewChatMessageVOTypes = .UPDATE_THREAD_INFO)
-	
+    case UpdateThreadInfo(req:UpdateThreadInfoRequest , uploadProgress: (Float)->(),  messageType:NewChatMessageVOTypes = .UPDATE_THREAD_INFO)
+    case CreateThreadWithMessage(req:CreateThreadWithMessage , messageType:NewChatMessageVOTypes = .CREATE_THREAD)
+    case LaeveThread(req:LeaveThreadRequest , messageType:NewChatMessageVOTypes = .LEAVE_THREAD)
 }

@@ -8,30 +8,31 @@
 
 import FanapPodAsyncSDK
 import SwiftyJSON
+import Foundation
 
-open class UpdateThreadInfoRequest: RequestModelDelegates  , Encodableb{
+open class UpdateThreadInfoRequest: RequestModelDelegates  , Encodable {
     
-    public let description:     String? // Description for thread
-//    public let image:           String? // URL og thread image to be set
-    public var metadata:        String? // New Metadata to be set on thread
-    public var threadImage:     UploadImageRequest?
-    public let threadId:        Int     // Id of thread
-    public let title:           String? // New Title for thread
+    public let description : String?
+    public var metadata    : String?
+    public var threadImage : UploadImageRequest?
+    public let threadId    : Int
+    public let title       : String?
     
+    
+    @available(*,deprecated , message: "removed in future release. use request method")
     public let typeCode:        String?
+    @available(*,deprecated , message: "removed in future release. use request method")
     public let uniqueId:        String
     
-    public init(description:        String?,
-//                image:              String?,
-                metadata:           String?,
+    public init(description:        String? = nil,
+                metadata:           String? = nil,
                 threadId:           Int,
-                threadImage:        UploadImageRequest?,
+                threadImage:        UploadImageRequest? = nil,
                 title:              String,
-                typeCode:           String?,
-                uniqueId:           String?) {
+                typeCode:           String? = nil,
+                uniqueId:           String? = nil) {
         
         self.description    = description
-//        self.image          = image
         self.metadata       = metadata
         self.threadId       = threadId
         self.threadImage    = threadImage
@@ -72,9 +73,16 @@ open class UpdateThreadInfoRequest: RequestModelDelegates  , Encodableb{
 		case metadata = "metadata"
 	}
     
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(description?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .description)
+        try container.encodeIfPresent(title?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .name)
+        try container.encodeIfPresent(metadata?.getCustomTextToSendWithRemoveSpaceAndEnter() , forKey: .metadata)
+    }
+    
 }
 
-
+@available(* , deprecated , message: "remoed in future release")
 open class UpdateThreadInfoRequestModel: UpdateThreadInfoRequest {
     
 }

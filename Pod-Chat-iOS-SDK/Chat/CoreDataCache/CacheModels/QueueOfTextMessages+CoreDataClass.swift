@@ -46,7 +46,7 @@ public class QueueOfTextMessages: NSManagedObject {
         
         func createQueueOfWaitTextMessagesModel() -> QueueOfWaitTextMessagesModel {
             let queueOfWaitTextMessagesModel = QueueOfWaitTextMessagesModel(textMessage:    self.textMessage,
-                                                                            messageType:    MessageType.getType(from: messageType ?? 1),
+                                                                            messageType:    MessageType(rawValue: messageType ?? 1) ?? .TEXT,
 //                                                                            metadata:       metadata,
                                                                             metadata:       self.metadata,
                                                                             repliedTo:      repliedTo,

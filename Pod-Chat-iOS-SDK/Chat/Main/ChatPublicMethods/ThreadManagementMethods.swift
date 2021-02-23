@@ -33,6 +33,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (CloseThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ThreadModel)
+    @available(*, deprecated , message: "removed in future release . use request method")
     public func closeThread(inputModel closeThreadInput: CloseThreadRequest,
                             uniqueId:       @escaping (String) -> (),
                             completion:     @escaping callbackTypeAlias) {
@@ -80,6 +81,7 @@ extension Chat {
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (CreateThreadRequest)
     /// - parameter uniqueId:   (response) it will returns the request 'UniqueId' that will send to server. (String)
     /// - parameter completion: (response) it will returns the response that comes from server to this request. (Any as! ThreadModel)
+    @available(*, deprecated , message: "removed in future release . use request method")
     public func createThread(inputModel createThreadInput: CreateThreadRequest,
                              uniqueId:          @escaping (String) -> (),
                              completion:        @escaping callbackTypeAlias) {

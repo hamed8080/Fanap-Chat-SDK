@@ -298,7 +298,7 @@ extension Chat {
         
     }
     
-    private func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
+     func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
                                             progress:      @escaping (Float) -> (),
                                             completion:    @escaping (Data?, DownloadImageModel) -> ()) {
         guard let createChatModel = createChatModel else {return}

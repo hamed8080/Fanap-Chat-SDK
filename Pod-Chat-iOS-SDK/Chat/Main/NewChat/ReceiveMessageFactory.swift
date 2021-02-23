@@ -89,6 +89,7 @@ class ReceiveMessageFactory{
 			case .LAST_SEEN_UPDATED:
 				break
 			case .LEAVE_THREAD:
+                LeaveThreadResponseHandler.handle(chat ,chatMessage , asyncMessage)
 				break
 			case .LOGOUT:
 				break
