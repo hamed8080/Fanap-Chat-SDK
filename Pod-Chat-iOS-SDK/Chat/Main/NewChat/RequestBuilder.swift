@@ -38,5 +38,13 @@ public enum RequestBuilder {
 	case CloseThread(threadId:Int ,  messageType:NewChatMessageVOTypes = .CLOSE_THREAD)
     case UpdateThreadInfo(req:UpdateThreadInfoRequest , uploadProgress: (Float)->(),  messageType:NewChatMessageVOTypes = .UPDATE_THREAD_INFO)
     case CreateThreadWithMessage(req:CreateThreadWithMessage , messageType:NewChatMessageVOTypes = .CREATE_THREAD)
-    case LaeveThread(req:LeaveThreadRequest , messageType:NewChatMessageVOTypes = .LEAVE_THREAD)
+    case LeaveThread(req:LeaveThreadRequest , messageType:NewChatMessageVOTypes = .LEAVE_THREAD)
+	case CreateBot(botName:String ,messageType:NewChatMessageVOTypes  = .CREATE_BOT)
+	case CreateBotCommand(req:AddBotCommandRequest ,messageType:NewChatMessageVOTypes = .DEFINE_BOT_COMMAND)
+	case StartBot(req:StartStopBotRequest ,messageType:NewChatMessageVOTypes = .START_BOT)
+	case StopBot(req:StartStopBotRequest ,messageType:NewChatMessageVOTypes  = .STOP_BOT)
+	case UserInfo
+	case SetProfile(req:UpdateChatProfileRequest ,messageType:NewChatMessageVOTypes  = .SET_PROFILE)
+	case SendStatusPing(req:StatusPing ,messageType:NewChatMessageVOTypes  = .STATUS_PING)
+	case ThreadParticipants(threadId:Int, _ req:ThreadParticipantsRequest , messageType:NewChatMessageVOTypes = .THREAD_PARTICIPANTS)
 }

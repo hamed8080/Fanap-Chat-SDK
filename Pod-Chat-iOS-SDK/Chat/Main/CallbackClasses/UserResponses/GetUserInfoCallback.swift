@@ -41,8 +41,9 @@ extension Chat {
         Chat.sharedInstance.delegate?.systemEvents(model: systemEventModel)
         
         if createChatModel.enableCache {
-            let user = User(messageContent: message.content?.convertToJSON() ?? [:])
-            Chat.cacheDB.saveUserInfo(withUserObject: user)
+			if let data = message.content?.data(using: .utf8) , let user = try? JSONDecoder().decode(User.self, from: data){
+				Chat.cacheDB.saveUserInfo(withUserObject: user)
+			}
         }
         
         if Chat.map[message.uniqueId] != nil {    

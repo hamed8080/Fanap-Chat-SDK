@@ -11,149 +11,176 @@ public struct ChatResponse{
 	public var error:ChatError?
 }
 
-
 //this extension merged after removed all deprecated method in Chat class
 public extension Chat {
    
-
-    
 	func request(_ builder :RequestBuilder ,
-                        typeCode:String? = nil,
-                        uniqueId:String? = nil,
-                        getCacheResponse: Bool?   = false,
-                        completion: @escaping (ChatResponse)->(),
-                        onSent: ((Any)->())? = nil,
-                        onDelivered: ((Any)->())? = nil,
-                        onSeen: ((Any)->())? = nil,
-                        uniqueIdResult:((String)->())? = nil){
-
-        guard let createChatModel = createChatModel else{return}
-        
-        let tuple :(request:Encodable? ,messageType:NewChatMessageVOTypes)
-        var subjectId:Int? = nil
-        
-        switch builder {
-        case .GetContacts(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .GetBlockedContacts(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .AddContact(req: let req):
-            let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
-            let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restApiRequest(req, decodeType: ContactResponse.self,url: url , headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .AddContacts(req: let req):
-            let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
-            let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restApiRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .ContactNotSeenDuration(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .RemoveContact(req: let req):
-            let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
-            let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restApiRequest(req, decodeType: RemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .SearchContact(req: let req , messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .SyncContacts:
-            SyncContactsRequestHandler.handle(self, completion: completion)
-            return
-        case .UpdateContact(req: let req):
-            let url = "\(createChatModel.platformHost)\(SERVICES_PATH.UPDATE_CONTACTS.rawValue)"
-            let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-            restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .BlockContact(req: let req , messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .UnBlockContact(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .MapReverse(req: let req):
-            guard let mapApiKey = createChatModel.mapApiKey else {return}
-            let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
-            let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-            restApiRequest(req, decodeType: MapReverse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .MapSearch(req: let req):
-            guard let mapApiKey = createChatModel.mapApiKey else {return}
-            let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
-            let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-            restApiRequest(req, decodeType: MapSearchResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .MapRouting(req: let req):
-            guard let mapApiKey = createChatModel.mapApiKey else {return}
-            let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_ROUTING.rawValue)"
-            let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-            restApiRequest(req, decodeType: MapRoutingResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
-            return
-        case .MapStaticImage(req: let req):
-            DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
-            return
-        case .Threads(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .IsThreadNamePublic(req:let req , messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .MuteThread(threadId:let threadId, messageType: let messageType):
-            tuple = (nil , messageType)
-            subjectId = threadId
-            break
-        case .UnMuteThread(threadId:let threadId, messageType: let messageType):
-            tuple = (nil , messageType)
-            subjectId = threadId
-            break
-        case .PinThread(threadId:let threadId, messageType: let messageType):
-            tuple = (nil , messageType)
-            subjectId = threadId
-            break
-        case .UnPinThread(threadId:let threadId , messageType: let messageType):
-            tuple = (nil , messageType)
-            subjectId = threadId
-            break
-        case .CreateThread(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .AddParticipant(threadId: let threadId , req: let req, messageType: let messageType):
-            tuple = ([req] , messageType)
-            subjectId = threadId
-            break
-        case .AddParticipants(threadId:let threadId, req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            subjectId = threadId
-            break
-        case .RemoveParticipant(threadId:let threadId, participantId: let participantId, messageType: let messageType):
-            tuple = ([participantId] , messageType)
-            subjectId = threadId
-            break
-        case .RemoveParticipants(threadId:let threadId, participantIds: let participantIds, messageType: let messageType):
-            tuple = (participantIds , messageType)
-            subjectId = threadId
-            break
-        case .JoinThread(uniqueName: let uniqueName, messageType: let messageType):
-            tuple = (uniqueName , messageType)
-            break
-        case .CloseThread(threadId: let threadId, messageType: let messageType):
-            tuple = (nil , messageType)
-            subjectId = threadId
-            break
-        case .UpdateThreadInfo(req: let req , uploadProgress: let uploadProgress , messageType: let messageType):
-            UpdateThreadInfoRequestHandler(self , req , uploadProgress , completion , uniqueId , uniqueIdResult , messageType , typeCode).handle()
-            return
-        case .CreateThreadWithMessage(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            break
-        case .LaeveThread(req: let req, messageType: let messageType):
-            tuple = (req , messageType)
-            subjectId = req.threadId
-            break
-        }
+				 typeCode:String? = nil,
+				 uniqueId:String? = nil,
+				 getCacheResponse: Bool?   = false,
+				 completion: @escaping (ChatResponse)->(),
+				 onSent: ((Any)->())? = nil,
+				 onDelivered: ((Any)->())? = nil,
+				 onSeen: ((Any)->())? = nil,
+				 uniqueIdResult:((String)->())? = nil){
+		
+		guard let createChatModel = createChatModel else{return}
+		
+		let tuple :(request:Encodable? ,messageType:NewChatMessageVOTypes)
+		var subjectId:Int? = nil
+		var plainText = false
+		
+		switch builder {
+			case .GetContacts(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .GetBlockedContacts(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .AddContact(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
+				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: ContactResponse.self,url: url , headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .AddContacts(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
+				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .ContactNotSeenDuration(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .RemoveContact(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
+				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: RemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .SearchContact(req: let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .SyncContacts:
+				SyncContactsRequestHandler.handle(self, completion: completion)
+				return
+			case .UpdateContact(req: let req):
+				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.UPDATE_CONTACTS.rawValue)"
+				let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+				restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .BlockContact(req: let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .UnBlockContact(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .MapReverse(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapReverse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapSearch(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapSearchResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapRouting(req: let req):
+				guard let mapApiKey = createChatModel.mapApiKey else {return}
+				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_ROUTING.rawValue)"
+				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
+				restApiRequest(req, decodeType: MapRoutingResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				return
+			case .MapStaticImage(req: let req):
+				DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
+				return
+			case .Threads(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .IsThreadNamePublic(req:let req , messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .MuteThread(threadId:let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .UnMuteThread(threadId:let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .PinThread(threadId:let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .UnPinThread(threadId:let threadId , messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .CreateThread(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .AddParticipant(threadId: let threadId , req: let req, messageType: let messageType):
+				tuple = ([req] , messageType)
+				subjectId = threadId
+				break
+			case .AddParticipants(threadId:let threadId, req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = threadId
+				break
+			case .RemoveParticipant(threadId:let threadId, participantId: let participantId, messageType: let messageType):
+				tuple = ([participantId] , messageType)
+				subjectId = threadId
+				break
+			case .RemoveParticipants(threadId:let threadId, participantIds: let participantIds, messageType: let messageType):
+				tuple = (participantIds , messageType)
+				subjectId = threadId
+				break
+			case .JoinThread(uniqueName: let uniqueName, messageType: let messageType):
+				tuple = (uniqueName , messageType)
+				break
+			case .CloseThread(threadId: let threadId, messageType: let messageType):
+				tuple = (nil , messageType)
+				subjectId = threadId
+				break
+			case .UpdateThreadInfo(req: let req , uploadProgress: let uploadProgress , messageType: let messageType):
+				UpdateThreadInfoRequestHandler(self , req , uploadProgress , completion , uniqueId , uniqueIdResult , messageType , typeCode).handle()
+				return
+			case .CreateThreadWithMessage(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .LeaveThread(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = req.threadId
+				break
+			case .CreateBot(botName: let botName, messageType: let messageType):
+				tuple = (botName , messageType)
+				plainText = true
+				break
+			case .CreateBotCommand(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				plainText = true
+				break
+			case .StopBot(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = req.threadId
+				break
+			case .StartBot(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = req.threadId
+				break
+			case .UserInfo:
+				tuple = (nil , .USER_INFO)
+				break
+			case .SetProfile(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .SendStatusPing(req: let req, messageType: let messageType):
+				tuple = (req , messageType)
+				break
+			case .ThreadParticipants(threadId: let threadId, _ : let req, messageType: let messageType):
+				tuple = (req , messageType)
+				subjectId = threadId
+				break
+		}
         prepareToSendAsync(req: tuple.request,
                            clientSpecificUniqueId: uniqueId,
                            typeCode: typeCode ,
@@ -163,7 +190,8 @@ public extension Chat {
                            completion: completion,
                            onSent: onSent,
                            onDelivered: onDelivered,
-                           onSeen: onSeen
+                           onSeen: onSeen,
+						   plainText: plainText
                            )
 
     }
@@ -206,16 +234,17 @@ public extension Chat {
                                                                completion: @escaping ((ChatResponse)->()),
                                                                onSent: ((Any)->())? = nil,
                                                                onDelivered: ((Any)->())? = nil,
-                                                               onSeen: ((Any)->())? = nil
+                                                               onSeen: ((Any)->())? = nil,
+															   plainText:Bool = false
 	){
         guard let createChatModel = createChatModel else {return}
         let uniqueId = clientSpecificUniqueId ?? UUID().uuidString
         uniqueIdResult?(uniqueId)
         let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
-        let content = req?.convertCodableToString()
+		
 		let chatMessage = SendChatMessageVO(chatMessageVOType:  messageType.rawValue,
 											token:              createChatModel.token,
-                                            content:            content  != nil ? "\(content!)" : nil,
+                                            content:            getContent(req , plainText),
                                             subjectId: subjectId,
 											typeCode:           typeCode,
 											uniqueId:           uniqueId,
@@ -232,6 +261,16 @@ public extension Chat {
 		
         callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
 		sendToAsync(asyncMessageVO: asyncMessage)
+	}
+	
+	private func getContent(_ req:Encodable? , _ plainText:Bool)->String?{
+		var content:String? = nil
+		if !plainText && req != nil {
+			content = req?.convertCodableToString()
+		}else if plainText && req != nil , let stringValue = req as? String{
+			content = stringValue
+		}
+		return content
 	}
 	
 	internal func sendToAsync(asyncMessageVO:SendAsyncMessageVO){
@@ -390,7 +429,6 @@ public enum NewChatMessageVOTypes :Int , Codable {
 	case DEFINE_BOT_COMMAND                = 63
 	case START_BOT                         = 64
 	case STOP_BOT                          = 65
-	case CONTACT_SYNCED                    = 90
 	case LOGOUT                            = 100
 	case STATUS_PING                       = 101
 	case CLOSE_THREAD                      = 102

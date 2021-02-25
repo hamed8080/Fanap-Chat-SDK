@@ -36,14 +36,14 @@ class ReceiveMessageFactory{
 				break
 			case .CONTACTS_LAST_SEEN:
 				break
-			case .CONTACT_SYNCED:
-				break
 			case .CREATE_BOT:
+				CreateBotResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .CREATE_THREAD:
 				CreateThreadResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .DEFINE_BOT_COMMAND:
+				CreateBotCommandResposneHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .DELETE_MESSAGE:
 				break
@@ -127,22 +127,28 @@ class ReceiveMessageFactory{
 			case .SENT:
 				break
 			case .SET_PROFILE:
+				SetProfileResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SET_RULE_TO_USER:
 				break
 			case .SPAM_PV_THREAD:
 				break
 			case .START_BOT:
+				StartBotResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .STATUS_PING:
+				//never triggered because no reponse back from server
+				StatusPingResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .STOP_BOT:
+				StopBotResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SYSTEM_MESSAGE:
 				break
 			case .THREAD_INFO_UPDATED:
 				break
 			case .THREAD_PARTICIPANTS:
+				ThreadParticipantsResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .UNBLOCK:
 				UnBlockResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -160,6 +166,7 @@ class ReceiveMessageFactory{
 			case .UPDATE_THREAD_INFO:
 				break
 			case .USER_INFO:
+				UserInfoResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .USER_STATUS:
 				break

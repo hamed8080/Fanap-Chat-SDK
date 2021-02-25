@@ -132,5 +132,3 @@ open class ThingVO {
     }
     
 }
-
-

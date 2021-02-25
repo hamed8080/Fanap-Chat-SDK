@@ -47,7 +47,7 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
         self.uniqueId       = uniqueId ?? UUID().uuidString
     }
     
-	// TODO: removed in futur release afetre remove typeCode and uniqueId
+	// TODO: removed in future release afetre remove typeCode and uniqueId
     public func convertContentToJSON() -> JSON {
         var content: JSON = [:]
         content["title"] = JSON(MakeCustomTextToSend(message: self.title).replaceSpaceEnterWithSpecificCharecters())

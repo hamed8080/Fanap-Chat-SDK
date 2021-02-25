@@ -225,7 +225,7 @@ extension Chat: AsyncDelegates {
                 log.verbose("get info result comes, and save userInfo: \n \(resultModel.returnDataAsJSON())", context: "Chat")
 
                 if resultModel.hasError == false {
-                    self.userInfo = User(withUserObject: resultModel.user)
+					self.userInfo = resultModel.user
                     self.isChatReady = true
                     self.delegate?.chatReady(withUserInfo: self.userInfo!)
                     if createChatModel.enableCache {
