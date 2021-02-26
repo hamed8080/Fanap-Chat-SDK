@@ -55,19 +55,19 @@ open class PinUnpinMessage : Codable{
     }
     
 	private enum CodingKeys: String ,CodingKey{
-		case messageId  = "messageId"
+        case messageId = "messageId"
 		case notifyAll = "notifyAll"
-		case text = "text"
-		case sender = "sender"
-		case time = "time"
+        case text      = "text"
+        case sender    = "sender"
+        case time      = "time"
 	}
 	
 	public required init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		self.messageId  = try container.decode(Int.self, forKey: .messageId)
-		self.notifyAll  = try container.decodeIfPresent(Bool.self, forKey: .notifyAll) ?? false
-		self.text  = try container.decodeIfPresent(String.self, forKey: .text)
-		self.sender  = try container.decodeIfPresent(Participant.self, forKey: .sender)
-		self.time  = try container.decodeIfPresent(Int.self, forKey: .time)
+        let container  = try decoder.container(keyedBy : CodingKeys.self)
+        self.messageId = try container.decode(Int.self, forKey: .messageId)
+        self.notifyAll = try container.decodeIfPresent(Bool.self, forKey : .notifyAll) ?? false
+        self.text      = try container.decodeIfPresent(String.self, forKey : .text)
+        self.sender    = try container.decodeIfPresent(Participant.self, forKey : .sender)
+        self.time      = try container.decodeIfPresent(Int.self, forKey : .time)
 	}
 }

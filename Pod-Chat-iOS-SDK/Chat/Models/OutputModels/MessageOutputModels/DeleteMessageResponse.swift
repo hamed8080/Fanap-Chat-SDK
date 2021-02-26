@@ -81,7 +81,7 @@ open class DeleteMessageModel: ResponseModel, ResponseModelDelegates {
     
 }
 
-
+@available(*,deprecated , message: "removed in future release.")
 open class DeleteMessageResponse: DeleteMessageModel {
     
 }

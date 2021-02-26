@@ -8,6 +8,7 @@
 
 import SwiftyJSON
 
+@available(*,deprecated , message: "removed in future release.use request method and threadId in parameter.")
 open class ClearHistoryRequest: RequestModelDelegates {
     
     public let threadId:    Int
@@ -39,7 +40,7 @@ open class ClearHistoryRequest: RequestModelDelegates {
 }
 
 
-/// MARK: -  this class will be deprecate (use this class instead: 'ClearHistoryRequest')
+@available(*,deprecated , message: "removed in future release.use ClearHistoryRequest")
 open class ClearHistoryRequestModel: ClearHistoryRequest {
     
 }

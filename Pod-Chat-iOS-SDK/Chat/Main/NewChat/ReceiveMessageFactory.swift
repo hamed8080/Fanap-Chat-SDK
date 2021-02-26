@@ -25,11 +25,12 @@ class ReceiveMessageFactory{
 			case .BLOCK:
 				BlockedResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
-			case .BOT_MESSAGE:
+			case .BOT_MESSAGE://TODO: not implemented yet!
 				break
-			case .CHANGE_TYPE:
+			case .CHANGE_TYPE://TODO: not implemented yet!
 				break
 			case .CLEAR_HISTORY:
+                ClearHistoryResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .CLOSE_THREAD:
 				CloseThreadResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -46,6 +47,7 @@ class ReceiveMessageFactory{
 				CreateBotCommandResposneHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .DELETE_MESSAGE:
+                DeleteMessageResposneHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .DELIVERY:
 				break
@@ -75,7 +77,7 @@ class ReceiveMessageFactory{
 				break
 			case .GET_REPORT_REASONS:
 				break
-			case .GET_STATUS:
+			case .GET_STATUS://TODO: not implemented yet!
 				break
 			case .GET_THREADS:
 				ThreadsResponseHandler.handle(chat ,chatMessage , asyncMessage)
@@ -101,11 +103,12 @@ class ReceiveMessageFactory{
 			case .PING:
 				break
 			case .PIN_MESSAGE:
+                PinUnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .PIN_THREAD:
 				PinThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
-			case .RELATION_INFO:
+			case .RELATION_INFO://TODO: not implemented yet!
 				break
 			case .REMOVED_FROM_THREAD:
 				break
@@ -114,7 +117,7 @@ class ReceiveMessageFactory{
 				break
 			case .REMOVE_ROLE_FROM_USER:
 				break
-			case .RENAME:
+			case .RENAME://TODO: not implemented yet!
 				break
 			case .REPORT_MESSAGE:
 				break
@@ -158,6 +161,7 @@ class ReceiveMessageFactory{
 				MuteThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UNPIN_MESSAGE:
+                PinUnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UNPIN_THREAD:
 				//same as Pin response no neeed new class to handle it
@@ -168,7 +172,7 @@ class ReceiveMessageFactory{
 			case .USER_INFO:
 				UserInfoResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
-			case .USER_STATUS:
+			case .USER_STATUS: //TODO: not implemented yet!
 				break
 			@unknown default :
 				print("a message recived with unknowned type value. investigate to fix or leave that.")

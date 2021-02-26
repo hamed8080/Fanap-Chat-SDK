@@ -180,6 +180,21 @@ public extension Chat {
 				tuple = (req , messageType)
 				subjectId = threadId
 				break
+        case .PinMessage(_ : let req , messageType: let messageType):
+                tuple = (req , messageType)
+                subjectId = req.messageId
+                break
+        case .UnPinMessage(_ : let req , messageType: let messageType):
+                tuple = (req , messageType)
+                subjectId = req.messageId
+                break
+        case .ClearHistory(threadId:let threadId , messageType: let messageType):
+                tuple = (nil , messageType)
+                subjectId = threadId
+                break
+        case .DeleteMessage(req:let req , messageType: let messageType):
+                tuple = (req , messageType)
+                break
 		}
         prepareToSendAsync(req: tuple.request,
                            clientSpecificUniqueId: uniqueId,

@@ -47,4 +47,8 @@ public enum RequestBuilder {
 	case SetProfile(req:UpdateChatProfileRequest ,messageType:NewChatMessageVOTypes  = .SET_PROFILE)
 	case SendStatusPing(req:StatusPing ,messageType:NewChatMessageVOTypes  = .STATUS_PING)
 	case ThreadParticipants(threadId:Int, _ req:ThreadParticipantsRequest , messageType:NewChatMessageVOTypes = .THREAD_PARTICIPANTS)
+    case PinMessage(_ req:PinUnpinMessageRequest , messageType:NewChatMessageVOTypes = .PIN_MESSAGE)
+    case UnPinMessage(_ req:PinUnpinMessageRequest , messageType:NewChatMessageVOTypes = .UNPIN_MESSAGE)
+    case ClearHistory(threadId:Int , messageType:NewChatMessageVOTypes = .CLEAR_HISTORY)
+    case DeleteMessage(req:DeleteMessageRequest , messageType:NewChatMessageVOTypes = .DELETE_MESSAGE)
 }
