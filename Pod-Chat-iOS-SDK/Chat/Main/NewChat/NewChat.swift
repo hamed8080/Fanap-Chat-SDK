@@ -5,15 +5,30 @@ import Alamofire
 import SwiftyJSON
 
 
+struct Notifyable{
+	var onSent: ((Any)->())? = nil
+	var onDelivered: ((Any)->())? = nil
+	var onSeen: ((Any)->())? = nil
+}
+
 public struct ChatResponse{
 	public var result:Any?
-    public var cacheResponse:Any?
+	public var cacheResponse:Any?
 	public var error:ChatError?
 }
 
 //this extension merged after removed all deprecated method in Chat class
 public extension Chat {
-   
+	
+	
+	func request2(parameters:MyParameters){
+		prepareToSendAsync2(parameters)
+	}
+	
+	func prepareToSendAsync2(_ parameters:MyParameters){
+		
+	}
+	
 	func request(_ builder :RequestBuilder ,
 				 typeCode:String? = nil,
 				 uniqueId:String? = nil,
@@ -31,11 +46,11 @@ public extension Chat {
 		var plainText = false
 		
 		switch builder {
-			case .GetContacts(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .GetContacts(req: let req ):
+				tuple = (req , .GET_CONTACTS)
 				break
-			case .GetBlockedContacts(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .GetBlockedContacts(req: let req):
+				tuple = (req , .GET_BLOCKED)
 				break
 			case .AddContact(req: let req):
 				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
@@ -47,16 +62,16 @@ public extension Chat {
 				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
 				restApiRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
 				return
-			case .ContactNotSeenDuration(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .ContactNotSeenDuration(req: let req):
+				tuple = (req , .GET_NOT_SEEN_DURATION)
 				break
 			case .RemoveContact(req: let req):
 				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
 				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
 				restApiRequest(req, decodeType: RemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
 				return
-			case .SearchContact(req: let req , messageType: let messageType):
-				tuple = (req , messageType)
+			case .SearchContact(req: let req):
+				tuple = (req , .GET_CONTACTS)
 				break
 			case .SyncContacts:
 				SyncContactsRequestHandler.handle(self, completion: completion)
@@ -66,11 +81,11 @@ public extension Chat {
 				let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
 				restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode, completion: completion)
 				return
-			case .BlockContact(req: let req , messageType: let messageType):
-				tuple = (req , messageType)
+			case .BlockContact(req: let req):
+				tuple = (req , .BLOCK)
 				break
-			case .UnBlockContact(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .UnBlockContact(req: let req):
+				tuple = (req , .UNBLOCK)
 				break
 			case .MapReverse(req: let req):
 				guard let mapApiKey = createChatModel.mapApiKey else {return}
@@ -93,135 +108,192 @@ public extension Chat {
 			case .MapStaticImage(req: let req):
 				DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
 				return
-			case .Threads(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .Threads(req: let req):
+				tuple = (req , .GET_THREADS)
 				break
-			case .IsThreadNamePublic(req:let req , messageType: let messageType):
-				tuple = (req , messageType)
+			case .IsThreadNamePublic(req:let req):
+				tuple = (req , .IS_NAME_AVAILABLE)
 				break
-			case .MuteThread(threadId:let threadId, messageType: let messageType):
-				tuple = (nil , messageType)
+			case .MuteThread(threadId:let threadId):
+				tuple = (nil , .MUTE_THREAD)
 				subjectId = threadId
 				break
-			case .UnMuteThread(threadId:let threadId, messageType: let messageType):
-				tuple = (nil , messageType)
+			case .UnMuteThread(threadId:let threadId):
+				tuple = (nil , .UNMUTE_THREAD)
 				subjectId = threadId
 				break
-			case .PinThread(threadId:let threadId, messageType: let messageType):
-				tuple = (nil , messageType)
+			case .PinThread(threadId:let threadId):
+				tuple = (nil , .PIN_THREAD)
 				subjectId = threadId
 				break
-			case .UnPinThread(threadId:let threadId , messageType: let messageType):
-				tuple = (nil , messageType)
+			case .UnPinThread(threadId:let threadId):
+				tuple = (nil , .UNPIN_THREAD)
 				subjectId = threadId
 				break
-			case .CreateThread(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .CreateThread(req: let req):
+				tuple = (req , .CREATE_THREAD)
 				break
-			case .AddParticipant(threadId: let threadId , req: let req, messageType: let messageType):
-				tuple = ([req] , messageType)
+			case .AddParticipant(threadId: let threadId , req: let req):
+				tuple = ([req] , .ADD_PARTICIPANT)
 				subjectId = threadId
 				break
-			case .AddParticipants(threadId:let threadId, req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .AddParticipants(threadId:let threadId, req: let req):
+				tuple = (req , .ADD_PARTICIPANT)
 				subjectId = threadId
 				break
-			case .RemoveParticipant(threadId:let threadId, participantId: let participantId, messageType: let messageType):
-				tuple = ([participantId] , messageType)
+			case .RemoveParticipant(threadId:let threadId, participantId: let participantId):
+				tuple = ([participantId] , .REMOVE_PARTICIPANT)
 				subjectId = threadId
 				break
-			case .RemoveParticipants(threadId:let threadId, participantIds: let participantIds, messageType: let messageType):
-				tuple = (participantIds , messageType)
+			case .RemoveParticipants(threadId:let threadId, participantIds: let participantIds):
+				tuple = (participantIds , .REMOVE_PARTICIPANT)
 				subjectId = threadId
 				break
-			case .JoinThread(uniqueName: let uniqueName, messageType: let messageType):
-				tuple = (uniqueName , messageType)
+			case .JoinThread(uniqueName: let uniqueName):
+				tuple = (uniqueName , .JOIN_THREAD)
 				break
-			case .CloseThread(threadId: let threadId, messageType: let messageType):
-				tuple = (nil , messageType)
+			case .CloseThread(threadId: let threadId):
+				tuple = (nil , .CLOSE_THREAD)
 				subjectId = threadId
 				break
-			case .UpdateThreadInfo(req: let req , uploadProgress: let uploadProgress , messageType: let messageType):
-				UpdateThreadInfoRequestHandler(self , req , uploadProgress , completion , uniqueId , uniqueIdResult , messageType , typeCode).handle()
+			case .UpdateThreadInfo(req: let req , uploadProgress: let uploadProgress):
+				UpdateThreadInfoRequestHandler(self , req , uploadProgress , completion , uniqueId , uniqueIdResult , .UPDATE_THREAD_INFO , typeCode).handle()
 				return
-			case .CreateThreadWithMessage(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .CreateThreadWithMessage(req: let req):
+				tuple = (req , .CREATE_THREAD)
 				break
-			case .LeaveThread(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .LeaveThread(req: let req):
+				tuple = (req , .LEAVE_THREAD)
 				subjectId = req.threadId
 				break
-			case .CreateBot(botName: let botName, messageType: let messageType):
-				tuple = (botName , messageType)
+			case .CreateBot(botName: let botName):
+				tuple = (botName , .CREATE_BOT)
 				plainText = true
 				break
-			case .CreateBotCommand(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
-				plainText = true
+			case .CreateBotCommand(req: let req):
+				tuple = (req , .DEFINE_BOT_COMMAND)
 				break
-			case .StopBot(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .StopBot(req: let req):
+				tuple = (req , .STOP_BOT)
 				subjectId = req.threadId
 				break
-			case .StartBot(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .StartBot(req: let req):
+				tuple = (req , .START_BOT)
 				subjectId = req.threadId
 				break
 			case .UserInfo:
 				tuple = (nil , .USER_INFO)
 				break
-			case .SetProfile(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .SetProfile(req: let req):
+				tuple = (req , .SET_PROFILE)
 				break
-			case .SendStatusPing(req: let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .SendStatusPing(req: let req):
+				tuple = (req , .STATUS_PING)
 				break
-			case .ThreadParticipants(threadId: let threadId, _ : let req, messageType: let messageType):
-				tuple = (req , messageType)
+			case .ThreadParticipants(threadId: let threadId, _ : let req):
+				tuple = (req , .THREAD_PARTICIPANTS)
 				subjectId = threadId
 				break
-        case .PinMessage(_ : let req , messageType: let messageType):
-                tuple = (req , messageType)
-                subjectId = req.messageId
-                break
-        case .UnPinMessage(_ : let req , messageType: let messageType):
-                tuple = (req , messageType)
-                subjectId = req.messageId
-                break
-        case .ClearHistory(threadId:let threadId , messageType: let messageType):
-                tuple = (nil , messageType)
-                subjectId = threadId
-                break
-        case .DeleteMessage(req:let req , messageType: let messageType):
-                tuple = (req , messageType)
-                break
+			case .PinMessage(_ : let req):
+				tuple = (req ,  .PIN_MESSAGE)
+				subjectId = req.messageId
+				break
+			case .UnPinMessage(_ : let req):
+				tuple = (req , .UNPIN_MESSAGE)
+				subjectId = req.messageId
+				break
+			case .ClearHistory(threadId:let threadId):
+				tuple = (nil , .CLEAR_HISTORY)
+				subjectId = threadId
+				break
+			case .DeleteMessage(req:let req):
+				tuple = (req , .DELETE_MESSAGE)
+				subjectId = req.messageId
+				break
+			case .BatchDeleteMessage(req:let req):
+				tuple = (req , .DELETE_MESSAGE)
+				req.uniqueIds.forEach { uniqueId in
+					callbacksManager.addCallback(uniqueId: uniqueId, callback: completion)
+				}
+				break
+			case .AllUnreadMessageCount(req:let req):
+				tuple = (req , .ALL_UNREAD_MESSAGE_COUNT)
+				break
+			case .Mentions(req:let req):
+				tuple = (req , .GET_HISTORY)
+				subjectId = req.threadId
+				break
+			case .MessageDeliveredUsers(req:let req):
+				tuple = (req , .GET_MESSAGE_DELEVERY_PARTICIPANTS)
+				break
+			case .MessageSeenByUsers(req:let req):
+				tuple = (req , .GET_MESSAGE_SEEN_PARTICIPANTS)
+				break
+			case .NotifyDeliveredMessage(messageId:let messageId):
+				tuple = ("\(messageId)" , .DELIVERY)
+				plainText = true
+				break
+			case .NotifySeenMessage(messageId:let messageId):
+				tuple = ("\(messageId)" , .SEEN)
+				plainText = true
+				break
 		}
-        prepareToSendAsync(req: tuple.request,
-                           clientSpecificUniqueId: uniqueId,
-                           typeCode: typeCode ,
-                           subjectId: subjectId,
-                           messageType: tuple.messageType,
-                           uniqueIdResult: uniqueIdResult,
-                           completion: completion,
-                           onSent: onSent,
-                           onDelivered: onDelivered,
-                           onSeen: onSeen,
+		prepareToSendAsync(req: tuple.request,
+						   clientSpecificUniqueId: uniqueId,
+						   typeCode: typeCode ,
+						   subjectId: subjectId,
+						   messageType: tuple.messageType,
+						   uniqueIdResult: uniqueIdResult,
+						   completion: completion,
+						   onSent: onSent,
+						   onDelivered: onDelivered,
+						   onSeen: onSeen,
 						   plainText: plainText
-                           )
-
-    }
+		)
+		
+	}
+		
+	public struct MyParameters {
+		public init(messageType: NewChatMessageVOTypes, req: Encodable? = nil, clientSpecificUniqueId: String? = nil, typeCode: String? = nil, subjectId: Int? = nil, uniqueIdResult: ((String) -> ())? = nil, completion: ((ChatResponse) -> ())? = nil, onSent: ((Any) -> ())? = nil, onDelivered: ((Any) -> ())? = nil, onSeen: ((Any) -> ())? = nil, plainText: Bool = false) {
+			self.messageType = messageType
+			self.req = req
+			self.clientSpecificUniqueId = clientSpecificUniqueId
+			self.typeCode = typeCode
+			self.subjectId = subjectId
+			self.uniqueIdResult = uniqueIdResult
+			self.completion = completion
+			self.onSent = onSent
+			self.onDelivered = onDelivered
+			self.onSeen = onSeen
+			self.plainText = plainText
+		}
+		
+		
+		
+		var messageType            :NewChatMessageVOTypes
+		var req                    :Encodable?              = nil
+		var clientSpecificUniqueId :String?                 = nil
+		var typeCode               :String?                 = nil
+		var subjectId              : Int?                   = nil
+		var uniqueIdResult         : ((String)->())?        = nil
+		var completion             : ((ChatResponse)->())?  = nil
+		var onSent                 : ((Any)->())?           = nil
+		var onDelivered            : ((Any)->())?           = nil
+		var onSeen                 : ((Any)->())?           = nil
+		var plainText              : Bool                   = false
+	}
 	
-    // REST API Request
-    private func restApiRequest<T:Decodable>(_ encodableRequest:Encodable? ,
-                             decodeType:T.Type,
-                             url:String,
-                             method:HTTPMethod = .get,
-                             headers:HTTPHeaders? = nil,
-                             clientSpecificUniqueId:String? = nil ,
-                             typeCode: String? ,
-                             uniqueIdResult: ((String)->())? = nil,
-                             completion:  @escaping ((ChatResponse)->())
-                             ){
+	// REST API Request
+	private func restApiRequest<T:Decodable>(_ encodableRequest:Encodable? ,
+											 decodeType:T.Type,
+											 url:String,
+											 method:HTTPMethod = .get,
+											 headers:HTTPHeaders? = nil,
+											 clientSpecificUniqueId:String? = nil ,
+											 typeCode: String? ,
+											 uniqueIdResult: ((String)->())? = nil,
+											 completion:  @escaping ((ChatResponse)->())
+	){
 		Networking.request(decodeType,
 						   from: url,
 						   withMethod: method,
@@ -238,29 +310,28 @@ public extension Chat {
 						   })
 	}
 	
-    // SOCKET Request
+	// SOCKET Request
 	private func prepareToSendAsync(req:Encodable? = nil ,
-															   clientSpecificUniqueId:String? ,
-															   typeCode:String? ,
-                                                               //this sometimes use to send threadId with subjectId Key must fix from server to get threadId
-                                                               subjectId:Int? = nil,
-															   messageType:NewChatMessageVOTypes ,
-                                                               uniqueIdResult:((String)->())? = nil,
-                                                               completion: @escaping ((ChatResponse)->()),
-                                                               onSent: ((Any)->())? = nil,
-                                                               onDelivered: ((Any)->())? = nil,
-                                                               onSeen: ((Any)->())? = nil,
-															   plainText:Bool = false
-	){
-        guard let createChatModel = createChatModel else {return}
-        let uniqueId = clientSpecificUniqueId ?? UUID().uuidString
-        uniqueIdResult?(uniqueId)
-        let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
+									clientSpecificUniqueId:String? ,
+									typeCode:String? ,
+									//this sometimes use to send threadId with subjectId Key must fix from server to get threadId
+									subjectId:Int? = nil,
+									messageType:NewChatMessageVOTypes ,
+									uniqueIdResult:((String)->())? = nil,
+									completion: @escaping ((ChatResponse)->()),
+									onSent: ((Any)->())? = nil,
+									onDelivered: ((Any)->())? = nil,
+									onSeen: ((Any)->())? = nil,
+									plainText:Bool = false){
+		guard let createChatModel = createChatModel else {return}
+		let uniqueId = clientSpecificUniqueId ?? UUID().uuidString
+		uniqueIdResult?(uniqueId)
+		let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
 		
 		let chatMessage = SendChatMessageVO(chatMessageVOType:  messageType.rawValue,
 											token:              createChatModel.token,
-                                            content:            getContent(req , plainText),
-                                            subjectId: subjectId,
+											content:            getContent(req , plainText),
+											subjectId: subjectId,
 											typeCode:           typeCode,
 											uniqueId:           uniqueId,
 											isCreateThreadAndSendMessage: true)
@@ -271,10 +342,10 @@ public extension Chat {
 											  ttl: createChatModel.msgTTL,
 											  peerName:     createChatModel.serverName,
 											  priority:     createChatModel.msgPriority
-											  )
+		)
 		
 		
-        callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
+		callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
 		sendToAsync(asyncMessageVO: asyncMessage)
 	}
 	
@@ -291,7 +362,7 @@ public extension Chat {
 	internal func sendToAsync(asyncMessageVO:SendAsyncMessageVO){
 		guard let content = asyncMessageVO.convertCodableToString() else { return }
 		asyncClient?.pushSendData(type: asyncMessageVO.pushMsgType ?? 3, content: content)
-        runSendMessageTimer()
+		runSendMessageTimer()
 	}
 	
 	internal func getDeviceIdAndCreateAsync(){
@@ -303,31 +374,32 @@ public extension Chat {
 						   withMethod: .get,
 						   withHeaders: headers,
 						   encodableRequest: nil
-        ) { [weak self] devicesResponse in
+		) { [weak self] devicesResponse in
 			if let device = devicesResponse?.devices?.first(where: {$0.current == true}){
 				self?.createChatModel?.deviceId = device.uid
-                self?.CreateAsync()
-            }else{
-                
-            }
-        }errorResult:{ responseModel in
-            self.delegate?.chatError(errorCode: responseModel.errorCode, errorMessage: responseModel.errorMessage, errorResult: nil)
-        }
+				self?.CreateAsync()
+			}else{
+				
+			}
+		}errorResult:{ responseModel in
+			self.delegate?.chatError(errorCode: responseModel.errorCode, errorMessage: responseModel.errorMessage, errorResult: nil)
+		}
 	}
+	
 }
 
 class Device : Codable {
-    var agent          : String?
-    var browser        : String?
-    var current        : Bool?
-    var deviceType     : String?
-    var id             : Int?
-    var ip             : String?
-    var language       : String?
-    var lastAccessTime : Int?
-    var os             : String?
-    var osVersion      : String?
-    var uid            : String?
+	var agent          : String?
+	var browser        : String?
+	var current        : Bool?
+	var deviceType     : String?
+	var id             : Int?
+	var ip             : String?
+	var language       : String?
+	var lastAccessTime : Int?
+	var os             : String?
+	var osVersion      : String?
+	var uid            : String?
 }
 
 
@@ -387,9 +459,9 @@ struct NewChatMessage : Decodable {
 
 public enum NewChatMessageVOTypes :Int , Codable {
 	case CREATE_THREAD                     = 1
-    case MESSAGE                           = 2
+	case MESSAGE                           = 2
 	case SENT                              = 3
-	case DELIVERY                          = 4
+	case DELIVERY                          = 4//has request but no callback from server back
 	case SEEN                              = 5
 	case PING                              = 6
 	case BLOCK                             = 7

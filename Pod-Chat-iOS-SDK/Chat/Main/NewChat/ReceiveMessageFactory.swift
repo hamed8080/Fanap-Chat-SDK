@@ -21,6 +21,7 @@ class ReceiveMessageFactory{
 				AddParticipantResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .ALL_UNREAD_MESSAGE_COUNT:
+				AllUnreadMessageCountResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .BLOCK:
 				BlockedResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -49,7 +50,7 @@ class ReceiveMessageFactory{
 			case .DELETE_MESSAGE:
                 DeleteMessageResposneHandler.handle(chat , chatMessage , asyncMessage)
 				break
-			case .DELIVERY:
+			case .DELIVERY://only use in request but no callback from server back
 				break
 			case .EDIT_MESSAGE:
 				break
@@ -67,10 +68,13 @@ class ReceiveMessageFactory{
 			case .GET_CURRENT_USER_ROLES:
 				break
 			case .GET_HISTORY:
+				HistoryResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .GET_MESSAGE_DELEVERY_PARTICIPANTS:
+				MessageDeliveredUsersResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .GET_MESSAGE_SEEN_PARTICIPANTS:
+				MessageSeenByUsersResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .GET_NOT_SEEN_DURATION:
 				ContactNotSeenDurationHandler.handle(chat , chatMessage , asyncMessage)
