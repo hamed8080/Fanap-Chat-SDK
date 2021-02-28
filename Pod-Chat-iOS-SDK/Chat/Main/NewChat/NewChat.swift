@@ -20,15 +20,11 @@ public struct ChatResponse{
 //this extension merged after removed all deprecated method in Chat class
 public extension Chat {
 	
-	
-	func request2(parameters:MyParameters){
-		prepareToSendAsync2(parameters)
-	}
-	
-	func prepareToSendAsync2(_ parameters:MyParameters){
-		
-	}
-	
+    
+//    func getContacts(request: GetContactsRequest,uniqueId:String? = nil,fromCache:Bool? = nil,uniqeIdResult:((String)->())? = nil ,typeCode:String? = nil,completion:@escaping (ChatResponse)->()){
+//        prepareToSendAsync(req:request,clientSpecificUniqueId:uniqueId,typeCode: typeCode, messageType: .GET_CONTACTS, completion: completion)
+//    }
+    
 	func request(_ builder :RequestBuilder ,
 				 typeCode:String? = nil,
 				 uniqueId:String? = nil,
@@ -237,6 +233,10 @@ public extension Chat {
 				tuple = ("\(messageId)" , .SEEN)
 				plainText = true
 				break
+            case .CurrentUserRoles(threadId:let threadId):
+                tuple = (nil, .GET_CURRENT_USER_ROLES)
+                subjectId = threadId
+                break
 		}
 		prepareToSendAsync(req: tuple.request,
 						   clientSpecificUniqueId: uniqueId,
@@ -251,36 +251,6 @@ public extension Chat {
 						   plainText: plainText
 		)
 		
-	}
-		
-	public struct MyParameters {
-		public init(messageType: NewChatMessageVOTypes, req: Encodable? = nil, clientSpecificUniqueId: String? = nil, typeCode: String? = nil, subjectId: Int? = nil, uniqueIdResult: ((String) -> ())? = nil, completion: ((ChatResponse) -> ())? = nil, onSent: ((Any) -> ())? = nil, onDelivered: ((Any) -> ())? = nil, onSeen: ((Any) -> ())? = nil, plainText: Bool = false) {
-			self.messageType = messageType
-			self.req = req
-			self.clientSpecificUniqueId = clientSpecificUniqueId
-			self.typeCode = typeCode
-			self.subjectId = subjectId
-			self.uniqueIdResult = uniqueIdResult
-			self.completion = completion
-			self.onSent = onSent
-			self.onDelivered = onDelivered
-			self.onSeen = onSeen
-			self.plainText = plainText
-		}
-		
-		
-		
-		var messageType            :NewChatMessageVOTypes
-		var req                    :Encodable?              = nil
-		var clientSpecificUniqueId :String?                 = nil
-		var typeCode               :String?                 = nil
-		var subjectId              : Int?                   = nil
-		var uniqueIdResult         : ((String)->())?        = nil
-		var completion             : ((ChatResponse)->())?  = nil
-		var onSent                 : ((Any)->())?           = nil
-		var onDelivered            : ((Any)->())?           = nil
-		var onSeen                 : ((Any)->())?           = nil
-		var plainText              : Bool                   = false
 	}
 	
 	// REST API Request
@@ -312,8 +282,8 @@ public extension Chat {
 	
 	// SOCKET Request
 	private func prepareToSendAsync(req:Encodable? = nil ,
-									clientSpecificUniqueId:String? ,
-									typeCode:String? ,
+									clientSpecificUniqueId:String? = nil ,
+									typeCode:String? = nil ,
 									//this sometimes use to send threadId with subjectId Key must fix from server to get threadId
 									subjectId:Int? = nil,
 									messageType:NewChatMessageVOTypes ,
@@ -506,7 +476,7 @@ public enum NewChatMessageVOTypes :Int , Codable {
 	case UNPIN_MESSAGE                     = 51
 	case SET_PROFILE                       = 52
 	case GET_CURRENT_USER_ROLES            = 54
-	case GET_REPORT_REASONS                = 56
+	case GET_REPORT_REASONS                = 56// not implemented yet!
 	case REPORT_THREAD                     = 57
 	case REPORT_USER                       = 58
 	case REPORT_MESSAGE                    = 59

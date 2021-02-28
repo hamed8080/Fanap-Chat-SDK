@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FanapPodAsyncSDK
 
 class ReceiveMessageFactory{
 	
@@ -37,6 +38,7 @@ class ReceiveMessageFactory{
 				CloseThreadResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .CONTACTS_LAST_SEEN:
+                ContactsLastSeenResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .CREATE_BOT:
 				CreateBotResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -66,6 +68,7 @@ class ReceiveMessageFactory{
 				ContactsResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .GET_CURRENT_USER_ROLES:
+                CurrentUserRolesResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .GET_HISTORY:
 				HistoryResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -79,7 +82,7 @@ class ReceiveMessageFactory{
 			case .GET_NOT_SEEN_DURATION:
 				ContactNotSeenDurationHandler.handle(chat , chatMessage , asyncMessage)
 				break
-			case .GET_REPORT_REASONS:
+			case .GET_REPORT_REASONS://TODO: not implemented yet!
 				break
 			case .GET_STATUS://TODO: not implemented yet!
 				break
@@ -105,6 +108,7 @@ class ReceiveMessageFactory{
 				MuteThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .PING:
+                log.verbose("Message of type 'PING' recieved", context: "Chat") //TODO: must replace with new log
 				break
 			case .PIN_MESSAGE:
                 PinUnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
@@ -115,6 +119,7 @@ class ReceiveMessageFactory{
 			case .RELATION_INFO://TODO: not implemented yet!
 				break
 			case .REMOVED_FROM_THREAD:
+                UserRemovedFromThreadServerAction.handle(chat, chatMessage, asyncMessage)
 				break
 			case .REMOVE_PARTICIPANT:
 				RemoveParticipantResponseHandler.handle(chat, chatMessage, asyncMessage)
@@ -129,7 +134,7 @@ class ReceiveMessageFactory{
 				break
 			case .REPORT_USER:
 				break
-			case .SEEN:
+			case .SEEN://only use in request but no callback from server back
 				break
 			case .SENT:
 				break
@@ -151,6 +156,7 @@ class ReceiveMessageFactory{
 				StopBotResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SYSTEM_MESSAGE:
+                SystemMessagerResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .THREAD_INFO_UPDATED:
 				break

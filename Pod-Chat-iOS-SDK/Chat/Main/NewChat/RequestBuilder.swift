@@ -58,4 +58,5 @@ public enum RequestBuilder {
 	case MessageSeenByUsers(req:MessageSeenByUsersRequest)
 	case NotifyDeliveredMessage(messageId:Int)
 	case NotifySeenMessage(messageId:Int)
+    case CurrentUserRoles(threadId:Int)
 }
