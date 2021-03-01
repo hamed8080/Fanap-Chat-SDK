@@ -64,19 +64,19 @@ open class Contact :Codable {
         
     }
     
-    public init(blocked:            Bool?,
-                cellphoneNumber:    String?,
-                email:              String?,
-                firstName:          String?,
+    public init(blocked:            Bool? = nil,
+                cellphoneNumber:    String? = nil,
+                email:              String? = nil,
+                firstName:          String? = nil,
                 hasUser:            Bool,
-                id:                 Int?,
-                image:              String?,
-                lastName:           String?,
-                linkedUser:         LinkedUser?,
-                notSeenDuration:    Int?,
-                timeStamp:          UInt?,
+                id:                 Int? = nil,
+                image:              String? = nil,
+                lastName:           String? = nil,
+                linkedUser:         LinkedUser? = nil,
+                notSeenDuration:    Int? = nil,
+                timeStamp:          UInt? = nil,
 //                uniqueId:           String?,
-                userId:             Int?) {
+                userId:             Int? = nil) {
         
         self.blocked            = blocked
         self.cellphoneNumber    = cellphoneNumber
