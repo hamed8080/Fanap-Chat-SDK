@@ -17,7 +17,22 @@ import Sentry
 // MARK: - Private Methods:
 
 extension Chat {
- 
+    
+    
+    func checkIfDeviceHasFreeSpace(needSpaceInMB: Int64, turnOffTheCache: Bool) -> Bool {
+        let availableSpace = DiskStatus.freeDiskSpaceInBytes
+        if availableSpace < (needSpaceInMB * 1024 * 1024) {
+            var message = "your disk space is less than \(DiskStatus.MBFormatter(DiskStatus.freeDiskSpaceInBytes))MB."
+            if turnOffTheCache {
+                message += " " + "so, the cache will be switch OFF!"
+            }
+            delegate?.chatError(errorCode: 6401, errorMessage: message, errorResult: nil)
+            return false
+        } else {
+            return true
+        }
+    }
+    
     /*
      *  Get deviceId with token:
      *
@@ -65,10 +80,10 @@ extension Chat {
          *
          *
          */
-        guard let createChatModel = createChatModel else {return}
-        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
+        
+        let url = ssoHost + SERVICES_PATH.SSO_DEVICES.rawValue
         let method: HTTPMethod = .get
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
         Alamofire.request(url, method: method, parameters: nil, headers: headers).responseString { (response) in
             
             // check if the result respons is success
@@ -177,10 +192,10 @@ extension Chat {
          *              - preferred_username:   String  (ex: "Reza")
          *
          */
-        guard let createChatModel = createChatModel else {return}
-        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_GENERATE_KEY.rawValue
+        
+        let url = SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GENERATE_KEY.rawValue
         let method: HTTPMethod = .post
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
         let params: Parameters = ["validity":       10 * 365 * 24 * 60 * 60,      // 10 years
                                   "renew":          "true",
                                   "keyAlgorithm":   keyAlgorithm ?? "aes",
@@ -301,10 +316,9 @@ extension Chat {
          *
          */
         // TODO: save the new keyId into the Cache
-        guard let createChatModel = createChatModel else {return}
-        let url = createChatModel.ssoHost + SERVICES_PATH.SSO_GET_KEY.rawValue + "\(keyId)"
+        let url = SERVICE_ADDRESSES.SSO_ADDRESS + SERVICES_PATH.SSO_GET_KEY.rawValue + "\(keyId)"
         let method: HTTPMethod = .get
-        let headers: HTTPHeaders = ["Authorization": "Bearer \(createChatModel.token)"]
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
         let params: Parameters = ["validity":       10 * 365 * 24 * 60 * 60,  // 10 years
                                   "renew":          false,
                                   "keyAlgorithm":   keyAlgorithm ?? "aes",
@@ -373,10 +387,9 @@ extension Chat {
                                  sentCallback:      (call: CallbackProtocolWith3Calls, uniques: [String])?,
                                  deliverCallback:   (call: CallbackProtocolWith3Calls, uniques: [String])?,
                                  seenCallback:      (call: CallbackProtocolWith3Calls, uniques: [String])?) {
-		
-		guard let chatMessageVO = try? JSONDecoder().decode(SendChatMessageVO.self, from: asyncMessageVO.content.data(using: .utf8)!) else {return}
         
-	
+        let chatMessageVO = SendChatMessageVO(content: asyncMessageVO.content.convertToJSON())
+        
         if let myCallbacks = callbacks {
             for item in myCallbacks {
                 if (asyncMessageVO.content.convertToJSON()["chatMessageVOType"].intValue == 41) {
@@ -419,11 +432,11 @@ extension Chat {
         log.verbose("map onDeliver json: \n \(Chat.mapOnDeliver)", context: "Chat")
         log.verbose("map onSeen json: \n \(Chat.mapOnSeen)", context: "Chat")
         
-		guard let contentToSend = asyncMessageVO.convertCodableToString() else{return}
+        let contentToSend = asyncMessageVO.convertModelToString()
         
         log.verbose("AsyncMessageContent of type JSON (to send to socket): \n \(contentToSend)", context: "Chat")
         
-        if (chatMessageVO.chatMessageVOType == 0) { // type 0 when getUserInfo
+        if (chatMessageVO.chatMessageVOType == 0) {
             sendRequestToAsync(type: asyncMessageVO.pushMsgType ?? 3, content: contentToSend)
         } else {
             sendRequestHandler(type: asyncMessageVO.pushMsgType ?? 3, content: contentToSend)
@@ -478,7 +491,6 @@ extension Chat {
      *
      */
     func ping() {
-        guard let createChatModel = createChatModel else {return}
         /*
          *
          *  -> if chat is connected and we also have the peerId
@@ -494,14 +506,23 @@ extension Chat {
             log.verbose("Try to send Ping", context: "Chat")
             
             let chatMessage = SendChatMessageVO(chatMessageVOType: ChatMessageVOTypes.PING.intValue(),
-                                                token: createChatModel.token)
+                                                content:            nil,
+                                                messageType:        nil,
+                                                metadata:           nil,
+                                                repliedTo:          nil,
+                                                systemMetadata:     nil,
+                                                subjectId:          nil,
+                                                token:              token,
+                                                tokenIssuer:        nil,
+                                                typeCode:           nil,
+                                                uniqueId:           nil,
+                                                uniqueIds:          nil,
+                                                isCreateThreadAndSendMessage: nil)
             
-			guard let content = chatMessage.convertCodableToString() else{return}
-			let asyncMessage = SendAsyncMessageVO(content:      content,
-												  msgTTL:       createChatModel.msgTTL,
-												  ttl: createChatModel.msgTTL,
-                                                  peerName:     createChatModel.serverName,
-                                                  priority:     createChatModel.msgPriority,
+            let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                                  msgTTL:       msgTTL,
+                                                  peerName:     serverName,
+                                                  priority:     msgPriority,
                                                   pushMsgType:  5)
             
             sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -539,7 +560,7 @@ extension Chat {
      *
      */
     func receivedMessageHandler(withContent message: ChatMessage) {
-        log.verbose("content of received message: \n \(message.convertCodableToString() ?? "")", context: "Chat")
+        log.verbose("content of received message: \n \(message.returnToJSON())", context: "Chat")
         lastReceivedMessageTime = Date()
                 
 //        let messageContentAsString      = message.content
@@ -902,19 +923,18 @@ extension Chat {
             break
             
         default:
-            log.verbose("This type of message is not defined yet!!!\n incomes = \(message.convertCodableToString() ?? "")", context: "Chat")
+            log.verbose("This type of message is not defined yet!!!\n incomes = \(message.returnToJSON())", context: "Chat")
             break
         }
     }
     
     private func chatErrorHandler(withMessage message: ChatMessage, messageContentAsJSON: JSON) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'ERROR' recieved", context: "Chat")
         
         // send log to Sentry 4.3.1
-        if createChatModel.captureLogsOnSentry {
+        if captureSentryLogs {
             let event = Event(level: SentrySeverity.error)
-            event.message = "Message of type 'ERROR' recieved: \n \(message.convertCodableToString() ?? "")"
+            event.message = "Message of type 'ERROR' recieved: \n \(message.returnToJSON())"
             Client.shared?.send(event: event, completion: { _ in })
         }
         
@@ -963,7 +983,6 @@ extension Chat {
     
     
     func chatMessageHandler(threadId: Int, messageContent: JSON) {
-        guard let createChatModel = createChatModel else {return}
         let message = Message(threadId: threadId, pushMessageVO: messageContent)
         
         if let messageOwner = message.participant?.id {
@@ -977,7 +996,7 @@ extension Chat {
             }
         }
         
-        if createChatModel.enableCache {
+        if enableCache {
             // save data comes from server to the Cache
             let theMessage = Message(threadId: threadId, pushMessageVO: messageContent)
             Chat.cacheDB.saveMessageObjects(messages: [theMessage], getHistoryParams: nil)
@@ -1011,7 +1030,6 @@ extension Chat {
     
     
     func userRemovedFromThread(id: Int?) {
-        guard let createChatModel = createChatModel else {return}
         if let threadId = id {
             let tRemoveFromThreadEM = ThreadEventModel(type:            ThreadEventTypes.THREAD_REMOVED_FROM,
                                                        participants:    nil,
@@ -1022,7 +1040,7 @@ extension Chat {
                                                        pinMessage:      nil)
             delegate?.threadEvents(model: tRemoveFromThreadEM)
             
-            if createChatModel.enableCache {
+            if enableCache {
                 Chat.cacheDB.deleteThreads(withThreadIds: [threadId])
             }
         }
@@ -1067,3 +1085,6 @@ extension Chat {
     }
     
 }
+
+
+

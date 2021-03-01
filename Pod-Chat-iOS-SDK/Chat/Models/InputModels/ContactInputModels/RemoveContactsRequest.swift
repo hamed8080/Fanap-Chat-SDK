@@ -48,7 +48,7 @@ open class RemoveContactsRequest : Encodable{
     
 }
 
-@available(*,unavailable , message: "use RemoveContactsRequest class")
+/// MARK: -  this class will be deprecate (use this class instead: 'RemoveContactsRequest')
 open class RemoveContactsRequestModel: RemoveContactsRequest {
     
 }

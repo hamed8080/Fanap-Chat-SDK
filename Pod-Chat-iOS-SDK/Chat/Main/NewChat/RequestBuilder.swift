@@ -8,21 +8,21 @@
 import Foundation
 
 public enum RequestBuilder {
-	case GetContacts(req:GetContactsRequest)
+	case GetContacts(req:ContactsRequest)
 	case GetBlockedContacts(req:BlockedListRequest)
 	case AddContact(req:AddContactRequest)
 	case AddContacts(req:[AddContactRequest])
-	case ContactNotSeenDuration(req:GetNotSeenDurationRequest)
+	case ContactNotSeenDuration(req:NotSeenDurationRequest)
 	case RemoveContact(req:RemoveContactsRequest)
-	case SearchContact(req:GetContactsRequest)
+	case SearchContact(req:ContactsRequest)
 	case SyncContacts
 	case UpdateContact(req:UpdateContactRequest)
-	case BlockContact(req:BlockRequest)
+	case BlockContact(req:NewBlockRequest)
 	case UnBlockContact(req:UnblockRequest)
 	case MapReverse(req:MapReverseRequest)
 	case MapSearch(req:MapSearchRequest)
-	case MapRouting(req:MapRoutingRequest)
-	case MapStaticImage(req:MapStaticImageRequest)
+	case MapRouting(req:NewMapRoutingRequest)
+	case MapStaticImage(req:NewMapStaticImageRequest)
 	case Threads(req:ThreadsRequest)
 	case IsThreadNamePublic(req:IsThreadNamePublicRequest)
 	case MuteThread(threadId:Int)

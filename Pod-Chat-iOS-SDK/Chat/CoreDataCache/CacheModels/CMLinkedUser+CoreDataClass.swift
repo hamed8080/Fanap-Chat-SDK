@@ -13,20 +13,7 @@ import CoreData
 
 public class CMLinkedUser: NSManagedObject {
     
-    static let crud = CoreDataCrud<CMContact>(entityName: "CMLinkedUser")
-    
-    class func convertContactToCM(linkedUser:LinkedUser  ,entity:CMLinkedUser? = nil) -> CMLinkedUser{
-    
-        let model        = entity ?? CMLinkedUser()
-        model.coreUserId = linkedUser.coreUserId as NSNumber?
-        model.image      = linkedUser.image
-        model.name       = linkedUser.name
-        model.nickname   = linkedUser.nickname
-        model.username   = linkedUser.username
-        
-        return model
-    }
-    
+	@available(*,deprecated , message: "removed in future release.")
     public func convertCMObjectToObject() -> LinkedUser {
         
         var coreUserId: Int?
@@ -53,7 +40,7 @@ public class CMLinkedUser: NSManagedObject {
         return model
     }
     
-    
+	@available(*,deprecated , message: "removed in future release.")
     func updateObject(with linkedUser: LinkedUser) {
         if let coreUserId = linkedUser.coreUserId as NSNumber? {
             self.coreUserId = coreUserId
@@ -72,4 +59,18 @@ public class CMLinkedUser: NSManagedObject {
         }
     }
     
+	
+	static let crud = CoreDataCrud<CMContact>(entityName: "CMLinkedUser")
+	
+	class func convertContactToCM(linkedUser:LinkedUser  ,entity:CMLinkedUser? = nil) -> CMLinkedUser{
+		
+		let model        = entity ?? CMLinkedUser()
+		model.coreUserId = linkedUser.coreUserId as NSNumber?
+		model.image      = linkedUser.image
+		model.name       = linkedUser.name
+		model.nickname   = linkedUser.nickname
+		model.username   = linkedUser.username
+		
+		return model
+	}
 }

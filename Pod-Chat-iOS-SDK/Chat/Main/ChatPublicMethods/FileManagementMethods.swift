@@ -16,6 +16,8 @@ import Alamofire
 
 extension Chat {
     
+    
+    
     public func isImageAvailableOnCache(inputModel imageInput:  GetImageRequest) -> Bool {
         if let isAvailable = Chat.cacheDB.isImageAvailable(hashCode: imageInput.hashCode) {
             return isAvailable
@@ -84,14 +86,14 @@ extension Chat {
                         progress:       @escaping (Float) -> (),
                         completion:     @escaping (Data?, DownloadFileModel) -> (),
                         cacheResponse:  @escaping (Data, DownloadFileModel) -> ()) {
-        guard let createChatModel = createChatModel else {return}
+        
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
         var hasFileOntheCache = false
         
         // if cache is enabled by user, first return cache result to the user
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             if let (cacheFileResult, filePath) = Chat.cacheDB.retrieveFileObject(hashCode: getFileInput.hashCode) {
                 hasFileOntheCache = true
                 let response = DownloadFileModel(messageContentModel:   cacheFileResult,
@@ -120,7 +122,7 @@ extension Chat {
         }
 
         if (!hasFileOntheCache) || (getFileInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadFile(withInputModel: getFileInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, fileModel) in
@@ -133,10 +135,10 @@ extension Chat {
     private func sendRequestToDownloadFile(withInputModel getFileInput:   GetFileRequest,
                                            progress:       @escaping (Float) -> (),
                                            completion:     @escaping (Data?, DownloadFileModel) -> ()) {
-        guard let createChatModel = createChatModel else {return}
-        let url = "\(createChatModel.podSpaceFileServerAddress)\(SERVICES_PATH.DRIVE_DOWNLOAD_FILE.rawValue)"
+
+        let url = "\(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)\(SERVICES_PATH.DRIVE_DOWNLOAD_FILE.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
-        let headers:    HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+        let headers:    HTTPHeaders = ["_token_": token, "_token_issuer_": "1"]
         
         Networking.sharedInstance.download(fromUrl:         url,
                                            withMethod:      method,
@@ -157,9 +159,9 @@ extension Chat {
                                             size:       fileSize ?? myFile.count,
                                             type:       fileType)
 
-                if createChatModel.enableCache {
-                    if DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myFile.count / 1024), turnOffTheCache: true, errorDelegate: self.delegate) {
-                        Chat.cacheDB.saveFileObject(fileInfo: uploadFile, fileData: myFile, toLocalPath: createChatModel.localFileCustomPath)
+                if self.enableCache {
+                    if self.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myFile.count / 1024), turnOffTheCache: true) {
+                        Chat.cacheDB.saveFileObject(fileInfo: uploadFile, fileData: myFile, toLocalPath: self.localFileCustomPath)
                     }
                 }
 
@@ -205,14 +207,14 @@ extension Chat {
                          progress:      @escaping (Float) -> (),
                          completion:    @escaping (Data?, DownloadImageModel) -> (),
                          cacheResponse: @escaping (Data, DownloadImageModel) -> ()) {
-        guard let createChatModel = createChatModel else {return}
+        
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
         var hasImageOnTheCache = false
         
         // if cache is enabled by user, first return cache result to the user
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             if let (cacheImageResult, imagePath) = Chat.cacheDB.retrieveImageObject(hashCode:   getImageInput.hashCode) {
                 let response = DownloadImageModel(messageContentModel:   cacheImageResult,
                                                   errorCode:             0,
@@ -240,7 +242,7 @@ extension Chat {
         }
         
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadImage(withInputModel: getImageInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -256,14 +258,14 @@ extension Chat {
                                   progress:      @escaping (Float) -> (),
                                   completion:    @escaping (Data?, DownloadImageModel) -> (),
                                   cacheResponse: @escaping (Data, DownloadImageModel) -> ()) {
-        guard let createChatModel = createChatModel else {return}
+        
         let theUniqueId = generateUUID()
         uniqueId(theUniqueId)
         
         var hasImageOnTheCache = false
         
         // if cache is enabled by user, first return cache result to the user
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             if let (cacheImageResult, imagePath) = Chat.cacheDB.retrieveImageThumbnailObject(hashCode:   getImageInput.hashCode) {
                 let response = DownloadImageModel(messageContentModel:   cacheImageResult,
                                                   errorCode:             0,
@@ -288,7 +290,7 @@ extension Chat {
                                     size:       getImageInput.size,
                                     serverResponse: getImageInput.serverResponse)
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel.deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
             sendRequestToDownloadImage(withInputModel: input, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -298,13 +300,13 @@ extension Chat {
         
     }
     
-     func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
+	func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
                                             progress:      @escaping (Float) -> (),
                                             completion:    @escaping (Data?, DownloadImageModel) -> ()) {
-        guard let createChatModel = createChatModel else {return}
-        let url = "\(createChatModel.podSpaceFileServerAddress)\(SERVICES_PATH.DRIVE_DOWNLOAD_IMAGE.rawValue)"
+        
+        let url = "\(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)\(SERVICES_PATH.DRIVE_DOWNLOAD_IMAGE.rawValue)"
         let method:     HTTPMethod  = HTTPMethod.get
-        let headers:    HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
+        let headers:    HTTPHeaders = ["_token_": token, "_token_issuer_": "1"]
         
         Networking.sharedInstance.download(fromUrl:         url,
                                            withMethod:      method,
@@ -328,12 +330,12 @@ extension Chat {
                                               size:         fileSize ?? myData.count,
                                               width:        nil)
                 
-                if createChatModel.enableCache {
-                    if DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myData.count / 1024), turnOffTheCache: true , errorDelegate: self.delegate) {
+                if self.enableCache {
+                    if self.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myData.count / 1024), turnOffTheCache: true) {
                         if getImageInput.quality == 0.123 {
-                            Chat.cacheDB.saveThumbnailImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: createChatModel.localImageCustomPath)
+                            Chat.cacheDB.saveThumbnailImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: self.localImageCustomPath)
                         } else {
-                            Chat.cacheDB.saveImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: createChatModel.localImageCustomPath)
+                            Chat.cacheDB.saveImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: self.localImageCustomPath)
                         }
                         
                     }
@@ -373,12 +375,12 @@ extension Chat {
                            uniqueId:        @escaping (String) -> (),
                            progress:        @escaping (Float) -> (),
                            completion:      @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+
         log.verbose("Try to upload file with this parameters: \n \(uploadFileInput)", context: "Chat")
 
         uniqueId(uploadFileInput.uniqueId)
 
-        if (createChatModel.enableCache) {
+        if (enableCache) {
             /*
                 seve this upload image on the Cache Wait Queue,
                 so if there was an situation that response of the server to this uploading doesn't come, then we know that our upload request didn't sent correctly
@@ -398,14 +400,14 @@ extension Chat {
             Chat.cacheDB.saveUploadFileToWaitQueue(file: messageObjectToSendToQueue)
         }
 
-        var url = "\(createChatModel.podSpaceFileServerAddress)"
+        var url = "\(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)"
         if let _ = uploadFileInput.userGroupHash {
             url += "\(SERVICES_PATH.PODSPACE_PUBLIC_UPLOAD_FILE.rawValue)"
         } else {
             url += "\(SERVICES_PATH.PODSPACE_UPLOAD_FILE.rawValue)"
         }
         
-        let headers:    HTTPHeaders = ["_token_":           createChatModel.token,
+        let headers:    HTTPHeaders = ["_token_":           token,
                                         "_token_issuer_":    "1",
                                         "Content-type":      "multipart/form-data"]
 
@@ -443,10 +445,10 @@ extension Chat {
             if (!hasError) {
                 let resultData = myResponse["result"]
                 
-                if createChatModel.enableCache {
+                if self.enableCache {
                     // save data comes from server to the Cache
                     let uploadFileObject = FileObject(messageContent: resultData)
-                    Chat.cacheDB.saveFileObject(fileInfo: uploadFileObject, fileData: uploadFileInput.dataToSend, toLocalPath: createChatModel.localFileCustomPath)
+                    Chat.cacheDB.saveFileObject(fileInfo: uploadFileObject, fileData: uploadFileInput.dataToSend, toLocalPath: self.localFileCustomPath)
                     let getFileRequest = GetFileRequest(//fileId:         uploadFileObject.id,
                                                         hashCode:       uploadFileObject.hashCode,
                                                         serverResponse: true)
@@ -518,12 +520,12 @@ extension Chat {
                             uniqueId:       @escaping (String) -> (),
                             progress:       @escaping (Float) -> (),
                             completion:     @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to upload image with this parameters: \n \(uploadImageInput)", context: "Chat")
         
         uniqueId(uploadImageInput.uniqueId)
         
-        if (createChatModel.enableCache) {
+        if (enableCache) {
             /**
              seve this upload image on the Cache Wait Queue,
              so if there was an situation that response of the server to this uploading doesn't come, then we know that our upload request didn't sent correctly
@@ -547,14 +549,14 @@ extension Chat {
             Chat.cacheDB.saveUploadImageToWaitQueue(image: messageObjectToSendToQueue)
         }
         
-        var url = "\(createChatModel.podSpaceFileServerAddress)"
+        var url = "\(SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)"
         if let _ = uploadImageInput.userGroupHash {
             url += "\(SERVICES_PATH.PODSPACE_PUBLIC_UPLOAD_IMAGE.rawValue)"
         } else {
             url += "\(SERVICES_PATH.PODSPACE_UPLOAD_IMAGE.rawValue)"
         }
         
-        let headers:    HTTPHeaders = ["_token_":           createChatModel.token,
+        let headers:    HTTPHeaders = ["_token_":           token,
                                        "_token_issuer_":    "1",
                                        "Content-type":      "multipart/form-data"]
         
@@ -591,10 +593,10 @@ extension Chat {
             if (!hasError) {
                 let resultData = myResponse["result"]
                 
-                if createChatModel.enableCache {
+                if self.enableCache {
                     // save data comes from server to the Cache
                     let uploadImageFile = ImageObject(messageContent: resultData)
-                    Chat.cacheDB.saveImageObject(imageInfo: uploadImageFile, imageData: uploadImageInput.dataToSend, toLocalPath: createChatModel.localImageCustomPath)
+                    Chat.cacheDB.saveImageObject(imageInfo: uploadImageFile, imageData: uploadImageInput.dataToSend, toLocalPath: self.localImageCustomPath)
                     let getImageRequest = GetImageRequest(//imageId:  uploadImageFile.id,
                                                           hashCode: uploadImageFile.hashCode,
                                                           quality:  nil,

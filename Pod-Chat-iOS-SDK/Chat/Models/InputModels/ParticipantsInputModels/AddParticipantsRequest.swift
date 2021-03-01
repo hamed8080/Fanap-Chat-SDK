@@ -17,7 +17,6 @@ open class AddParticipantsRequest: RequestModelDelegates {
     public let coreUserIds: [Int]?
     public let threadId:    Int
     
-	
     public let typeCode:    String?
     public let uniqueId:    String
     

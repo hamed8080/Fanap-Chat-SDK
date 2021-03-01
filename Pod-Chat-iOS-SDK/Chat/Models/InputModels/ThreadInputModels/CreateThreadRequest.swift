@@ -73,7 +73,7 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
         if let typeCode_ = self.typeCode {
             content["typeCode"] = JSON(typeCode_)
         }
-        content["type"] = JSON(self.type?.rawValue ?? 0)
+        content["type"] = JSON(self.type?.intValue() ?? 0)
         content["uniqueId"] = JSON(self.uniqueId)
         
         return content
@@ -109,7 +109,6 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
 
 
 /// MARK: -  this class will be deprecate (use this class instead: 'CreateThreadRequest')
-@available(*,deprecated , message: "use CreateThreadRequest removed in future release.")
 open class CreateThreadRequestModel: CreateThreadRequest {
     
 }

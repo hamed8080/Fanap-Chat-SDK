@@ -12,22 +12,20 @@ open class MapReverseRequest :Encodable {
     
     public let lat:     Double
     public let lng:     Double
-    public var uniqueId = UUID().uuidString
     
     public init(lat:    Double,
-                lng:    Double,
-                uniqueId:String = UUID().uuidString
-    ) {
+                lng:    Double) {
         
-        self.lat      = lat
-        self.lng      = lng
-        self.uniqueId = uniqueId
+        self.lat    = lat
+        self.lng    = lng
     }
     
 }
 
-@available(*,unavailable , message:"use MapReverseRequest class")
-open class MapReverseRequestModel: MapReverseRequest {}
+
+open class MapReverseRequestModel: MapReverseRequest {
+    
+}
 
 
 

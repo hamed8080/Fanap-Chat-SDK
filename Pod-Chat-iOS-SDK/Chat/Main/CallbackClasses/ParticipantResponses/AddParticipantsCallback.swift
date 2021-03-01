@@ -21,10 +21,9 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to addParticipant function (by using "addParticipantsCallbackToUser")
     func responseOfAddParticipant(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'ADD_PARTICIPANT' recieved", context: "Chat")
         
-        if createChatModel.enableCache {
+        if enableCache {
             var participants = [Participant]()
             if let res = message.content?.convertToJSON() {
                 let conversation = Conversation(messageContent: res)

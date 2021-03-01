@@ -24,6 +24,7 @@ public enum Roles: String , Codable {
     case THREAD_ADMIN             = "THREAD_ADMIN"
     case unknown
     
+	@available(*,deprecated , message: "removed from future release.")
     func stringValue() -> String {
         switch self {
         case .CHANGE_THREAD_INFO:       return "CHANGE_THREAD_INFO"

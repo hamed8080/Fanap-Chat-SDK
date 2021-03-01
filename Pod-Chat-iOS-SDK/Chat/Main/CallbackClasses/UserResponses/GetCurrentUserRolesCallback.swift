@@ -21,7 +21,6 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to getCurrentUserRoles function (by using "getCurrentUserRolesCallbackToUser")
     func responseOfGetCurrentUserRoles(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'GET_CURRENT_USER_ROLES' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -33,7 +32,7 @@ extension Chat {
                                           contentCount:     nil,
                                           subjectId:        message.subjectId)
         
-        if createChatModel.enableCache {
+        if enableCache {
             if let response = returnData.resultAsArray as? [String], let threadId = message.subjectId {
                 let currentUserRolesModel = GetCurrentUserRolesModel(messageContent:    response,
                                                                      hasError:          returnData.hasError,

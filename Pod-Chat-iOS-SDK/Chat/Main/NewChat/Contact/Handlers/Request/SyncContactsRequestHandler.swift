@@ -18,7 +18,7 @@ class SyncContactsRequestHandler {
 		var contactsToSync:[AddContactRequest] = []
 		authorizeContactAccess(grant: { store in
 			let phoneContacts = SyncContactsRequestHandler.getContactsFromAuthorizedStore(store)
-			let cachePhoneContacts = Chat.cacheDB.retrievePhoneContacts()
+			let cachePhoneContacts = Chat.cacheDB.newRetrievePhoneContacts()
 			phoneContacts.forEach { phoneContact in
 				if let findedContactCache = cachePhoneContacts.first(where: {$0.cellphoneNumber == phoneContact.cellphoneNumber}){
 					if (PhoneContact.isContactChanged(findedContactCache, phoneContactModel: phoneContact)) {

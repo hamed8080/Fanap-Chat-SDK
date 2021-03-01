@@ -57,13 +57,12 @@ extension Chat {
                               response: CreateReturnData,
                               success:  @escaping callbackTypeAlias,
                               failure:  @escaping callbackTypeAlias) {
-            
             log.verbose("GetHistoryCallbacks", context: "Chat")
             
             if let arrayContent = response.resultAsArray as? [JSON] {
                 let content = sendParams.content?.convertToJSON()
                 
-                if Chat.sharedInstance.createChatModel?.enableCache == true {
+                if Chat.sharedInstance.enableCache {
                     // save data comes from server to the Cache
                     var messages = [Message]()
                     for item in (response.resultAsArray as? [JSON]) ?? [] {
@@ -72,8 +71,7 @@ extension Chat {
                     }
                     
                     handleServerAndCacheDifferential(sendParams: sendParams, serverResponse: messages)
-					guard let content = sendParams.convertCodableToString() else{return}					
-                    Chat.cacheDB.saveMessageObjects(messages: messages, getHistoryParams: JSON(stringLiteral: content))
+                    Chat.cacheDB.saveMessageObjects(messages: messages, getHistoryParams: sendParams.convertModelToJSON())
                 }
                 
                 let getHistoryModel = GetHistoryResponse(messageContent:    arrayContent,
@@ -191,7 +189,7 @@ extension Chat {
             if let arrayContent = response.resultAsArray as? [JSON] {
                 let content = sendParams.content?.convertToJSON()
                 
-                if Chat.sharedInstance.createChatModel?.enableCache == true {
+                if Chat.sharedInstance.enableCache {
                     
                 }
                 

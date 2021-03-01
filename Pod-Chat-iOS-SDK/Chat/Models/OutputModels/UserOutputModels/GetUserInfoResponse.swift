@@ -18,9 +18,7 @@ open class UserInfoModel: ResponseModel, ResponseModelDelegates {
                 errorMessage:   String,
                 errorCode:      Int) {
         
-		let data = try! messageContent.rawData()
-		let user = try! JSONDecoder().decode(User.self, from: data)
-		self.user = user
+        self.user   = User(messageContent: messageContent)
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
     
@@ -39,8 +37,7 @@ open class UserInfoModel: ResponseModel, ResponseModelDelegates {
 	}
 	
     public func returnDataAsJSON() -> JSON {
-		
-        let result: JSON = ["user": JSON(user)]
+        let result: JSON = ["user": user.formatToJSON()]
         
         let resultAsJSON: JSON = ["result":         result,
                                   "hasError":       hasError,

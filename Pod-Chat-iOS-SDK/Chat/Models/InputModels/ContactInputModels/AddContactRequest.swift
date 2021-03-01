@@ -10,14 +10,15 @@ import Foundation
 
 open class AddContactRequest :Encodable {
     
-    public var cellphoneNumber    : String?
-    public var email              : String?
-    public var firstName          : String?
-    public var lastName           : String?
-    public var ownerId            : Int?
-    public var username           : String?
-    public var typeCode           : String
-	public var uniqueId:           String = UUID().uuidString // uniqueId needed in request model sened to server
+    public var cellphoneNumber:    String?
+    public var email:              String?
+    public var firstName:          String?
+    public var lastName:           String?
+    public var ownerId:            Int?
+    public var username:           String?
+
+    public var typeCode:           String?
+    public var uniqueId:           String
     
     public init(cellphoneNumber    : String? = nil,
                 email              : String? = nil,
@@ -36,10 +37,31 @@ open class AddContactRequest :Encodable {
         self.typeCode           = typeCode ?? "default"
         self.uniqueId           = uniqueId ?? UUID().uuidString
     }
+    
+    /// Add Contact with username
+    public init(email:      String?,
+                firstName:  String?,
+                lastName:   String?,
+                ownerId:    Int?,
+                username:   String?,
+                typeCode:   String?,
+                uniqueId:   String?) {
+        
+        self.cellphoneNumber    = nil
+        self.email              = email
+        self.firstName          = firstName
+        self.lastName           = lastName
+        self.ownerId            = ownerId
+        self.username           = username
+
+        self.typeCode           = typeCode
+        self.uniqueId           = uniqueId ?? UUID().uuidString
+    }
+    
 }
 
 
-@available(*, unavailable,message: "the class was removed use AddContactRequest instead")
+/// MARK: -  this class will be deprecate.  (use this class instead: 'AddContactRequest')
 open class AddContactRequestModel: AddContactRequest {
     
 }

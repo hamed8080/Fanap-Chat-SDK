@@ -20,7 +20,6 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to unpinThread function (by using "unpinThreadCallbackToUser")
     func responseOfUnpinThread(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'UNPIN_THREAD' recieved", context: "Chat")
         
         let tUnpinEM = ThreadEventModel(type:           ThreadEventTypes.THREAD_UNPIN,
@@ -32,7 +31,7 @@ extension Chat {
                                         pinMessage:     nil)
         delegate?.threadEvents(model: tUnpinEM)
         
-        if createChatModel.enableCache {
+        if enableCache {
             if let thId = message.subjectId {
                 Chat.cacheDB.savePinUnpinCMConversationEntity(withThreadId: thId, isPinned: false)
             }

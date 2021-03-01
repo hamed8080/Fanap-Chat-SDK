@@ -10,7 +10,7 @@ import Foundation
 import SwiftyBeaver
 import FanapPodAsyncSDK
 
-
+@available(*,deprecated , message: "removed from future release.")
 public enum ConsoleLogLevel {
     case ERROR
     case WARNING
@@ -18,13 +18,13 @@ public enum ConsoleLogLevel {
     case INFO
     case VERBOSE
     
-	func logLevel() -> LogLevel {
-		switch self {
-			case .ERROR:    return LogLevel.error
-			case .WARNING:  return LogLevel.warning
-			case .DEBUG:    return LogLevel.debug
-			case .INFO:     return LogLevel.info
-			case .VERBOSE:  return LogLevel.verbose
-		}
-	}
+    func logLevel() -> LogLevel {
+        switch self {
+        case .ERROR:    return LogLevel.error
+        case .WARNING:  return LogLevel.warning
+        case .DEBUG:    return LogLevel.debug
+        case .INFO:     return LogLevel.info
+        case .VERBOSE:  return LogLevel.verbose
+        }
+    }
 }

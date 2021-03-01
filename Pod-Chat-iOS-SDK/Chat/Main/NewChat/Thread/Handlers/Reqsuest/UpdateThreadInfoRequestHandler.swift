@@ -57,15 +57,14 @@ public class UpdateThreadInfoRequestHandler  {
     func updateThreadInfo(_ uploadImageModel:UploadImageResponse? = nil) {
         guard let createChatModel = chat.createChatModel else {return}
         guard let reqContent = req.convertCodableToString() else{return}
-        let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UPDATE_THREAD_INFO.intValue(),
+        let chatMessage = NewSendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UPDATE_THREAD_INFO.intValue(),
                                             token:              createChatModel.token,
                                             content:            "\(reqContent)",
                                             subjectId:          req.threadId,
                                             typeCode:           typeCode ?? createChatModel.typeCode,
                                             uniqueId:           calculatedUniqueId)
         guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
+        let asyncMessage = NewSendAsyncMessageVO(content:      content,
                                               ttl: createChatModel.msgTTL,
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)

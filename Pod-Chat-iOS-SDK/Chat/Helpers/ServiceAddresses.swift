@@ -8,6 +8,25 @@
 
 import Foundation
 
+
+public struct SERVICE_ADDRESSES_ENUM {
+    public var SSO_ADDRESS          = "http://172.16.110.76"
+    public var PLATFORM_ADDRESS     = "http://172.16.106.26:8080/hamsam"
+    public var FILESERVER_ADDRESS   = "http://172.16.106.26:8080/hamsam"
+    public var PODSPACE_FILESERVER_ADDRESS = "https://podspace.pod.ir"
+    public var MAP_ADDRESS          = "https://api.neshan.org/v1"
+    
+//    public func stringValue() -> String {
+//        switch self {
+//        case .SSO_ADDRESS:          return "http://172.16.110.76"
+//        case .PLATFORM_ADDRESS:     return "http://172.16.106.26:8080/hamsam"
+//        case .FILESERVER_ADDRESS:   return "http://172.16.106.26:8080/hamsam"
+//        case .MAP_ADDRESS:          return "https://api.neshan.org/v1"
+//        }
+//    }
+    
+}
+
 public enum SERVICES_PATH: String {
     
     // Devices:
@@ -85,6 +104,7 @@ public enum SERVICES_PATH: String {
         case .MAP_SEARCH:       return "/search"
         case .MAP_ROUTING:      return "/routing"
         case .MAP_STATIC_IMAGE: return "/static"
+			
         }
     }
     

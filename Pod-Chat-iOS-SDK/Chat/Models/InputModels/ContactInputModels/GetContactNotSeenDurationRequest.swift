@@ -7,33 +7,44 @@
 //
 
 import Foundation
+import SwiftyJSON
 
-open class GetNotSeenDurationRequest: Encodable {
+open class GetNotSeenDurationRequest: RequestModelDelegates {
     
-	public let userIds     : [Int]
-	
-	@available(*,deprecated , message: "removed in future release use typeCode In contactNotSeenDuration method params")
-	public var typeCode    : String? = nil
-	
-	@available(*,deprecated , message: "removed in future release use uniqueId In contactNotSeenDuration method params")
-	public var uniqueId    : String = UUID().uuidString
+    public let userIds:     [Int]
     
-	
-	@available(*,deprecated , message: "removed in future release use another init without uniqueId params")
-    public init(userIds: [Int], typeCode: String?, uniqueId: String?) {
+    public let typeCode:    String?
+    public let uniqueId:    String
+    
+    public init(userIds:    [Int],
+                typeCode:   String?,
+                uniqueId:   String?) {
+        
         self.userIds    = userIds
+        
         self.typeCode   = typeCode
-		self.uniqueId   = uniqueId ?? UUID().uuidString
+        self.uniqueId   = uniqueId ?? UUID().uuidString
     }
-	
-	public init(userIds: [Int]) {
-		self.userIds    = userIds
-	}
+    
+    public func convertContentToJSON() -> JSON {
+        var content: JSON = [:]
+        var users: JSON = []
+        for item in userIds {
+            users.appendIfArray(json: JSON(item))
+        }
+        content["userIds"] = JSON(users)
+        return content
+    }
+    
+    public func convertContentToJSONArray() -> [JSON] {
+        return []
+    }
     
 }
 
 
-@available(*,unavailable, message: "use GetNotSeenDurationRequest class instead")
+/// MARK: -  this class will be deprecate.  (use this class instead: 'NotSeenDurationRequest')
 open class NotSeenDurationRequestModel: GetNotSeenDurationRequest {
+    
 }
 

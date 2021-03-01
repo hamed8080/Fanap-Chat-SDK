@@ -8,38 +8,60 @@
 
 import Foundation
 
-
-open class AddContactsRequest :Encodable{
+open class AddContactsRequest {
     
     public let cellphoneNumbers:    [String]
     public let emails:              [String]
     public let firstNames:          [String]
     public let lastNames:           [String]
     public let usernames:           [String]
+    
     public let typeCode:            String?
     public let uniqueIds:           [String]
     
-    // Memberwise initializer
-    public init(cellphoneNumbers:    [String]? = nil,
+    /// Add Contacts with CellPhone numbers
+    public init(cellphoneNumbers:   [String],
                 emails:             [String],
                 firstNames:         [String],
                 lastNames:          [String],
-				userNames:			[String]? = nil,
-                typeCode:           String? = nil,
+                typeCode:           String?,
                 uniqueIds:          [String]) {
         
-        self.cellphoneNumbers    = cellphoneNumbers ?? []
+        self.cellphoneNumbers   = cellphoneNumbers
         self.emails             = emails
         self.firstNames         = firstNames
         self.lastNames          = lastNames
-        self.usernames          = userNames ?? []
+        self.usernames          = []
+        
         self.typeCode           = typeCode
         self.uniqueIds          = uniqueIds
     }
+    
+    /// Add Contacts with usernames
+    public init(emails:     [String],
+                firstNames: [String],
+                lastNames:  [String],
+                usernames:  [String],
+                typeCode:   String?,
+                uniqueIds:  [String]) {
+        
+        self.cellphoneNumbers   = []
+        self.emails             = emails
+        self.firstNames         = firstNames
+        self.lastNames          = lastNames
+        self.usernames          = usernames
+        
+        self.typeCode           = typeCode
+        self.uniqueIds          = uniqueIds
+    }
+    
 }
 
-@available(*,unavailable , message: "this class removed use AddContactsRequest")
+/// MARK: -  this class will be deprecate.  (use this class instead: 'AddContactsRequest')
 open class AddContactsRequestModel: AddContactsRequest {
+    
+    
+    
 }
 
 

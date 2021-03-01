@@ -21,7 +21,6 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to getThreads function (by using "threadsCallbackToUser")
     func responseOfGetThreads(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'GET_THREADS' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -35,7 +34,7 @@ extension Chat {
         
         if (Chat.map[message.uniqueId] != nil) {
             if (message.uniqueId != "") {
-                if createChatModel.enableCache {
+                if enableCache {
                     
                     
                     let threadsModel = GetThreadsResponse(messageContent:   (returnData.resultAsArray as? [JSON]) ?? [],
@@ -71,7 +70,7 @@ extension Chat {
                 Chat.map.removeValue(forKey: message.uniqueId)
                 
             } else {
-                if createChatModel.enableCache {
+                if enableCache {
                     var serverThreadIds: [Int] = []
                     for item in message.content?.convertToJSON() ?? [:] {
                         if let threadId = item.1["id"].int {

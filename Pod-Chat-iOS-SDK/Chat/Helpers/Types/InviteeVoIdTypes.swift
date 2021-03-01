@@ -17,6 +17,7 @@ public enum InviteeVoIdTypes : Int , Encodable {
     case TO_BE_USER_USERNAME = 4
     case TO_BE_USER_ID = 5
     
+	@available(*,deprecated , message: "removed from future release.")
     public func stringValue() -> String {
         switch self {
         case .TO_BE_USER_SSO_ID:            return "TO_BE_USER_SSO_ID"
@@ -27,6 +28,7 @@ public enum InviteeVoIdTypes : Int , Encodable {
         }
     }
     
+	@available(*,deprecated , message: "removed from future release.")
     public func intValue() -> Int {
         switch self {
         case .TO_BE_USER_SSO_ID:            return 1

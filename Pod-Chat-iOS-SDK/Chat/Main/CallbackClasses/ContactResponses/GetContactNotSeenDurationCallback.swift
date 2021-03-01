@@ -11,7 +11,6 @@ import Foundation
 import Foundation
 import SwiftyBeaver
 import FanapPodAsyncSDK
-import SwiftyJSON
 
 
 extension Chat {
@@ -40,8 +39,8 @@ extension Chat {
             callback.onResultCallback(uID:      message.uniqueId,
                                       response: returnData,
                                       success:  { (successJSON) in
-                                        self.getContactNotSeenDurationCallbackToUser?(successJSON)
-                                      }) { _ in }
+                self.getContactNotSeenDurationCallbackToUser?(successJSON)
+            }) { _ in }
             Chat.map.removeValue(forKey: message.uniqueId)
         }
     }
@@ -54,16 +53,20 @@ extension Chat {
             log.verbose("NotSeenDurationCallback", context: "Chat")
             
             if !(response.hasError) {
-                let notSeenDictionary = response.result?.dictionary?.mapValues{ $0.int }
-                if let notSeens = notSeenDictionary?.map({ UserLastSeenDuration(userId: Int($0) ?? 0, time: $1 ?? 0)}){
-                    let response = ContactNotSeenDurationRespoonse(notSeenDuration: notSeens,
-                                                                   hasError: response.hasError,
-                                                                   errorMessage: response.errorMessage,
-                                                                   errorCode: response.errorCode)
-                    success(response)
+                if let content = response.result {
+                    let notSeenDurationModel = GetContactNotSeenDurationResponse(notSeenDuration:   content,
+                                                                                 hasError:          response.hasError,
+                                                                                 errorMessage:      response.errorMessage,
+                                                                                 errorCode:         response.errorCode)
+
+                    success(notSeenDurationModel)
                 }
             }
+            
         }
+        
     }
     
 }
+
+

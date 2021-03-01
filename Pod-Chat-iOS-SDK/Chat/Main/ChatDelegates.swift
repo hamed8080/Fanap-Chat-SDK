@@ -8,17 +8,17 @@
 
 import Foundation
 
-public protocol ChatErrorDelegate{
-    func chatError(errorCode: Int, errorMessage: String, errorResult: Any?)
-}
 
-public protocol ChatDelegates: class, ChatErrorDelegate {
+
+public protocol ChatDelegates: class {
     
     func chatConnect()
     func chatDisconnect()
     func chatReconnect()
     func chatReady(withUserInfo: User)
     func chatState(state: AsyncStateType)
+    
+    func chatError(errorCode: Int, errorMessage: String, errorResult: Any?)
     
     func botEvents(model: BotEventModel)
     func contactEvents(model: ContactEventModel)
@@ -27,4 +27,5 @@ public protocol ChatDelegates: class, ChatErrorDelegate {
     func systemEvents(model: SystemEventModel)
     func threadEvents(model: ThreadEventModel)
     func userEvents(model: UserEventModel)
+    
 }

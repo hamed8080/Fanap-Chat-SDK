@@ -21,7 +21,6 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to editMessage function (by using "editMessageCallbackToUser")
     func responseOfEditMessage(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'EDIT_MESSAGE' recieved", context: "Chat")
         
         let returnData = CreateReturnData(hasError:         false,
@@ -56,7 +55,7 @@ extension Chat {
         
         // save edited data on the cache
         // remove this message from wait edit queue
-        if createChatModel.enableCache {
+        if enableCache {
             Chat.cacheDB.saveMessageObjects(messages: [myMessage], getHistoryParams: nil)
             Chat.cacheDB.deleteWaitEditMessage(uniqueId: message.uniqueId)
         }

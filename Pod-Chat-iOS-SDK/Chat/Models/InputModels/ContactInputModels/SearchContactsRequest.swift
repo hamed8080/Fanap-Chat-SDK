@@ -18,12 +18,13 @@ open class SearchContactsRequest {
     public let order:           Ordering?
     public let query:           String?
     public let summery:         Bool?
-    public let typeCode:        String?
+	@available(*,deprecated , message: "remove from future release. use request method")
+	public let typeCode:        String?
     
-    @available(*,deprecated , message: "remove from future release. use uniqueId in searchContacts method parameter")
+	@available(*,deprecated , message: "remove from future release. use request method")
     public let uniqueId:        String
     
-    @available(*,deprecated , message: "remove from future release. use init without uniqueId")
+    @available(*,deprecated , message: "remove from future release. use init without uniqueId and typeCode")
     public init(cellphoneNumber:    String?,
                 contactId:          Int?,
                 count:              Int?,
@@ -53,8 +54,7 @@ open class SearchContactsRequest {
                 offset:             Int? = nil,
                 order:              Ordering? = nil,
                 query:              String? = nil,
-                summery:            Bool? = nil,
-                typeCode:           String? = nil) {
+                summery:            Bool? = nil) {
         
         self.cellphoneNumber    = cellphoneNumber
         self.contactId          = contactId
@@ -64,7 +64,8 @@ open class SearchContactsRequest {
         self.order              = order
         self.query              = query
         self.summery            = summery
-        self.typeCode           = typeCode
+		//removed in future release
+        self.typeCode           = nil
         //removed in future release
         self.uniqueId           = UUID().uuidString
     }

@@ -14,7 +14,9 @@ open class MapSearchRequest : Encodable {
     public let lng:     Double
     public let term:    String
     
-    public init(lat: Double, lng: Double, term:   String) {
+    public init(lat:    Double,
+                lng:    Double,
+                term:   String) {
         
         self.lat    = lat
         self.lng    = lng
@@ -23,7 +25,7 @@ open class MapSearchRequest : Encodable {
     
 }
 
-@available(*,unavailable , message: "use MapSearchRequest class")
+
 open class MapSearchRequestModel: MapSearchRequest {
     
 }

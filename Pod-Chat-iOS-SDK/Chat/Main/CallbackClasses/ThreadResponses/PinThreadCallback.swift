@@ -20,7 +20,6 @@ extension Chat {
     ///    - but on the situation where the response is valid,
     ///    - it will call the "onResultCallback" callback to pinThread function (by using "pinThreadCallbackToUser")
     func responseOfPinThread(withMessage message: ChatMessage) {
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Message of type 'PIN_THREAD' recieved", context: "Chat")
         
         let tPinEM = ThreadEventModel(type:         ThreadEventTypes.THREAD_PIN,
@@ -41,7 +40,7 @@ extension Chat {
                                           contentCount:     nil,
                                           subjectId:        message.subjectId)
         
-        if createChatModel.enableCache {
+        if enableCache {
             if let thId = message.subjectId {
                 Chat.cacheDB.savePinUnpinCMConversationEntity(withThreadId: thId, isPinned: true)
             }

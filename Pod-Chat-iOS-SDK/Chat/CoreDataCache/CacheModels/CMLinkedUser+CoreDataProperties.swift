@@ -13,6 +13,11 @@ import CoreData
 
 extension CMLinkedUser {
 
+	@available(*,deprecated , message: "removed in future release.")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<CMLinkedUser> {
+        return NSFetchRequest<CMLinkedUser>(entityName: "CMLinkedUser")
+    }
+
     @NSManaged public var coreUserId:   NSNumber?
     @NSManaged public var image:        String?
     @NSManaged public var name:         String?

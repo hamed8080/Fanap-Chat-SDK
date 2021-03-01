@@ -124,6 +124,66 @@ extension Cache {
         }
     }
     
+    
+    
+    // MARK: - save PhoneBook Contact:
+    /// Save PhoneBook Contact:
+    /// by calling this function, it save (or update) PhoneContact that comes from users phone, into the Cache.
+    ///
+    /// - fetch PhoneContact objects from 'PhoneContact' Entity
+    /// - filter it by cellphoneNumber
+    /// - if it found any PhoneContact object, it will update its values on the Cache
+    /// - otherwise it will create new CMContact
+    ///
+    /// Inputs:
+    /// it gets  "AddContactRequestModel" model as an input
+    ///
+    /// Outputs:
+    /// it returns no output
+    ///
+    /// - parameters:
+    ///     -  contact:     contacts to save on Cache. (AddContactRequestModel)
+    ///
+    /// - Returns:
+    ///     none
+    ///
+    public func savePhoneBookContact(contact myContact: AddContactRequest) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "PhoneContact")
+        if let contactCellphoneNumber = myContact.cellphoneNumber {
+            fetchRequest.predicate = NSPredicate(format: "cellphoneNumber == %@", contactCellphoneNumber)
+            do {
+                if let result = try context.fetch(fetchRequest) as? [PhoneContact] {
+                    if (result.count > 0) {
+                        result.first!.updateObject(with: myContact)
+                        saveContext(subject: "Update PhoneContact -update existing object-")
+                    } else {
+                        let thePhoneContactEntity = NSEntityDescription.entity(forEntityName: "PhoneContact", in: context)
+                        let thePhoneContact = PhoneContact(entity: thePhoneContactEntity!, insertInto: context)
+                        thePhoneContact.updateObject(with: myContact)
+                        saveContext(subject: "Update PhoneContact -create new object-")
+                    }
+                }
+            } catch {
+                fatalError("Error on trying to find the contact from PhoneContact entity")
+            }
+        }
+    }
+    
+    public func savePhoneBookContacts(contacts myContacts: AddContactsRequestModel) {
+        for (index, _) in myContacts.cellphoneNumbers.enumerated() {
+            let addContactInput = AddContactRequest(cellphoneNumber: myContacts.cellphoneNumbers[index],
+                                                    email:          myContacts.emails[index],
+                                                    firstName:      myContacts.firstNames[index],
+                                                    lastName:       myContacts.lastNames[index],
+                                                    ownerId:        nil,
+                                                    typeCode:       nil,
+                                                    uniqueId:       nil)
+            savePhoneBookContact(contact: addContactInput)
+        }
+    }
+    
+    
+    
     // MARK: - save Thread:
     /// Save Thread:
     /// by calling this function, save (or update) Threads that comes from server, into the cache

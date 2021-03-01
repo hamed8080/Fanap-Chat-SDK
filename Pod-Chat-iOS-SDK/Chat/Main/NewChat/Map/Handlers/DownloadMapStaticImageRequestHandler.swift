@@ -12,7 +12,7 @@ class DownloadMapStaticImageRequestHandler {
 	
 	private init(){}
 	
-	internal class func handle(req:MapStaticImageRequest ,
+	internal class func handle(req:NewMapStaticImageRequest ,
 							   createChatModel:CreateChatModel ,
 							   completion:@escaping (ChatResponse)->(),
 							   downloadProgress:((Float) -> ())? = nil)

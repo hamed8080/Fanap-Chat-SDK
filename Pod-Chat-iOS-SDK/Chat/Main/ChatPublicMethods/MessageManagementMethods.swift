@@ -34,24 +34,30 @@ extension Chat {
     public func clearHistory(inputModel clearHistoryInput: ClearHistoryRequest,
                              uniqueId:          @escaping ((String) -> ()),
                              completion:        @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+          
         log.verbose("Try to request to create clear history with this parameters: \n \(clearHistoryInput)", context: "Chat")
         uniqueId(clearHistoryInput.uniqueId)
         clearHistoryCallbackToUser = completion
           
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CLEAR_HISTORY.intValue(),
-											token:              createChatModel.token,
-											content:            "\(clearHistoryInput.convertContentToJSON())",
+                                            content:            "\(clearHistoryInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          clearHistoryInput.threadId,
-                                            typeCode:           clearHistoryInput.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           clearHistoryInput.typeCode ?? generalTypeCode,
                                             uniqueId:           clearHistoryInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:    content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+          
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
 
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(ClearHistoryCallback(parameters: chatMessage), clearHistoryInput.uniqueId)],
@@ -81,24 +87,30 @@ extension Chat {
     public func deleteMessage(inputModel deleteMessageInput:   DeleteMessageRequest,
                               uniqueId:             @escaping ((String) -> ()),
                               completion:           @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to edit message with this parameters: \n \(deleteMessageInput)", context: "Chat")
         uniqueId(deleteMessageInput.uniqueId)
         
         deleteMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELETE_MESSAGE.intValue(),
-											token:              createChatModel.token,
                                             content:            "\(deleteMessageInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          deleteMessageInput.messageId,
-                                            typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           deleteMessageInput.uniqueId)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           deleteMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           deleteMessageInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
+        
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -127,22 +139,30 @@ extension Chat {
     public func deleteMultipleMessages(inputModel deleteMessageInput:   DeleteMultipleMessagesRequest,
                                        uniqueIds:            @escaping (([String]) -> ()),
                                        completion:           @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to edit message with this parameters: \n \(deleteMessageInput)", context: "Chat")
         uniqueIds(deleteMessageInput.uniqueIds)
         
         deleteMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELETE_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            "\(deleteMessageInput.convertContentToJSON())",
-                                            typeCode:           deleteMessageInput.typeCode ?? createChatModel.typeCode)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+                                            content:            "\(deleteMessageInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           deleteMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           nil,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
+        
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         var myCallBacks: [(DeleteMessageCallbacks, String)] = []
@@ -177,7 +197,7 @@ extension Chat {
     public func editMessage(inputModel editMessageInput:   EditTextMessageRequest,
                             uniqueId:           @escaping ((String) -> ()),
                             completion:         @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to edit message with this parameters: \n \(editMessageInput)", context: "Chat")
         uniqueId(editMessageInput.uniqueId)
         
@@ -190,7 +210,7 @@ extension Chat {
          and we will send this Queue to user on the GetHistory request,
          now user knows which messages didn't send correctly, and can handle them
          */
-        if createChatModel.enableCache {
+        if enableCache {
             let messageObjectToSendToQueue = QueueOfWaitEditMessagesModel(textMessage:  editMessageInput.textMessage,
                                                                           messageType:  editMessageInput.messageType,
                                                                           metadata:     nil,
@@ -206,19 +226,23 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: editMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.EDIT_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            MakeCustomTextToSend(message: editMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
-                                            messageType:        editMessageInput.messageType.rawValue,
+                                            content:            MakeCustomTextToSend(message: editMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+                                            messageType:        editMessageInput.messageType.returnIntValue(),
+                                            metadata:           nil,
                                             repliedTo:          editMessageInput.repliedTo,
+                                            systemMetadata:     nil,
                                             subjectId:          editMessageInput.messageId,
-                                            typeCode:           editMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           editMessageInput.uniqueId)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           editMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           editMessageInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
+        
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -252,7 +276,7 @@ extension Chat {
                                onSent:              @escaping callbackTypeAlias,
                                onDelivere:          @escaping callbackTypeAlias,
                                onSeen:              @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to Forward with this parameters: \n \(forwardMessageInput)", context: "Chat")
         uniqueIds(forwardMessageInput.uniqueIds)
         
@@ -262,7 +286,7 @@ extension Chat {
          and we will send this Queue to user on the GetHistory request,
          now user knows which messages didn't send correctly, and can handle them
          */
-        if createChatModel.enableCache {
+        if enableCache {
             for (index, item) in forwardMessageInput.messageIds.enumerated() {
                 let messageObjectToSendToQueue = QueueOfWaitForwardMessagesModel(//messageIds:    [item],
                                                                                  messageId:     item,
@@ -280,17 +304,23 @@ extension Chat {
         sendCallbackToUserOnSeen = onSeen
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.FORWARD_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            "\(forwardMessageInput.messageIds)",
+                                            content:            "\(forwardMessageInput.messageIds)",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          forwardMessageInput.threadId,
-                                            typeCode:           forwardMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueIds:          forwardMessageInput.uniqueIds)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           forwardMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           nil,
+                                            uniqueIds:          forwardMessageInput.uniqueIds,
+                                            isCreateThreadAndSendMessage: nil)
+
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
 
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -311,23 +341,30 @@ extension Chat {
                                           uniqueId:         @escaping ((String) -> ()),
                                           completion:       @escaping callbackTypeAlias,
                                           cacheResponse:    @escaping ((UnreadMessageCountModel) -> ())) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to get all unread messages count", context: "Chat")
         uniqueId(inputModel.uniqueId)
         getAllUnreadMessagesCountCallbackToUser = completion
       
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.ALL_UNREAD_MESSAGE_COUNT.intValue(),
-											token:              createChatModel.token,
-											content:            "\(inputModel.convertContentToJSON())",
-                                            typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
+                                            content:            "\(inputModel.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           inputModel.typeCode ?? generalTypeCode,
                                             uniqueId:           inputModel.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+    
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
       
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetAllUnreadMessagesCountCallbacks(), inputModel.uniqueId)],
@@ -335,7 +372,7 @@ extension Chat {
                                 deliverCallback:    nil,
                                 seenCallback:       nil)
       
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             let cacheUnreadCount = Chat.cacheDB.retrieveAllUnreadMessageCount()
             let unreadMessageCountModel = UnreadMessageCountModel(unreadCount:  cacheUnreadCount,
                                                                   hasError:     false,
@@ -379,25 +416,30 @@ extension Chat {
                            fileMessagesNotSent:     @escaping (([QueueOfWaitFileMessagesModel]) -> ()),
                            uploadImageNotSent:      @escaping (([QueueOfWaitUploadImagesModel]) -> ()),
                            uploadFileNotSent:       @escaping (([QueueOfWaitUploadFilesModel]) -> ())) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to get history with this parameters: \n \(getHistoryInput)", context: "Chat")
         uniqueId(getHistoryInput.uniqueId)
         getHistoryCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_HISTORY.intValue(),
-											token:              createChatModel.token,
                                             content:            "\(getHistoryInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          getHistoryInput.threadId,
-                                            typeCode:           getHistoryInput.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           getHistoryInput.typeCode ?? generalTypeCode,
                                             uniqueId:           getHistoryInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
       
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetHistoryCallbacks(parameters: chatMessage), getHistoryInput.uniqueId)],
@@ -406,7 +448,7 @@ extension Chat {
                                 seenCallback:       nil)
        
 //         if cache is enabled by user, first return cache result to the user
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             
             if let textMessages = Chat.cacheDB.retrieveWaitTextMessages(threadId: getHistoryInput.threadId) {
                 textMessagesNotSent(textMessages)
@@ -467,25 +509,29 @@ extension Chat {
                                uniqueId:                @escaping ((String) -> ()),
                                completion:              @escaping callbackTypeAlias,
                                cacheResponse:           @escaping ((GetHistoryModel) -> ())) {
-        
-        guard let createChatModel = createChatModel else {return}
         log.verbose("Try to request to get mention list with this parameters: \n \(getMentionInput)", context: "Chat")
         uniqueId(getMentionInput.uniqueId)
         getMentionListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_HISTORY.intValue(),
-											token:              createChatModel.token,
-											content:            "\(getMentionInput.convertContentToJSON())",
+                                            content:            "\(getMentionInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          getMentionInput.threadId,
-                                            typeCode:           getMentionInput.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           getMentionInput.typeCode ?? generalTypeCode,
                                             uniqueId:           getMentionInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
-		guard let content = chatMessage.convertCodableToString() else{return}
-        let asyncMessage = SendAsyncMessageVO(content:      content,
-                                              msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+      
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(GetMentionCallbacks(parameters: chatMessage), getMentionInput.uniqueId)],
@@ -493,7 +539,7 @@ extension Chat {
                                 deliverCallback:    nil,
                                 seenCallback:       nil)
         
-        if (getCacheResponse ?? createChatModel.enableCache) {
+        if (getCacheResponse ?? enableCache) {
             // ToDo:
         }
         
@@ -520,24 +566,30 @@ extension Chat {
     public func messageDeliveryList(inputModel messageDeliveryListInput:   GetMessageDeliveredSeenListRequest,
                                     uniqueId:                   @escaping ((String) -> ()),
                                     completion:                 @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to get message deliver participants with this parameters: \n \(messageDeliveryListInput)", context: "Chat")
         uniqueId(messageDeliveryListInput.uniqueId)
         
         getMessageDeliverListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_MESSAGE_DELEVERY_PARTICIPANTS.intValue(),
-											token:              createChatModel.token,
-											content:            "\(messageDeliveryListInput.convertContentToJSON())",
-                                            typeCode:           messageDeliveryListInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           messageDeliveryListInput.uniqueId)
+                                            content:            "\(messageDeliveryListInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           messageDeliveryListInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           messageDeliveryListInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -566,24 +618,30 @@ extension Chat {
     public func messageSeenList(inputModel messageSeenListInput:   GetMessageDeliveredSeenListRequest,
                                 uniqueId:               @escaping ((String) -> ()),
                                 completion:             @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to get message seen participants with this parameters: \n \(messageSeenListInput)", context: "Chat")
         uniqueId(messageSeenListInput.uniqueId)
         
         getMessageSeenListCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.GET_MESSAGE_SEEN_PARTICIPANTS.intValue(),
-											token:              createChatModel.token,
-											content:            "\(messageSeenListInput.convertContentToJSON())",
-                                            typeCode:           messageSeenListInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           messageSeenListInput.uniqueId)
+                                            content:            "\(messageSeenListInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           messageSeenListInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           messageSeenListInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -614,26 +672,31 @@ extension Chat {
     public func pinMessage(inputModel:  PinUnpinMessageRequest,
                            uniqueId:    @escaping (String) -> (),
                            completion:  @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+            
         log.verbose("Try to request to pin message with this parameters: \n \(inputModel)", context: "Chat")
         uniqueId(inputModel.uniqueId)
         
         pinMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.PIN_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            "\(inputModel.convertContentToJSON())",
+                                            content:            "\(inputModel.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          inputModel.messageId,
-                                            typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           inputModel.typeCode ?? generalTypeCode,
                                             uniqueId:           inputModel.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(PinMessageCallbacks(), inputModel.uniqueId)],
@@ -660,26 +723,31 @@ extension Chat {
     public func unpinMessage(inputModel:  PinUnpinMessageRequest,
                              uniqueId:    @escaping (String) -> (),
                              completion:  @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+            
         log.verbose("Try to request to unpin message with this parameters: \n \(inputModel)", context: "Chat")
         uniqueId(inputModel.uniqueId)
         
         unpinMessageCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.UNPIN_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            "\(inputModel.convertContentToJSON())",
+                                            content:            "\(inputModel.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          inputModel.messageId,
-                                            typeCode:           inputModel.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           inputModel.typeCode ?? generalTypeCode,
                                             uniqueId:           inputModel.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(UnpinMessageCallbacks(), inputModel.uniqueId)],
@@ -712,7 +780,7 @@ extension Chat {
                              onSent:            @escaping callbackTypeAlias,
                              onDelivere:        @escaping callbackTypeAlias,
                              onSeen:            @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to reply Message with this parameters: \n \(replyMessageInput)", context: "Chat")
         uniqueId(replyMessageInput.uniqueId)
         
@@ -727,7 +795,7 @@ extension Chat {
          and we will send this Queue to user on the GetHistory request,
          now user knows which messages didn't send correctly, and can handle them
          */
-        if createChatModel.enableCache {
+        if enableCache {
             let messageObjectToSendToQueue = QueueOfWaitTextMessagesModel(textMessage:      replyMessageInput.textMessage,
                                                                           messageType:      replyMessageInput.messageType,
                                                                           metadata:         (replyMessageInput.metadata != nil) ? "\(replyMessageInput.metadata!)" : nil,
@@ -743,21 +811,23 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: replyMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            MakeCustomTextToSend(message: replyMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
-                                            messageType:        replyMessageInput.messageType.rawValue,
+                                            content:            MakeCustomTextToSend(message: replyMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+                                            messageType:        replyMessageInput.messageType.returnIntValue(),
                                             metadata:           (replyMessageInput.metadata != nil) ? "\(MakeCustomTextToSend(message: replyMessageInput.metadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             repliedTo:          replyMessageInput.repliedTo,
+                                            systemMetadata:     nil,
                                             subjectId:          replyMessageInput.threadId,
-                                            typeCode:           replyMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           replyMessageInput.uniqueId)
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           replyMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           replyMessageInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -784,20 +854,27 @@ extension Chat {
     ///
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (SendDeliverSeenRequest)
     public func deliver(inputModel deliverInput: SendDeliverSeenRequest) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to send deliver message for a message id with this parameters: \n messageId = \(deliverInput.messageId) , ownerId = \(deliverInput.ownerId)", context: "Chat")
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DELIVERY.intValue(),
-											token:              createChatModel.token,
-											content:            "\(deliverInput.messageId)",
-                                            typeCode:           deliverInput.typeCode ?? createChatModel.typeCode)
-		
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+                                            content:            "\(deliverInput.messageId)",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           deliverInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           nil,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
+        
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  3)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -822,20 +899,27 @@ extension Chat {
     ///
     /// - parameter inputModel: (input) you have to send your parameters insid this model. (SendDeliverSeenRequest)
     public func seen(inputModel seenInput: SendDeliverSeenRequest) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to send seen message for a message id with this parameters: \n messageId = \(seenInput.messageId) , ownerId = \(seenInput.ownerId)", context: "Chat")
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SEEN.intValue(),
-											token:              createChatModel.token,
-											content:            "\(seenInput.messageId)",
-                                            typeCode:           seenInput.typeCode ?? createChatModel.typeCode)
+                                            content:            "\(seenInput.messageId)",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           seenInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           nil,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  3)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -870,7 +954,7 @@ extension Chat {
                                        onSent:      @escaping callbackTypeAlias,
                                        onDelivered: @escaping callbackTypeAlias,
                                        onSeen:      @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to send BotMessage with this parameters: \n \(sendInterActiveMessageInput)", context: "Chat")
         uniqueId(sendInterActiveMessageInput.uniqueId)
         
@@ -883,20 +967,23 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: sendInterActiveMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.BOT_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            MakeCustomTextToSend(message: sendInterActiveMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+                                            content:            MakeCustomTextToSend(message: sendInterActiveMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
+                                            messageType:        nil,
                                             metadata:           "\(MakeCustomTextToSend(message: sendInterActiveMessageInput.metadata).replaceSpaceEnterWithSpecificCharecters())",
+                                            repliedTo:          nil,
                                             systemMetadata:     (sendInterActiveMessageInput.systemMetadata != nil) ? "\(MakeCustomTextToSend(message: sendInterActiveMessageInput.systemMetadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             subjectId:          sendInterActiveMessageInput.messageId,
-                                            typeCode:           sendInterActiveMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           sendInterActiveMessageInput.uniqueId)
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           sendInterActiveMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           sendInterActiveMessageInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -936,13 +1023,13 @@ extension Chat {
                                     onSent:                     @escaping callbackTypeAlias,
                                     onDelivere:                 @escaping callbackTypeAlias,
                                     onSeen:                     @escaping callbackTypeAlias) {
-        let mapStaticImageInput = MapStaticImageRequest(centerLat: sendLocationMessageRequest.mapCenter.lat,
+        
+        let mapStaticImageInput = MapStaticImageRequestModel(centerLat: sendLocationMessageRequest.mapCenter.lat,
                                                              centerLng: sendLocationMessageRequest.mapCenter.lng,
-															 key: createChatModel?.mapApiKey,
                                                              height:    sendLocationMessageRequest.mapHeight,
+                                                             type:      sendLocationMessageRequest.mapType,
                                                              width:     sendLocationMessageRequest.mapWidth,
-                                                             zoom:      sendLocationMessageRequest.mapZoom,
-															 type:      sendLocationMessageRequest.mapType)
+                                                             zoom:      sendLocationMessageRequest.mapZoom)
         
         mapStaticImage(inputModel: mapStaticImageInput,
                        uniqueId: { _ in },
@@ -960,7 +1047,7 @@ extension Chat {
                                                  hC:                nil,
                                                  wC:                nil,
                                                  userGroupHash:     sendLocationMessageRequest.userGroupHash,
-                                                 typeCode:          sendLocationMessageRequest.typeCode ?? self.createChatModel?.typeCode,
+                                                 typeCode:          sendLocationMessageRequest.typeCode ?? self.generalTypeCode,
                                                  uniqueId:          sendLocationMessageRequest.uniqueId)
             
             let messageInput = SendTextMessageRequestModel(content:         sendLocationMessageRequest.textMessage ?? "",
@@ -969,7 +1056,7 @@ extension Chat {
                                                            repliedTo:       sendLocationMessageRequest.repliedTo,
                                                            systemMetadata:  sendLocationMessageRequest.systemMetadata,
                                                            threadId:        sendLocationMessageRequest.threadId,
-                                                           typeCode:        sendLocationMessageRequest.typeCode ?? self.createChatModel?.typeCode,
+                                                           typeCode:        sendLocationMessageRequest.typeCode ?? self.generalTypeCode,
                                                            uniqueId:        sendLocationMessageRequest.uniqueId)
             
             let fileMessageInput = SendFileMessageRequestModel(messageInput:    messageInput,
@@ -1025,7 +1112,7 @@ extension Chat {
                                 onSent:                 @escaping callbackTypeAlias,
                                 onDelivered:            @escaping callbackTypeAlias,
                                 onSeen:                 @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to Send File adn Message with this parameters: \n \(sendFileMessageInput)", context: "Chat")
         uploadUniqueId(sendFileMessageInput.uploadInput.uniqueId)
         messageUniqueId(sendFileMessageInput.messageInput.uniqueId)
@@ -1036,7 +1123,7 @@ extension Chat {
          and we will send this Queue to user on the GetHistory request,
          now user knows which messages didn't send correctly, and can handle them
          */
-        if createChatModel.enableCache {
+        if enableCache {
             if let file = sendFileMessageInput.uploadInput as? UploadFileRequestModel {
                 let messageObjectToSendToQueue = QueueOfWaitFileMessagesModel(textMessage:  sendFileMessageInput.messageInput.textMessage,
                                                                               messageType:  sendFileMessageInput.messageInput.messageType,
@@ -1121,11 +1208,11 @@ extension Chat {
             }) { (response) in
                 let myResponse: UploadImageResponse = response as! UploadImageResponse
                 if !(myResponse.hasError) {
-                    metadata["file"] = myResponse.returnMetaData(onServiceAddress: createChatModel.fileServer)
+                    metadata["file"] = myResponse.returnMetaData(onServiceAddress: self.SERVICE_ADDRESSES.FILESERVER_ADDRESS)
                     metadata["file"]["actualHeight"] = JSON(image.hC)
                     metadata["file"]["actualWidth"]  = JSON(image.wC)
                     metadata["file"]["extension"]   = JSON(uploadRequest.fileExtension ?? "")
-                    metadata["file"]["link"]        = JSON("\(createChatModel.podSpaceFileServerAddress)\(SERVICES_PATH.DRIVE_DOWNLOAD_IMAGE.stringValue())?hash=\(myResponse.uploadImage?.hashCode ?? "")")
+                    metadata["file"]["link"]        = JSON("\(self.SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)\(SERVICES_PATH.DRIVE_DOWNLOAD_IMAGE.stringValue())?hash=\(myResponse.uploadImage?.hashCode ?? "")")
                     metadata["file"]["mimeType"]    = JSON(uploadRequest.mimeType)
                     metadata["file"]["name"]        = JSON(uploadRequest.fileName)
                     metadata["file"]["originalName"] = JSON(uploadRequest.originalName)
@@ -1169,9 +1256,9 @@ extension Chat {
             }) { (response) in
                 let myResponse: UploadFileResponse = response as! UploadFileResponse
                 if !(myResponse.hasError) {
-                    metadata["file"]    = myResponse.returnMetaData(onServiceAddress: createChatModel.fileServer)
+                    metadata["file"]    = myResponse.returnMetaData(onServiceAddress: self.SERVICE_ADDRESSES.FILESERVER_ADDRESS)
                     metadata["file"]["extension"]   = JSON(uploadRequest.fileExtension ?? "")
-                    metadata["file"]["link"]        = JSON("\(createChatModel.podSpaceFileServerAddress)\(SERVICES_PATH.DRIVE_DOWNLOAD_FILE.stringValue())?hash=\(myResponse.uploadFile?.hashCode ?? "")")
+                    metadata["file"]["link"]        = JSON("\(self.SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)\(SERVICES_PATH.DRIVE_DOWNLOAD_FILE.stringValue())?hash=\(myResponse.uploadFile?.hashCode ?? "")")
                     metadata["file"]["mimeType"]    = JSON(uploadRequest.mimeType)
                     metadata["file"]["name"]        = JSON(uploadRequest.fileName)
                     metadata["file"]["originalName"] = JSON(uploadRequest.originalName)
@@ -1199,7 +1286,7 @@ extension Chat {
                                                                     repliedTo:      sendFileMessageInput.messageInput.repliedTo,
                                                                     systemMetadata: sendFileMessageInput.messageInput.systemMetadata,
                                                                     threadId:       sendFileMessageInput.messageInput.threadId,
-                                                                    typeCode:       sendFileMessageInput.messageInput.typeCode ?? createChatModel.typeCode,
+                                                                    typeCode:       sendFileMessageInput.messageInput.typeCode ?? generalTypeCode,
                                                                     uniqueId:       sendFileMessageInput.messageInput.uniqueId)
             self.sendTextMessage(inputModel: sendMessageParamModel, uniqueId: { _ in }, onSent: { (sent) in
                 onSent(sent)
@@ -1282,7 +1369,7 @@ extension Chat {
                                 onSent:                 @escaping callbackTypeAlias,
                                 onDelivere:             @escaping callbackTypeAlias,
                                 onSeen:                 @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to send Message with this parameters: \n \(sendTextMessageInput)", context: "Chat")
         uniqueId(sendTextMessageInput.uniqueId)
         
@@ -1298,7 +1385,7 @@ extension Chat {
          and we will send this Queue to user on the GetHistory request,
          now user knows which messages didn't send correctly, and can handle them
          */
-        if createChatModel.enableCache {
+        if enableCache {
             let messageObjectToSendToQueue = QueueOfWaitTextMessagesModel(textMessage:      sendTextMessageInput.textMessage,
                                                                           messageType:      sendTextMessageInput.messageType,
                                                                           metadata:         (sendTextMessageInput.metadata != nil) ? "\(sendTextMessageInput.metadata!)" : nil,
@@ -1314,22 +1401,23 @@ extension Chat {
 //        let messageTxtContent = MakeCustomTextToSend(message: sendTextMessageInput.content).replaceSpaceEnterWithSpecificCharecters()
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.MESSAGE.intValue(),
-											token:              createChatModel.token,
                                             content:            MakeCustomTextToSend(message: sendTextMessageInput.textMessage).replaceSpaceEnterWithSpecificCharecters(),
-                                            messageType:        sendTextMessageInput.messageType.rawValue,
+                                            messageType:        sendTextMessageInput.messageType.returnIntValue(),
                                             metadata:           (sendTextMessageInput.metadata != nil) ? "\(MakeCustomTextToSend(message: sendTextMessageInput.metadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             repliedTo:          sendTextMessageInput.repliedTo,
                                             systemMetadata:     (sendTextMessageInput.systemMetadata != nil) ? "\(MakeCustomTextToSend(message: sendTextMessageInput.systemMetadata!).replaceSpaceEnterWithSpecificCharecters())" : nil,
                                             subjectId:          sendTextMessageInput.threadId,
-                                            typeCode:           sendTextMessageInput.typeCode ?? createChatModel.typeCode,
-                                            uniqueId:           sendTextMessageInput.uniqueId)
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           sendTextMessageInput.typeCode ?? generalTypeCode,
+                                            uniqueId:           sendTextMessageInput.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -1401,19 +1489,25 @@ extension Chat {
      *
      */
     func sendSignalMessage(input: SendSignalMessageRequest) {
-        guard let createChatModel = createChatModel else {return}
-        let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SYSTEM_MESSAGE.intValue(),
-											token:              createChatModel.token,
-											content:            "\(input.convertContentToJSON())",
-                                            subjectId:          input.threadId,
-                                            uniqueId:           input.uniqueId)
         
-		guard let chatMessageContent = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:     chatMessageContent,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority,
+        let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.SYSTEM_MESSAGE.intValue(),
+                                            content:            "\(input.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          input.threadId,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           nil,
+                                            uniqueId:           input.uniqueId,
+                                            uniqueIds:          nil,
+                                            isCreateThreadAndSendMessage: nil)
+        
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
                                               pushMsgType:  4)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
@@ -1444,8 +1538,7 @@ extension Chat {
     /// - parameter completion: (response) it will returns a boolean value that if this request was successfull or not! (Bool)
     public func cancelSendMessage(inputModel cancelMessageInput:   CancelMessageRequestModel,
                                   completion:           @escaping ((Bool) -> ())) {
-        guard let createChatModel = createChatModel else {return}
-        if createChatModel.enableCache {
+        if enableCache {
             if let textUID = cancelMessageInput.textMessageUniqueId {
                 Chat.cacheDB.deleteWaitTextMessage(uniqueId: textUID)
                 completion(true)

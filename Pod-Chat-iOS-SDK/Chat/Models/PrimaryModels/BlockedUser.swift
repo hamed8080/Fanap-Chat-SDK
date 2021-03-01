@@ -27,9 +27,7 @@ open class BlockedUser : Decodable {
         self.lastName       = messageContent["lastName"].string
         self.nickName       = messageContent["nickName"].string
         self.profileImage   = messageContent["profileImage"].string
-		if let contact = try? JSONDecoder().decode(Contact.self, from: messageContent["contactVO"].rawData()){
-			self.contact = contact
-		}
+        self.contact        = Contact(messageContent: messageContent["contactVO"])
     }
     
     public init(id:         Int?,
@@ -65,14 +63,13 @@ open class BlockedUser : Decodable {
     }
     
     public func formatToJSON() -> JSON {
-		
         let result: JSON = ["id":               id ?? NSNull(),
                             "coreUserId":   coreUserId ?? NSNull(),
                             "firstName":    firstName ?? NSNull(),
                             "lastName":     lastName ?? NSNull(),
                             "nickName":     nickName ?? NSNull(),
                             "profileImage": profileImage ?? NSNull(),
-                            "contact":      contact?.convertCodableToString() ?? NSNull()]
+                            "contact":      contact?.formatToJSON() ?? NSNull()]
         return result
     }
  

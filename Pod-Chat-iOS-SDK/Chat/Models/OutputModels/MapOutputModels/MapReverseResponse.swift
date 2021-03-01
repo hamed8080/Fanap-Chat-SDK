@@ -7,28 +7,52 @@
 //
 
 import Foundation
+import SwiftyJSON
 
-open class MapReverseResponse: ResponseModel {
+open class MapReverseModel: ResponseModel, ResponseModelDelegates {
     
+    public var result: MapReverse
     
-    @available(*,unavailable , renamed: "reverse")
-    public var result: MapReverse? = nil
-    
-    public var reverse: MapReverse? = nil
-    
-    private enum CodingKeys : String , CodingKey{
-        case hasError     = "hasError"
-        case message      = "message"
-        case errorCode    = "errorCode"
-        case reverse      = "reverse"
+    public init(messageContent: JSON,
+                hasError:       Bool,
+                errorMessage:   String,
+                errorCode:      Int) {
+        
+        self.result = MapReverse(messageContent: messageContent)
+        super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
     
-    public required init(from decoder: Decoder) throws {
-        let container     = try decoder.container(keyedBy: CodingKeys.self)
-        reverse           = try container.decodeIfPresent(MapReverse.self, forKey: .reverse)
-        let errorCode     = try container.decodeIfPresent(Int.self, forKey: .errorCode) ?? 0
-        let hasError      = try container.decodeIfPresent(Bool.self, forKey: .hasError) ?? false
-        let message       = try container.decodeIfPresent(String.self, forKey: .message) ?? ""
-        super.init(hasError: hasError, errorMessage: message, errorCode: errorCode)
+    public init(hasError:       Bool,
+                errorMessage:   String?,
+                errorCode:      Int?,
+                reversObject:   MapReverse) {
+        
+        self.result = reversObject
+        super.init(hasError:        hasError,
+                   errorMessage:    errorMessage ?? "",
+                   errorCode:       errorCode ?? 0)
     }
+	
+	public required init(from decoder: Decoder) throws {
+		fatalError("init(from:) has not been implemented")
+	}
+	
+    
+    public func returnDataAsJSON() -> JSON {
+        let theResult: JSON = ["reverse":   result.formatToJSON()]
+        let finalResult: JSON = ["result":          theResult,
+                                 "hasError":        hasError,
+                                 "errorMessage":    errorMessage,
+                                 "errorCode":       errorCode]
+        
+        return finalResult
+    }
+    
 }
+
+
+open class MapReverseResponse: MapReverseModel {
+    
+}
+
+

@@ -14,7 +14,9 @@ open class LeaveThreadRequest : Encodable {
     public let threadId:        Int
     public let clearHistory:    Bool?
     
+	@available(*,deprecated , message: "rmoved in future release use request method.")
     public let typeCode:        String?
+	@available(*,deprecated , message: "rmoved in future release use request method.")
     public let uniqueId:        String
     
     public init(threadId:       Int,
@@ -48,7 +50,7 @@ open class LeaveThreadRequest : Encodable {
     
 }
 
-@available(*,deprecated , message: "this remoed in future release use request method.")
+@available(*,deprecated , message: "rmoved in future release use request method.")
 open class LeaveThreadRequestModel: LeaveThreadRequest {
     
 }

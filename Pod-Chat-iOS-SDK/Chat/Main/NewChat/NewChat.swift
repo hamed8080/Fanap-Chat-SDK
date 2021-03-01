@@ -24,6 +24,37 @@ public extension Chat {
 //    func getContacts(request: GetContactsRequest,uniqueId:String? = nil,fromCache:Bool? = nil,uniqeIdResult:((String)->())? = nil ,typeCode:String? = nil,completion:@escaping (ChatResponse)->()){
 //        prepareToSendAsync(req:request,clientSpecificUniqueId:uniqueId,typeCode: typeCode, messageType: .GET_CONTACTS, completion: completion)
 //    }
+	
+	//**************************** Intitializers ****************************
+	func createChatObject(object:CreateChatModel){
+		isCreateObjectFuncCalled = true
+		createChatModel = object
+		initialize()
+	}
+	
+	func initialize(){
+		if createChatModel?.captureLogsOnSentry == true {
+			startCrashAnalytics()
+		}
+		
+		if createChatModel?.getDeviceIdFromToken == false{
+			getDeviceIdAndCreateAsync()
+		}else{
+			CreateAsync()
+		}
+		
+		_ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: createChatModel?.deviecLimitationSpaceMB ?? 100, turnOffTheCache: true, errorDelegate: delegate)
+	}
+	
+	func dispose() {
+		stopAllChatTimers()
+		asyncClient?.disposeAsyncObject()
+		asyncClient = nil
+		Chat.instance = nil
+		print("Disposed Singleton instance")
+	}
+	//**************************** Intitializers ****************************
+	
     
 	func request(_ builder :RequestBuilder ,
 				 typeCode:String? = nil,
@@ -87,19 +118,19 @@ public extension Chat {
 				guard let mapApiKey = createChatModel.mapApiKey else {return}
 				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
 				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-				restApiRequest(req, decodeType: MapReverse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				restApiRequest(req, decodeType: NewMapReverse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
 				return
 			case .MapSearch(req: let req):
 				guard let mapApiKey = createChatModel.mapApiKey else {return}
 				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
 				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-				restApiRequest(req, decodeType: MapSearchResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				restApiRequest(req, decodeType: NewMapSearchResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
 				return
 			case .MapRouting(req: let req):
 				guard let mapApiKey = createChatModel.mapApiKey else {return}
 				let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_ROUTING.rawValue)"
 				let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]
-				restApiRequest(req, decodeType: MapRoutingResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
+				restApiRequest(req, decodeType: NewMapRoutingResponse.self, url: url ,headers: headers , typeCode: typeCode, completion: completion)
 				return
 			case .MapStaticImage(req: let req):
 				DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
@@ -298,7 +329,7 @@ public extension Chat {
 		uniqueIdResult?(uniqueId)
 		let typeCode = typeCode ?? createChatModel.typeCode ?? "default"
 		
-		let chatMessage = SendChatMessageVO(chatMessageVOType:  messageType.rawValue,
+		let chatMessage = NewSendChatMessageVO(chatMessageVOType:  messageType.rawValue,
 											token:              createChatModel.token,
 											content:            getContent(req , plainText),
 											subjectId: subjectId,
@@ -307,8 +338,7 @@ public extension Chat {
 											isCreateThreadAndSendMessage: true)
 		
 		guard let chatMessageContent = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:     chatMessageContent,
-											  msgTTL:       createChatModel.msgTTL,
+		let asyncMessage = NewSendAsyncMessageVO(content:     chatMessageContent,
 											  ttl: createChatModel.msgTTL,
 											  peerName:     createChatModel.serverName,
 											  priority:     createChatModel.msgPriority
@@ -329,7 +359,7 @@ public extension Chat {
 		return content
 	}
 	
-	internal func sendToAsync(asyncMessageVO:SendAsyncMessageVO){
+	internal func sendToAsync(asyncMessageVO:NewSendAsyncMessageVO){
 		guard let content = asyncMessageVO.convertCodableToString() else { return }
 		asyncClient?.pushSendData(type: asyncMessageVO.pushMsgType ?? 3, content: content)
 		runSendMessageTimer()

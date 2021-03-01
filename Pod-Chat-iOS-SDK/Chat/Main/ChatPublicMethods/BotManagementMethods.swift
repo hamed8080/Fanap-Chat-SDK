@@ -35,25 +35,31 @@ extension Chat {
     public func createBot(inputModel createBotInput:  CreateBotRequest,
                           uniqueId:                 @escaping (String) -> (),
                           completion:               @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to create bot with this parameters: \n \(createBotInput.botName)", context: "Chat")
         uniqueId(createBotInput.uniqueId)
         
         createBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.CREATE_BOT.intValue(),
-											token:              createChatModel.token,
                                             content:            createBotInput.botName,
-                                            typeCode:           createBotInput.typeCode ?? createChatModel.typeCode,
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           createBotInput.typeCode ?? generalTypeCode,
                                             uniqueId:           createBotInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(CreateBotCallback(), createBotInput.uniqueId)],
@@ -84,25 +90,31 @@ extension Chat {
     public func addBotCommand(inputModel addBotCommandsInput:    AddBotCommandRequest,
                               uniqueId:         @escaping (String) -> (),
                               completion:       @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to add bot command with this parameters: \n \(addBotCommandsInput.botName)", context: "Chat")
         uniqueId(addBotCommandsInput.uniqueId)
         
         addBotCommandCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.DEFINE_BOT_COMMAND.intValue(),
-											token:              createChatModel.token,
-											content:            "\(addBotCommandsInput.convertContentToJSON())",
-                                            typeCode:           addBotCommandsInput.typeCode ?? createChatModel.typeCode,
+                                            content:            "\(addBotCommandsInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
+                                            subjectId:          nil,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           addBotCommandsInput.typeCode ?? generalTypeCode,
                                             uniqueId:           addBotCommandsInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(AddBotCommandCallback(), addBotCommandsInput.uniqueId)],
@@ -133,26 +145,31 @@ extension Chat {
     public func startBot(inputModel startBotInput:  StartStopBotRequest,
                          uniqueId:      @escaping (String) -> (),
                          completion:    @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to start bot with this parameters: \n botName = \(startBotInput.botName) \n threadId = \(startBotInput.threadId)", context: "Chat")
         uniqueId(startBotInput.uniqueId)
         
         startBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.START_BOT.intValue(),
-											token:              createChatModel.token,
-											content:            "\(startBotInput.convertContentToJSON())",
+                                            content:            "\(startBotInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          startBotInput.threadId,
-                                            typeCode:           startBotInput.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           startBotInput.typeCode ?? generalTypeCode,
                                             uniqueId:           startBotInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(StartBotCallback(), startBotInput.uniqueId)],
@@ -182,26 +199,31 @@ extension Chat {
     public func stopBot(inputModel stopBotInput:    StartStopBotRequest,
                         uniqueId:       @escaping (String) -> (),
                         completion:     @escaping callbackTypeAlias) {
-        guard let createChatModel = createChatModel else {return}
+        
         log.verbose("Try to request to stop bot with this parameters: \n botName = \(stopBotInput.botName) \n threadId = \(stopBotInput.threadId)", context: "Chat")
         uniqueId(stopBotInput.uniqueId)
         
         stopBotCallbackToUser = completion
         
         let chatMessage = SendChatMessageVO(chatMessageVOType:  ChatMessageVOTypes.STOP_BOT.intValue(),
-											token:              createChatModel.token,
                                             content:            "\(stopBotInput.convertContentToJSON())",
+                                            messageType:        nil,
+                                            metadata:           nil,
+                                            repliedTo:          nil,
+                                            systemMetadata:     nil,
                                             subjectId:          stopBotInput.threadId,
-                                            typeCode:           stopBotInput.typeCode ?? createChatModel.typeCode,
+                                            token:              token,
+                                            tokenIssuer:        nil,
+                                            typeCode:           stopBotInput.typeCode ?? generalTypeCode,
                                             uniqueId:           stopBotInput.uniqueId,
+                                            uniqueIds:          nil,
                                             isCreateThreadAndSendMessage: true)
         
-		guard let content = chatMessage.convertCodableToString() else{return}
-		let asyncMessage = SendAsyncMessageVO(content:      content,
-											  msgTTL:       createChatModel.msgTTL,
-											  ttl: createChatModel.msgTTL,
-                                              peerName:     createChatModel.serverName,
-                                              priority:     createChatModel.msgPriority)
+        let asyncMessage = SendAsyncMessageVO(content:      chatMessage.convertModelToString(),
+                                              msgTTL:       msgTTL,
+                                              peerName:     serverName,
+                                              priority:     msgPriority,
+                                              pushMsgType:  nil)
         
         sendMessageWithCallback(asyncMessageVO:     asyncMessage,
                                 callbacks:          [(StopBotCallback(), stopBotInput.uniqueId)],

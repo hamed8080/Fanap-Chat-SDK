@@ -172,18 +172,13 @@ extension Chat: AsyncDelegates {
          *
          */
         log.verbose("content of received message: \n \(params)", context: "Chat")
-		if let data = try? params.rawData() , let asyncMessage = try? JSONDecoder().decode(AsyncMessage.self,from: data){
-			handleReceiveMessageFromAsync(withContent: asyncMessage)
-		}
-		
-		
-		
-		//Only code needed in new Version release
-		if let data = try? params.rawData(){
-			ReceiveMessageFactory.invokeCallback(data: data , chat: self)
-		}
+        
+        let asyncMessage = AsyncMessage(withContent: params)
+        handleReceiveMessageFromAsync(withContent: asyncMessage)
     }
-
+    
+    
+    
     
     /*
      * Handle AsyncReady:
@@ -217,7 +212,6 @@ extension Chat: AsyncDelegates {
     }
     
     func makeChatReady() {
-        guard let createChatModel = createChatModel else {return}
         if userInfo == nil {
             getUserInfoRetryCount += 1
             getUserInfo(getCacheResponse: nil, uniqueId: { _ in }, completion: { (result) in
@@ -225,10 +219,10 @@ extension Chat: AsyncDelegates {
                 log.verbose("get info result comes, and save userInfo: \n \(resultModel.returnDataAsJSON())", context: "Chat")
 
                 if resultModel.hasError == false {
-					self.userInfo = resultModel.user
+                    self.userInfo = User(withUserObject: resultModel.user)
                     self.isChatReady = true
                     self.delegate?.chatReady(withUserInfo: self.userInfo!)
-                    if createChatModel.enableCache {
+                    if self.enableCache {
                         self.getAllThreads(withInputModel: GetAllThreadsRequest(summary: true, typeCode: nil))
                     }
                 }
@@ -264,12 +258,10 @@ extension Chat: AsyncDelegates {
 //        lastReceivedMessageTimer = RepeatingTimer(timeInterval: (Double(self.chatPingMessageInterval) * 1.5))
         
         stopLastReceivedMessageTimer()
-		lastReceivedMessageTimer(interval: (Double(self.chatPingMessageInterval) * 1.5))
-		if let data = withContent.content.data(using: .utf8) ,
-		   let chatMessage = try? JSONDecoder().decode(ChatMessage.self, from: data){
-			receivedMessageHandler(withContent: chatMessage)
-		}
-		
+        lastReceivedMessageTimer(interval: (Double(self.chatPingMessageInterval) * 1.5))
+        
+        let chatMessage = ChatMessage(withContent: withContent.content.convertToJSON())
+        receivedMessageHandler(withContent: chatMessage)
     }
     
     
@@ -298,3 +290,6 @@ extension Chat: AsyncDelegates {
     
     
 }
+
+
+

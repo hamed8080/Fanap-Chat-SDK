@@ -12,18 +12,27 @@ import SwiftyJSON
 
 class AsyncMessage : Codable {
     
-	let content    	: String
-	let id         	: Int
-	let senderId   	: Int
-	let senderName 	: String?
-	let type       	: Int
+    let content:    String  // String of JSON
+    let id:         Int
+    let senderId:   Int
+    let senderName: String?
+    let type:       Int
     
     init(content: String, id: Int, senderId: Int, senderName: String?, type: Int) {
-        self.content    	= content
-        self.id         	= id
-        self.senderId   	= senderId
-        self.senderName 	= senderName
-        self.type       	= type
+        self.content    = content
+        self.id         = id
+        self.senderId   = senderId
+        self.senderName = senderName
+        self.type       = type
+    }
+    
+	@available(*,deprecated , message: "removed in future release.")
+    init(withContent: JSON) {
+        self.content    = withContent["content"].stringValue
+        self.id         = withContent["id"].intValue
+        self.senderId   = withContent["senderId"].intValue
+        self.senderName = withContent["senderName"].string
+        self.type       = withContent["type"].intValue
     }
     
 }

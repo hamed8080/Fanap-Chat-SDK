@@ -10,45 +10,68 @@ import Foundation
 import SwiftyJSON
 
 
-open class MapReverse : Codable {
+open class MapReverse {
     
     public var address:             String?
     public var city:                String?
-    public var neighbourhood:       String?
-    
-    @available(*,unavailable,renamed: "inOddEvenZone")
-    public var in_odd_even_zone : Bool?
-    public var inOddEvenZone    : Bool?
-    
-    @available(*,unavailable,renamed: "in_traffic_zone")
+    public var neighbourhood:       Bool?
+    public var in_odd_even_zone:    Bool?
     public var in_traffic_zone:     Bool?
-    public var inTrafficZone:Bool?
-    
-    @available(*,unavailable,renamed: "municipalityZone")
     public var municipality_zone:   Int?
-    public var municipalityZone:String?
-    
     public var state:               String?
     
-    
-    private enum CodingKeys : String ,CodingKey{
-        case address          = "address"
-        case city             = "city"
-        case neighbourhood    = "neighbourhood"
-        case inOddEvenZone    = "in_odd_even_zone"
-        case inTrafficZone    = "in_traffic_zone"
-        case municipalityZone = "municipality_zone"
-        case state            = "state"
+    public init(messageContent: JSON) {
+        self.address            = messageContent["address"].string
+        self.city               = messageContent["city"].string
+        self.neighbourhood      = messageContent["neighbourhood"].bool
+        self.in_odd_even_zone   = messageContent["in_odd_even_zone"].bool
+        self.in_traffic_zone    = messageContent["in_traffic_zone"].bool
+        self.municipality_zone  = messageContent["municipality_zone"].int
+        self.state              = messageContent["state"].string
     }
     
-    public required init(from decoder: Decoder) throws {
-        let container       = try decoder.container(keyedBy: CodingKeys.self)
-        address             = (try? container.decodeIfPresent(String.self, forKey : .address)) ?? nil
-        city                = (try? container.decodeIfPresent(String.self, forKey : .city)) ?? nil
-        neighbourhood       = (try? container.decodeIfPresent(String.self, forKey : .neighbourhood)) ?? nil
-        inOddEvenZone       = (try? container.decodeIfPresent(Bool.self, forKey : .inOddEvenZone)) ?? nil
-        inTrafficZone       = (try? container.decodeIfPresent(Bool.self, forKey : .inTrafficZone)) ?? false
-        municipalityZone    = (try? container.decodeIfPresent(String.self, forKey : .municipalityZone)) ?? nil
-        state               = (try? container.decodeIfPresent(String.self, forKey : .state)) ?? nil
+    public init(address:            String?,
+                city:               String?,
+                neighbourhood:      Bool?,
+                in_odd_even_zone:   Bool?,
+                in_traffic_zone:    Bool?,
+                municipality_zone:  Int?,
+                state:              String?) {
+        
+        self.address            = address
+        self.city               = city
+        self.neighbourhood      = neighbourhood
+        self.in_odd_even_zone   = in_odd_even_zone
+        self.in_traffic_zone    = in_traffic_zone
+        self.municipality_zone  = municipality_zone
+        self.state              = state
     }
+    
+    public init(theMapReverse: MapReverse) {
+        
+        self.address            = theMapReverse.address
+        self.city               = theMapReverse.city
+        self.neighbourhood      = theMapReverse.neighbourhood
+        self.in_odd_even_zone   = theMapReverse.in_odd_even_zone
+        self.in_traffic_zone    = theMapReverse.in_traffic_zone
+        self.municipality_zone  = theMapReverse.municipality_zone
+        self.state              = theMapReverse.state
+    }
+    
+    
+    public func formatDataToMakeMapReverse() -> MapReverse {
+        return self
+    }
+    
+    public func formatToJSON() -> JSON {
+        let result: JSON = ["address": address ?? NSNull(),
+                            "city":  city ?? NSNull(),
+                            "neighbourhood":       neighbourhood ?? NSNull(),
+                            "in_odd_even_zone":     in_odd_even_zone ?? NSNull(),
+                            "in_traffic_zone":           in_traffic_zone ?? NSNull(),
+                            "municipality_zone":         municipality_zone ?? NSNull(),
+                            "state":        state ?? NSNull()]
+        return result
+    }
+    
 }
