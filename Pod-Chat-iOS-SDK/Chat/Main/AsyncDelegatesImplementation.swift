@@ -175,6 +175,11 @@ extension Chat: AsyncDelegates {
         
         let asyncMessage = AsyncMessage(withContent: params)
         handleReceiveMessageFromAsync(withContent: asyncMessage)
+        
+        //Only code needed in new Version release
+        if let data = try? params.rawData(){
+            ReceiveMessageFactory.invokeCallback(data: data , chat: self)
+        }
     }
     
     

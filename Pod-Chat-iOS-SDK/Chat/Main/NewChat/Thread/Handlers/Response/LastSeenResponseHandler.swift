@@ -14,7 +14,7 @@ class LastSeenResponseHandler : ResponseHandler{
         guard let data = chatMessage.content?.data(using: .utf8) else {return}
         guard let conversations = try? JSONDecoder().decode(Conversation.self, from: data) else{return}
         callback(.init(result: conversations))
-        chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+        chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
         let unreadCount = chatMessage.content?.convertToJSON()["unreadCount"].int
         let tUnreadCountUpdateEM = ThreadEventModel(type:           ThreadEventTypes.THREAD_UNREAD_COUNT_UPDATED,
                                                     threadId:       chatMessage.subjectId,

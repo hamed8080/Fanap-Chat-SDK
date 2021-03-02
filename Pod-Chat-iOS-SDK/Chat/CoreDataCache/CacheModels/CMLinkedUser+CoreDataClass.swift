@@ -59,18 +59,4 @@ public class CMLinkedUser: NSManagedObject {
         }
     }
     
-	
-	static let crud = CoreDataCrud<CMContact>(entityName: "CMLinkedUser")
-	
-	class func convertContactToCM(linkedUser:LinkedUser  ,entity:CMLinkedUser? = nil) -> CMLinkedUser{
-		
-		let model        = entity ?? CMLinkedUser()
-		model.coreUserId = linkedUser.coreUserId as NSNumber?
-		model.image      = linkedUser.image
-		model.name       = linkedUser.name
-		model.nickname   = linkedUser.nickname
-		model.username   = linkedUser.username
-		
-		return model
-	}
 }

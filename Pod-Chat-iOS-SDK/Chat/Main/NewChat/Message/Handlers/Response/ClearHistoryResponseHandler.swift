@@ -14,7 +14,7 @@ class ClearHistoryResponseHandler: ResponseHandler {
         guard let data = chatMessage.content?.data(using: .utf8) else {return}
         guard let threadId = try? JSONDecoder().decode(Int.self, from: data) else{return}
         callback(.init(result: threadId))
-        chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+        chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
     }
 }
 

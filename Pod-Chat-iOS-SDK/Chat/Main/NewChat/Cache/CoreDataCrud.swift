@@ -50,7 +50,6 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
     
     public func delete(entity:NSManagedObject){
         PSM.shared.context.delete(entity)
-        save()
     }
     
     public func deleteWith(predicate:NSPredicate){
@@ -59,7 +58,6 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
             req.predicate = predicate
             let deleteReq = NSBatchDeleteRequest(fetchRequest: req)
             try PSM.shared.context.execute(deleteReq)
-            save()
         }catch{
             print("error in delete happened\(error)")
         }
@@ -69,7 +67,6 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
     public func deleteAll(){
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest())
         let _ = try? PSM.shared.context.execute(deleteRequest)
-        save()
     }
     
     public func insert(setEntityVariables:(T)->()){
@@ -82,7 +79,6 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
             let entity = getInsertEntity()
             setEntityVariables(entity)
         }
-        save()
     }
     
     public func save(){

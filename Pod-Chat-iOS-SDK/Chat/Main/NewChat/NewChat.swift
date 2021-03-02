@@ -29,8 +29,56 @@ public extension Chat {
 	func createChatObject(object:CreateChatModel){
 		isCreateObjectFuncCalled = true
 		createChatModel = object
+        initAllOldProperties()
 		initialize()
 	}
+    
+    private func initAllOldProperties(){
+        if let model = createChatModel{
+            self.debuggingLogLevel                    = model.showDebuggingLogLevel
+            self.captureSentryLogs                    = model.captureLogsOnSentry
+            if captureSentryLogs {
+                startCrashAnalytics()
+            }
+            
+            self.socketAddress                        = model.socketAddress
+            self.ssoHost                              = model.ssoHost
+            self.platformHost                         = model.platformHost
+            self.fileServer                           = model.fileServer
+            self.serverName                           = model.serverName
+            self.token                                = model.token
+            self.enableCache                          = model.enableCache
+            self.mapServer                            = model.mapServer
+            
+            cacheTimeStamp                            =  model.cacheTimeStampInSec
+            if let mapApiKey                          = model.mapApiKey{
+                self.mapApiKey                        = mapApiKey
+            }
+            
+            if let typeCode                           = model.typeCode{
+                self.generalTypeCode                  = typeCode
+            }
+            self.msgPriority                          = model.msgPriority
+            self.msgTTL                               = model.msgTTL
+            self.httpRequestTimeout                   = model.httpRequestTimeout
+            self.actualTimingLog                      = model.actualTimingLog
+            self.deviecLimitationSpaceMB              = model.deviecLimitationSpaceMB
+            self.wsConnectionWaitTime                 = model.wsConnectionWaitTime
+            self.connectionRetryInterval              = model.connectionRetryInterval
+            self.connectionCheckTimeout               = model.connectionCheckTimeout
+            self.messageTtl                           = model.messageTtl
+            self.reconnectOnClose                     = model.reconnectOnClose
+            self.maxReconnectTimeInterval             = model.maxReconnectTimeInterval
+            
+            self.SERVICE_ADDRESSES.SSO_ADDRESS        = ssoHost
+            self.SERVICE_ADDRESSES.PLATFORM_ADDRESS   = platformHost
+            self.SERVICE_ADDRESSES.FILESERVER_ADDRESS = fileServer
+            self.SERVICE_ADDRESSES.MAP_ADDRESS        = mapServer
+            
+            self.localImageCustomPath                 = model.localImageCustomPath
+            self.localFileCustomPath                  = model.localFileCustomPath
+        }
+    }
 	
 	func initialize(){
 		if createChatModel?.captureLogsOnSentry == true {
@@ -59,12 +107,13 @@ public extension Chat {
 	func request(_ builder :RequestBuilder ,
 				 typeCode:String? = nil,
 				 uniqueId:String? = nil,
-				 getCacheResponse: Bool?   = false,
+				 useCache: Bool  = false,
 				 completion: @escaping (ChatResponse)->(),
 				 onSent: ((Any)->())? = nil,
 				 onDelivered: ((Any)->())? = nil,
 				 onSeen: ((Any)->())? = nil,
-				 uniqueIdResult:((String)->())? = nil){
+				 uniqueIdResult:((String)->())? = nil
+                 ){
 		
 		guard let createChatModel = createChatModel else{return}
 		
@@ -75,27 +124,22 @@ public extension Chat {
 		switch builder {
 			case .GetContacts(req: let req ):
 				tuple = (req , .GET_CONTACTS)
+                CasheFactory.get(chat:self , useCache: useCache, completion: completion , casheType: .GET_CASHED_CONTACTS)
 				break
 			case .GetBlockedContacts(req: let req):
 				tuple = (req , .GET_BLOCKED)
 				break
 			case .AddContact(req: let req):
-				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
-				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-				restApiRequest(req, decodeType: ContactResponse.self,url: url , headers: headers , typeCode: typeCode, completion: completion)
+                AddContactRequestHandler.handle(req: req, chat: self, useCache: useCache, completion: completion)
 				return
 			case .AddContacts(req: let req):
-				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.ADD_CONTACTS.rawValue)"
-				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-				restApiRequest(req, decodeType: ContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+                AddContactsRequestHandler.handle(req: req, chat: self, useCache: useCache, completion: completion)
 				return
 			case .ContactNotSeenDuration(req: let req):
 				tuple = (req , .GET_NOT_SEEN_DURATION)
 				break
 			case .RemoveContact(req: let req):
-				let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
-				let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-				restApiRequest(req, decodeType: RemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode, completion: completion)
+                RemoveContactRequestHandler.handle(req: req, chat: self, typeCode: typeCode, completion: completion)
 				return
 			case .SearchContact(req: let req):
 				tuple = (req , .GET_CONTACTS)
@@ -285,7 +329,7 @@ public extension Chat {
 	}
 	
 	// REST API Request
-	private func restApiRequest<T:Decodable>(_ encodableRequest:Encodable? ,
+    func restApiRequest<T:Decodable>(_ encodableRequest:Encodable? ,
 											 decodeType:T.Type,
 											 url:String,
 											 method:HTTPMethod = .get,

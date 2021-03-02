@@ -14,6 +14,6 @@ class CurrentUserRolesResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let userRoles = try? JSONDecoder().decode([Roles].self, from: data) else{return}
 		callback(.init(result: userRoles))
-		chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

@@ -32,7 +32,7 @@ class CallbacksManager{
         }
     }
     
-	func removeError(uniqueId:String ){
+	func removeCallback(uniqueId:String){
 		callbacks.removeValue(forKey: uniqueId)
 	}
 	

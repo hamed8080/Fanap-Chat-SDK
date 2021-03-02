@@ -43,7 +43,7 @@ class ErrorResponseHandler  : ResponseHandler{
 			chat.delegate?.chatError(errorCode:   code,
 									 errorMessage: message ,
 									 errorResult:    content)
-			chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+			chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 		}
 	}
 }

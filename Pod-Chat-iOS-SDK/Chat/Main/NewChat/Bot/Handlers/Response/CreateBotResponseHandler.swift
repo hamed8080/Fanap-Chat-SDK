@@ -13,6 +13,6 @@ class CreateBotResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let bot = try? JSONDecoder().decode(Bot.self, from: data) else{return}
 		callback(.init(result: bot))
-		chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

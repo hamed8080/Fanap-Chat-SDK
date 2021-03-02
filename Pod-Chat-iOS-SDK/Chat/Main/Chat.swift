@@ -39,6 +39,7 @@ public class Chat {
 		dispose()
 	}
     
+    @available(*,unavailable , renamed: "createChatObject(object:)",message: "use new createChatObject with CreateChatModel Object in parameter.")
     public func createChatObject(socketAddress:             String,
                                  ssoHost:                   String,
                                  platformHost:              String,
@@ -65,91 +66,7 @@ public class Chat {
                                  localImageCustomPath:      URL?,
                                  localFileCustomPath:       URL?,
                                  deviecLimitationSpaceMB:   Int64?,
-                                 showDebuggingLogLevel:     ConsoleLogLevel?) {
-        
-        self.debuggingLogLevel = showDebuggingLogLevel?.logLevel() ?? LogLevel.error
-        
-        self.captureSentryLogs = captureLogsOnSentry
-        if captureLogsOnSentry {
-			startCrashAnalytics()
-        }
-        
-        self.socketAddress      = socketAddress
-        self.ssoHost            = ssoHost
-        self.platformHost       = platformHost
-        self.fileServer         = fileServer
-        self.serverName         = serverName
-        self.token              = token
-        self.enableCache        = enableCache
-        self.mapServer          = mapServer
-        
-        if let timeStamp = cacheTimeStampInSec {
-            cacheTimeStamp = timeStamp
-        }
-        
-        if let theMapApiKey = mapApiKey {
-            self.mapApiKey = theMapApiKey
-        }
-        
-        if let theTypeCode = typeCode {
-            self.generalTypeCode = theTypeCode
-        }
-        
-        if let theMsgPriority = msgPriority {
-            self.msgPriority = theMsgPriority
-        }
-        
-        if let theMsgTTL = msgTTL {
-            self.msgTTL = theMsgTTL
-        }
-        
-        if let theHttpRequestTimeout = httpRequestTimeout {
-            self.httpRequestTimeout = theHttpRequestTimeout
-        }
-        
-        if let theActualTimingLog = actualTimingLog {
-            self.actualTimingLog = theActualTimingLog
-        }
-        
-        if let timeLimitation = deviecLimitationSpaceMB {
-            self.deviecLimitationSpaceMB = timeLimitation
-        }
-        
-        self.wsConnectionWaitTime       = wsConnectionWaitTime
-        self.connectionRetryInterval    = connectionRetryInterval
-        self.connectionCheckTimeout     = connectionCheckTimeout
-        self.messageTtl                 = messageTtl
-        self.reconnectOnClose           = reconnectOnClose
-        self.maxReconnectTimeInterval   = maxReconnectTimeInterval ?? 60
-        
-        self.SERVICE_ADDRESSES.SSO_ADDRESS          = ssoHost
-        self.SERVICE_ADDRESSES.PLATFORM_ADDRESS     = platformHost
-        self.SERVICE_ADDRESSES.FILESERVER_ADDRESS   = fileServer
-        self.SERVICE_ADDRESSES.MAP_ADDRESS          = mapServer
-        
-        self.localImageCustomPath = localImageCustomPath
-        self.localFileCustomPath = localFileCustomPath
-        
-        if getDeviceIdFromToken {
-            getDeviceIdWithToken { (deviceIdStr) in
-                self.deviceId = deviceIdStr
-                log.info("get deviceId successfully = \(self.deviceId ?? "error!!")", context: "Chat")
-                
-                DispatchQueue.main.async {
-                    self.CreateAsync()
-                }
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.CreateAsync()
-            }
-        }
-        
-		if DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: self.deviecLimitationSpaceMB, turnOffTheCache: true, errorDelegate: delegate) {
-//            self.enableCache = false
-        }
-        
-    }
+                                 showDebuggingLogLevel:     ConsoleLogLevel?) {}
     
 	func startCrashAnalytics() {
         

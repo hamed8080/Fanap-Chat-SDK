@@ -14,7 +14,7 @@ class IsPublicThreadNameAvailableResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let thread = try? JSONDecoder().decode(PublicThreadNameAvailableResponse.self, from: data) else{return}
 		callback(.init(result: thread))
-		chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 	
 }

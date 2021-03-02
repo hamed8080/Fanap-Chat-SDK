@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-@available(*,deprecated , message:"removed in future release.use RemoveContactResponse")
+@available(*,deprecated , message:"removed in future release.use NewRemoveContactResponse")
 open class RemoveContactModel: ResponseModel, ResponseModelDelegates {
 	
 	public var result:  Bool
@@ -34,7 +34,11 @@ open class RemoveContactModel: ResponseModel, ResponseModelDelegates {
 				   errorMessage:    errorMessage ?? "",
 				   errorCode:       errorCode ?? 0)
 	}
-	
+    
+   public required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
 	@available(*,deprecated , message:"removed in future release")
 	public func returnDataAsJSON() -> JSON {
 		let finalResult: JSON = ["result":          result,
@@ -44,29 +48,12 @@ open class RemoveContactModel: ResponseModel, ResponseModelDelegates {
 		
 		return finalResult
 	}
-	
-	private enum CodingKeys: String , CodingKey{
-		case result       = "result"
-		case hasError     = "hasError"
-		case message      = "message"
-		case errorCode    = "errorCode"
-	}
-	
-	public required init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		let hasError = try container.decodeIfPresent(Bool.self, forKey: .hasError)
-		let message = try container.decodeIfPresent(String.self, forKey: .message)
-		let errorCode = try container.decodeIfPresent(Int.self, forKey: .errorCode)
-		self.result = try container.decodeIfPresent(Bool.self, forKey: .result) ?? false
-		super.init(hasError: hasError ?? false, errorMessage: message ?? "", errorCode: errorCode ?? 0 )
-	}
+
 }
 
 @available(*,deprecated , message:"removed in future release")
 open class RemoveContactResponse: RemoveContactModel {
 	
 }
-
-
 
 

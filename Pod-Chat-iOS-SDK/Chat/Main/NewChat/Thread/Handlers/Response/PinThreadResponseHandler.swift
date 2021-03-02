@@ -15,6 +15,6 @@ class PinThreadResponseHandler: ResponseHandler {
 		guard let threadId = try? JSONDecoder().decode(Int.self, from: data) else{return}
         let resposne = PinThreadResponse(threadId: threadId)
 		callback(.init(result: resposne))
-		chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

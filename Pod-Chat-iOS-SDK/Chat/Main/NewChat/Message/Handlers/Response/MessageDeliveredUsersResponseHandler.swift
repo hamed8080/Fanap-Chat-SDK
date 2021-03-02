@@ -13,7 +13,7 @@ class MessageDeliveredUsersResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let history = try? JSONDecoder().decode([Participant].self, from: data) else{return}
 		callback(.init(result: history))
-		chat.callbacksManager.removeError(uniqueId: chatMessage.uniqueId)
+		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }
 
