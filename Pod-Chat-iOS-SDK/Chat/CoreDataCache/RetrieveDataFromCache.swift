@@ -1181,11 +1181,7 @@ extension Cache {
         
     }
     
-	
-	//new Lines Added
-	public func newRetrievePhoneContacts() -> [Contact] {
-		return PhoneContact.crud.getAll().map {$0.convertToContact()}
-	}
+    
 }
 
 

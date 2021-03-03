@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public struct BatchDeleteMessageRequest: Encodable {
+public class BatchDeleteMessageRequest: BaseRequest {
 	
 	let threadId:Int
 	let deleteForAll:Bool
@@ -34,7 +34,7 @@ public struct BatchDeleteMessageRequest: Encodable {
 		case uniqueIds    = "uniqueIds"
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(messageIds, forKey: .ids)
 		try container.encode(deleteForAll, forKey: .deleteForAll)

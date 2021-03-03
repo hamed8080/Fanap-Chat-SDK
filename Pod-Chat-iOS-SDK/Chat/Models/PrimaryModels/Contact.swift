@@ -78,7 +78,7 @@ open class Contact :Codable {
 //                uniqueId:           String?,
                 userId:             Int? = nil) {
         
-        self.blocked            = blocked
+        self.blocked            = blocked 
         self.cellphoneNumber    = cellphoneNumber
         self.email              = email
         self.firstName          = firstName

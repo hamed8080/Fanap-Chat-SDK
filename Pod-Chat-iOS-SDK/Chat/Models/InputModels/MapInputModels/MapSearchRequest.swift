@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class MapSearchRequest : Encodable {
+public class MapSearchRequest : BaseRequest {
     
     public let lat:     Double
     public let lng:     Double
@@ -22,11 +22,24 @@ open class MapSearchRequest : Encodable {
         self.lng    = lng
         self.term   = term
     }
+	
+	private enum CodingKeys:String , CodingKey{
+		case lat = "lat"
+		case lng = "lng"
+		case term = "term"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encode(lat, forKey: .lat)
+		try? container.encode(lng, forKey: .lng)
+		try? container.encode(term, forKey: .term)
+	}
     
 }
 
 
-open class MapSearchRequestModel: MapSearchRequest {
+public class MapSearchRequestModel: MapSearchRequest {
     
 }
 

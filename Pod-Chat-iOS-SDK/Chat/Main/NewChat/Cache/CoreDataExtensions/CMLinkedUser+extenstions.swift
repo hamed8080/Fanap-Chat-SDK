@@ -33,7 +33,7 @@ extension CMLinkedUser{
     
     public class func insertOrUpdate(linkedUser:LinkedUser , resultEntity:((CMLinkedUser)->())? = nil){
         
-        if let findedEntity = CMLinkedUser.crud.find(keyWithFromat: "coreUserId == %i", value: linkedUser.coreUserId!){
+		if let coreUserId = linkedUser.coreUserId, let findedEntity = CMLinkedUser.crud.find(keyWithFromat: "coreUserId == %i", value: coreUserId){
             let cmLinkedUser = convertLinkUserToCM(linkedUser: linkedUser, entity: findedEntity)
             resultEntity?(cmLinkedUser)
         }else{

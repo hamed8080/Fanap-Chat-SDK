@@ -17,7 +17,7 @@ public struct Cordinate  {
 	}
 }
 
-open class NewMapRoutingRequest : Encodable {
+public class NewMapRoutingRequest : BaseRequest {
 	
 	public   var alternative: Bool = true
 	private  let destination:Cordinate
@@ -36,7 +36,7 @@ open class NewMapRoutingRequest : Encodable {
 		case destination = "destination"
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var continer = encoder.container(keyedBy: CodingKeys.self)
 		try? continer.encode("\(origin.lat),\(origin.lng)", forKey: .origin)
 		try? continer.encode("\(destination.lat),\(destination.lng)", forKey: .destination)

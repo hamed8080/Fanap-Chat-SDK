@@ -13,7 +13,7 @@ import SwiftyJSON
 public class UpdateThreadInfoRequestHandler  {
     
     private let chat:Chat
-    private let req:UpdateThreadInfoRequest
+    private let req:NewUpdateThreadInfoRequest
     private let completion:(ChatResponse)->()
     private let uploadProgress: (Float)->()
     private let clientSpecificUniqueId:String?
@@ -24,22 +24,20 @@ public class UpdateThreadInfoRequestHandler  {
     private var calculatedUniqueId:String
     
     public init (_ chat:Chat ,
-                 _ req:UpdateThreadInfoRequest ,
+                 _ req:NewUpdateThreadInfoRequest ,
                  _ uploadProgress:@escaping (Float)->() ,
                  _ completion:@escaping (ChatResponse)->() ,
-                 _ clientSpecificUniqueId:String? = nil,
                  _ uniqueIdResult: ((String)->())? = nil ,
-                 _ messageType:NewChatMessageVOTypes ,
-                 _ typeCode:String? = nil){
+                 _ messageType:NewChatMessageVOTypes){
         
         self.chat = chat
         self.req = req
         self.completion = completion
         self.messageType = messageType
         self.uniqueIdResult = uniqueIdResult
-        self.typeCode = typeCode
+		self.typeCode = req.typeCode
         self.uploadProgress = uploadProgress
-        self.clientSpecificUniqueId = clientSpecificUniqueId
+		self.clientSpecificUniqueId = req.uniqueId
         self.calculatedUniqueId = UUID().uuidString
     }
     

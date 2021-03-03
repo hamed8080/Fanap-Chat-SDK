@@ -7,12 +7,21 @@
 
 import Foundation
 
-public struct IsThreadNamePublicRequest: Encodable {
+public class IsThreadNamePublicRequest: BaseRequest {
+	
 	public let name:String
 	
 	public init(name:String){
 		self.name = name
 	}
 	
+	private enum CodingKeys:String,CodingKey{
+		case name = "name"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encode(name, forKey: .name)
+	}
 }
 

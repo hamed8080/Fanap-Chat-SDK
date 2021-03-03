@@ -80,8 +80,5 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
             setEntityVariables(entity)
         }
     }
-    
-    public func save(){
-        PSM.shared.save()
-    }
+
 }

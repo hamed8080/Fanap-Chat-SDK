@@ -6,7 +6,8 @@
 //
 
 import Foundation
-public struct UnreadMessageCountRequest: Encodable{
+public class UnreadMessageCountRequest: BaseRequest{
+	
 	let countMutedThreads:Bool
 	
 	public init (countMutedThreads:Bool = false){
@@ -17,7 +18,7 @@ public struct UnreadMessageCountRequest: Encodable{
 		case mute = "mute"
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(countMutedThreads, forKey: .mute)
 	}

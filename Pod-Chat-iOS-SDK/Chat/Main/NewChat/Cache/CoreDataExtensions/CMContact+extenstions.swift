@@ -63,6 +63,6 @@ extension CMContact{
                 }
             }
         }
-        CMContact.crud.save()
+		PSM.shared.save()
     }
 }

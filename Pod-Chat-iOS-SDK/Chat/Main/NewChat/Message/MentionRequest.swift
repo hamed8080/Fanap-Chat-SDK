@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MentionRequest : Encodable {
+public class MentionRequest : BaseRequest {
 	
 	public var count:               Int = 50
 	public var offset:              Int = 0
@@ -31,7 +31,7 @@ public struct MentionRequest : Encodable {
 		case allMentioned = "allMentioned"
 	}
 	
-	public func encode(to encoder: Encoder)throws{
+	public override func encode(to encoder: Encoder)throws{
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(count, forKey: .count)
 		try container.encode(offset, forKey: .offset)

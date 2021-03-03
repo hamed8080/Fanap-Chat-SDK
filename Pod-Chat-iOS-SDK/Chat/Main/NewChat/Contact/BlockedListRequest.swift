@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public struct BlockedListRequest : Encodable {
+public class BlockedListRequest : BaseRequest {
 	
 	public let count:       Int?
 	public let offset:      Int?
@@ -14,6 +14,17 @@ public struct BlockedListRequest : Encodable {
 	public init (count: Int? = 50 , offset: Int = 0){
 		self.count      = count
 		self.offset     = offset
+	}
+	
+	private enum CodingKeys: String , CodingKey{
+		case count = "count"
+		case offset = "offset"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encodeIfPresent(count, forKey: .count)
+		try? container.encodeIfPresent(offset, forKey: .offset)
 	}
 	
 }

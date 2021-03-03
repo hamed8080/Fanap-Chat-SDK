@@ -11,14 +11,12 @@ class SyncContactsRequestHandler {
 	
 	private init(){}
 	
-	class func handle(_ chat:Chat ,
-								   completion:@escaping (ChatResponse)->(),
-								   uniqueIdsResult:(([String])->())? = nil) {
+	class func handle(_ chat:Chat ,completion:@escaping (ChatResponse)->(), uniqueIdsResult:(([String])->())? = nil) {
 		
 		var contactsToSync:[AddContactRequest] = []
 		authorizeContactAccess(grant: { store in
 			let phoneContacts = SyncContactsRequestHandler.getContactsFromAuthorizedStore(store)
-			let cachePhoneContacts = Chat.cacheDB.newRetrievePhoneContacts()
+			let cachePhoneContacts = PhoneContact.crud.getAll().map {$0.convertToContact()}
 			phoneContacts.forEach { phoneContact in
 				if let findedContactCache = cachePhoneContacts.first(where: {$0.cellphoneNumber == phoneContact.cellphoneNumber}){
 					if (PhoneContact.isContactChanged(findedContactCache, phoneContactModel: phoneContact)) {
@@ -34,7 +32,7 @@ class SyncContactsRequestHandler {
 			}
 			if contactsToSync.count <= 0 {return}
 			
-			chat.request(.AddContacts(req: contactsToSync)) { response in
+			chat.addContacts(contactsToSync) { response in
 				
 				if response.error == nil {
 					PhoneContact.updateOrInsertPhoneBooks(contacts:contactsToSync)

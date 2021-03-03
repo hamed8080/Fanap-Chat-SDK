@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public struct MessageSeenByUsersRequest : Encodable{
+public class MessageSeenByUsersRequest : BaseRequest{
 	
 	let messageId:Int
 	let offset:Int
@@ -16,5 +16,19 @@ public struct MessageSeenByUsersRequest : Encodable{
 		self.messageId = messageId
 		self.offset = offset
 		self.count = count
+	}
+	
+	
+	private enum CodingKeys:String , CodingKey{
+		case messageId = "messageId"
+		case offset = "offset"
+		case count = "count"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encode(messageId, forKey: .messageId)
+		try? container.encode(offset, forKey: .offset)
+		try? container.encode(count, forKey: .count)
 	}
 }

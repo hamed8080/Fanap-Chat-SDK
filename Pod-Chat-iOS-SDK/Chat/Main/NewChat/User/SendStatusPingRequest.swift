@@ -1,12 +1,22 @@
 //
-//  StatusPing.swift
+//  SendStatusPingRequest.swift
 //  FanapPodChatSDK
 //
-//  Created by Hamed Hosseini on 2/24/21.
+//  Created by Hamed Hosseini on 3/3/21.
 //
 
 import Foundation
-public struct StatusPing : Encodable{
+
+public enum StatusPingType : Int , Encodable{
+	case CHAT
+	case THREAD
+	case CONTACTS
+	case THREAD_ID
+	case CONTACT_ID
+}
+
+
+public class SendStatusPingRequest : BaseRequest{
 	
 	public let statusType:StatusPingType
 	public let id:Int?
@@ -31,7 +41,7 @@ public struct StatusPing : Encodable{
 		case locationId = "locationId"
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		
 		if statusType == .CHAT {
@@ -43,13 +53,4 @@ public struct StatusPing : Encodable{
 		}
 		try container.encodeIfPresent(id, forKey: .locationId)
 	}
-}
-
-
-public enum StatusPingType : Int , Encodable{
-	case CHAT
-	case THREAD
-	case CONTACTS
-	case THREAD_ID
-	case CONTACT_ID
 }

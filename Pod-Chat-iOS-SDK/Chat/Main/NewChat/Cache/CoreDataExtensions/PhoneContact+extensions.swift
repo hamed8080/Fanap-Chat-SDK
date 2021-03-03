@@ -49,7 +49,6 @@ extension PhoneContact{
 				findedContact.firstName = contact.firstName
 				findedContact.lastName  = contact.lastName
 				findedContact.email     = contact.email
-				PSM.shared.save()
 			}else{
 				//insert CoreData Model
 				PhoneContact.crud.insert { phoneContactEntity in
@@ -66,5 +65,6 @@ extension PhoneContact{
 		for contact in contacts {
 			savePhoneBookContact(contact: contact)
 		}
+		PSM.shared.save()
 	}
 }

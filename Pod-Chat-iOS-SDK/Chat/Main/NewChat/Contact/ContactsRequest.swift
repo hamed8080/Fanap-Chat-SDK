@@ -9,7 +9,7 @@ import Foundation
 
 import FanapPodAsyncSDK
 
-open class ContactsRequest : Codable {
+public class ContactsRequest : BaseRequest {
 	
 	public var size       		: Int = 50
 	public var offset      		: Int = 0
@@ -53,7 +53,7 @@ open class ContactsRequest : Codable {
 		case summery
 	}
 	
-	public func encode(to encoder: Encoder) throws {
+	public override func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try? container.encodeIfPresent(size, forKey: .size)
 		try? container.encodeIfPresent(offset, forKey: .offset)

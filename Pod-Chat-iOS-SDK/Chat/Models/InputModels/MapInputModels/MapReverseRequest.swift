@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class MapReverseRequest :Encodable {
+public class MapReverseRequest :BaseRequest {
     
     public let lat:     Double
     public let lng:     Double
@@ -19,11 +19,22 @@ open class MapReverseRequest :Encodable {
         self.lat    = lat
         self.lng    = lng
     }
+	
+	private enum CodingKeys :String , CodingKey{
+		case lat = "lat"
+		case lng = "lng"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encode(lat, forKey: .lat)
+		try? container.encode(lng, forKey: .lng)
+	}
     
 }
 
 
-open class MapReverseRequestModel: MapReverseRequest {
+public class MapReverseRequestModel: MapReverseRequest {
     
 }
 

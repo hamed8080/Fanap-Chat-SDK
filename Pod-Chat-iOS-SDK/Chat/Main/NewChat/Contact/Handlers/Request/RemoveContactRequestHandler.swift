@@ -24,7 +24,7 @@ class RemoveContactRequestHandler{
     private class func removeFromCacheIfExist(chat:Chat , removeContactResponse:NewRemoveContactResponse? , contactId:Int){
         if removeContactResponse?.deteled == true{
             CMContact.crud.deleteWith(predicate: NSPredicate(format: "id == %i", contactId))
-            CMContact.crud.save()
+			PSM.shared.save()
         }
     }
 }

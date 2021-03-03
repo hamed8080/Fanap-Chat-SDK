@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class NewBlockRequest: Encodable {
+public class NewBlockRequest: BaseRequest {
 	
 	public let contactId:   Int?
 	public let threadId:    Int?
@@ -22,4 +22,16 @@ open class NewBlockRequest: Encodable {
 		self.userId     = userId
 	}
 	
+	private enum CodingKeys : String ,CodingKey{
+		case contactId = "contactId"
+		case threadId = "threadId"
+		case userId = "userId"
+	}
+	
+	public override func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try? container.encodeIfPresent(contactId, forKey: .contactId)
+		try? container.encodeIfPresent(threadId, forKey: .threadId)
+		try? container.encodeIfPresent(userId, forKey: .userId)
+	}
 }

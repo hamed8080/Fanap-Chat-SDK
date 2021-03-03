@@ -17,7 +17,7 @@ class ContactsResponseHandler: ResponseHandler {
         guard let contacts = try? JSONDecoder().decode([Contact].self, from: data) else{return}
         callback(.init(result: contacts))
         chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
-        CasheFactory.write(chat: chat, data: contacts, casheType: .GET_CASHED_CONTACTS)
+        CacheFactory.write(chat: chat, data: contacts, cacheType: .GET_CASHED_CONTACTS)
     }
     
 }
