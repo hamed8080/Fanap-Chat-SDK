@@ -11,23 +11,26 @@ class GetBlockedContactsRequestHandler {
 
 	class func handle( _ req:BlockedListRequest ,
 					   _ chat:Chat,
-					   _ useCache:Bool = false,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[BlockedUser]>,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .GET_BLOCKED,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
-		
-		CacheFactory.get(chat:chat ,
-						 useCache: useCache,
-						 completion: completion ,
-						 cacheType: .GET_CASHED_CONTACTS)
+                                uniqueIdResult: uniqueIdResult){response in
+            completion(response.result as? [BlockedUser]  , response.error)
+        }
+        
+//    TODO: must ad to core data cache
+//
+//		CacheFactory.get(chat:chat ,
+//						 useCache: cacheResponse != nil,
+//						 completion: { response in
+//                            completion(response.cacheResponse as? [BlockedUser] , response.error)
+//                         } ,
+//						 cacheType: .GET_BLOCKED_USERS)
 	}
 	
 }

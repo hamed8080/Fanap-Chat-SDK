@@ -10,17 +10,17 @@ class ThreadParticipantsRequestHandler {
 	
 	class func handle( _ req:ThreadParticipantsRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[Participant]> ,
+					   _ uniqueIdResult:UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								subjectId: req.threadId,
 								messageType: .THREAD_PARTICIPANTS,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? [Participant] , response.error)
+        }
 	}
 }
 

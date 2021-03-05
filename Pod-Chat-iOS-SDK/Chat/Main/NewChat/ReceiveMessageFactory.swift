@@ -52,7 +52,8 @@ class ReceiveMessageFactory{
 			case .DELETE_MESSAGE:
                 DeleteMessageResposneHandler.handle(chat , chatMessage , asyncMessage)
 				break
-			case .DELIVERY://only use in request but no callback from server back
+			case .DELIVERY:
+                DeliverMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .EDIT_MESSAGE:
 				break
@@ -134,9 +135,11 @@ class ReceiveMessageFactory{
 				break
 			case .REPORT_USER:
 				break
-			case .SEEN://only use in request but no callback from server back
+			case .SEEN:
+                SentMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SENT:
+                SeenMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SET_PROFILE:
 				SetProfileResponseHandler.handle(chat , chatMessage , asyncMessage)

@@ -11,7 +11,7 @@ class SyncContactsRequestHandler {
 	
 	private init(){}
 	
-	class func handle(_ chat:Chat ,completion:@escaping (ChatResponse)->(), uniqueIdsResult:(([String])->())? = nil) {
+    class func handle(_ chat:Chat ,completion:@escaping CompletionType<[Contact]>, uniqueIdsResult:UniqueIdsResultType = nil) {
 		
 		var contactsToSync:[AddContactRequest] = []
 		authorizeContactAccess(grant: { store in
@@ -32,12 +32,14 @@ class SyncContactsRequestHandler {
 			}
 			if contactsToSync.count <= 0 {return}
 			
-			chat.addContacts(contactsToSync) { response in
+			chat.addContacts(contactsToSync) { response , error in
 				
-				if response.error == nil {
+				if error == nil {
 					PhoneContact.updateOrInsertPhoneBooks(contacts:contactsToSync)
-				}
-				completion(response)
+                    completion(nil,error)
+                }else {
+                    completion(response, nil)
+                }
 			}
 			uniqueIdsResult?(uniqueIds)
 			

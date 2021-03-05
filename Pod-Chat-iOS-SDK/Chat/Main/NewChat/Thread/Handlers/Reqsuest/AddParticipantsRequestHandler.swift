@@ -7,22 +7,22 @@
 
 import Foundation
 class AddParticipantsRequestHandler {
-	
-	class func handle( _ req:[AddParticipantRequest] ,
-					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
-	){
-		guard let firstAddRequest = req.first else {return}
-		chat.prepareToSendAsync(req: req,
-								clientSpecificUniqueId: firstAddRequest.uniqueId,
-								typeCode: firstAddRequest.typeCode ,
-								subjectId: firstAddRequest.threadId,
-								messageType: .ADD_PARTICIPANT,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
-	}
+    
+    class func handle( _ req:[AddParticipantRequest] ,
+                       _ chat:Chat,
+                       _ completion: @escaping  CompletionType<Conversation>,
+                       _ uniqueIdResult: UniqueIdResultType = nil
+    ){
+        guard let firstAddRequest = req.first else {return}
+        chat.prepareToSendAsync(req: req,
+                                clientSpecificUniqueId: firstAddRequest.uniqueId,
+                                typeCode: firstAddRequest.typeCode ,
+                                subjectId: firstAddRequest.threadId,
+                                messageType: .ADD_PARTICIPANT,
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? Conversation  , response.error )
+        }
+    }
 }
 
-	
+

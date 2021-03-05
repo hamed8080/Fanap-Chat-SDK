@@ -11,14 +11,15 @@ import Alamofire
 
 class UpdateContactRequestHandler {
 	
-	class func handle( req:UpdateContactRequest , chat:Chat,typeCode:String? = nil , completion: @escaping (ChatResponse)->()){
+	class func handle( req:UpdateContactRequest , chat:Chat,typeCode:String? = nil , completion: @escaping CompletionType<[Contact]>){
 		
 		guard let createChatModel = chat.createChatModel else {return}
 		let url = "\(createChatModel.platformHost)\(SERVICES_PATH.UPDATE_CONTACTS.rawValue)"
 		let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
 		chat.restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode){ response in
-			updateContacts(chat: chat, contactsResponse:response.result as? ContactResponse)
-			completion(response)
+            let contactResponse = response.result as? ContactResponse
+			updateContacts(chat: chat, contactsResponse: contactResponse)
+            completion(contactResponse?.contacts , response.error)
 		}
 	}
 	

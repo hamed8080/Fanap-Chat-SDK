@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-struct NewSendChatMessageVO : Codable {
+public struct NewSendChatMessageVO : Codable {
 	
 	
 	
@@ -43,7 +43,7 @@ struct NewSendChatMessageVO : Codable {
 		case isCreateThreadAndSendMessage
 	}
 	
-	func encode(to encoder: Encoder) throws {
+	public func encode(to encoder: Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try? container.encodeIfPresent(chatMessageVOType, forKey: .type)
 		try? container.encodeIfPresent(token, forKey: .token)

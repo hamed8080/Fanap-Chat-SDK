@@ -10,6 +10,7 @@ class CacheFactory {
     
     enum CacheType {
         case GET_CASHED_CONTACTS
+        case GET_BLOCKED_USERS
     }
     
     class func get(chat:Chat ,useCache: Bool = false , completion: ((ChatResponse)->())? = nil , cacheType: CacheType){
@@ -17,6 +18,9 @@ class CacheFactory {
             switch cacheType {
             case .GET_CASHED_CONTACTS:
                 completion?(.init(result: nil, cacheResponse: CMContact.crud.getAll().map{$0.convertCMObjectToObject()}, error: nil))
+                break
+            case .GET_BLOCKED_USERS:
+                //completion?(.init(result: nil, cacheResponse: CMBlocked.crud.getAll().map{$0.convertCMObjectToObject()}, error: nil))
                 break
             }
         }
@@ -27,6 +31,8 @@ class CacheFactory {
             switch cacheType {
             case .GET_CASHED_CONTACTS:
                 CMContact.insertOrUpdate(contacts: data as! [Contact])
+                break
+            case .GET_BLOCKED_USERS:
                 break
             }
         }

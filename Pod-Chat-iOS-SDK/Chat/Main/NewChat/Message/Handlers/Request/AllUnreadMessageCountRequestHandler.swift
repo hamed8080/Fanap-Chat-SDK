@@ -10,15 +10,15 @@ class AllUnreadMessageCountRequestHandler {
 	
 	class func handle( _ req:UnreadMessageCountRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
+					   _ completion: @escaping CompletionType<Int> ,
 					   _ uniqueIdResult: ((String)->())? = nil
 	){
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .ALL_UNREAD_MESSAGE_COUNT,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? Int , response.error)
+        }
 	}
 }

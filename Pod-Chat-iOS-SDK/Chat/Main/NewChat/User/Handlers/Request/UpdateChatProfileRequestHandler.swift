@@ -7,18 +7,18 @@
 
 import Foundation
 class UpdateChatProfileRequestHandler {
-	
-	class func handle(_ req:NewUpdateChatProfile,
-					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
-	){
-		chat.prepareToSendAsync(req: req,
-								clientSpecificUniqueId: req.uniqueId,
-								typeCode: req.typeCode ,
-								messageType: .SET_PROFILE,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
-	}
+    
+    class func handle(_ req:NewUpdateChatProfile,
+                      _ chat:Chat,
+                      _ completion: @escaping CompletionType<Profile> ,
+                      _ uniqueIdResult: UniqueIdResultType = nil
+    ){
+        chat.prepareToSendAsync(req: req,
+                                clientSpecificUniqueId: req.uniqueId,
+                                typeCode: req.typeCode ,
+                                messageType: .SET_PROFILE,
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? Profile , response.error)
+        }
+    }
 }

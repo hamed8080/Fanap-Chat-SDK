@@ -10,17 +10,18 @@ class IsThreadNamePublicRequestHandler {
 	
 	class func handle( _ req:IsThreadNamePublicRequest ,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<String> ,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .IS_NAME_AVAILABLE,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            let threadNameResponse = response.result as? PublicThreadNameAvailableResponse
+            completion(threadNameResponse?.name , response.error)
+        }
 	}
 }
 

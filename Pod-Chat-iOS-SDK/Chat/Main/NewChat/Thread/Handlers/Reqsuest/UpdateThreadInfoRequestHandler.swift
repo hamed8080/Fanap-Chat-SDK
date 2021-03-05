@@ -14,10 +14,10 @@ public class UpdateThreadInfoRequestHandler  {
     
     private let chat:Chat
     private let req:NewUpdateThreadInfoRequest
-    private let completion:(ChatResponse)->()
-    private let uploadProgress: (Float)->()
+    private let completion:CompletionType<Conversation>
+    private let uploadProgress: UploadProgressType
     private let clientSpecificUniqueId:String?
-    private let uniqueIdResult:((String)->())?
+    private let uniqueIdResult:UniqueIdResultType
     private let messageType:NewChatMessageVOTypes
     private let typeCode:String?
     private var uploadProgressValue: Float = 0
@@ -25,9 +25,9 @@ public class UpdateThreadInfoRequestHandler  {
     
     public init (_ chat:Chat ,
                  _ req:NewUpdateThreadInfoRequest ,
-                 _ uploadProgress:@escaping (Float)->() ,
-                 _ completion:@escaping (ChatResponse)->() ,
-                 _ uniqueIdResult: ((String)->())? = nil ,
+                 _ uploadProgress:@escaping UploadProgressType ,
+                 _ completion:@escaping CompletionType<Conversation> ,
+                 _ uniqueIdResult: UniqueIdResultType = nil ,
                  _ messageType:NewChatMessageVOTypes){
         
         self.chat = chat
@@ -67,7 +67,9 @@ public class UpdateThreadInfoRequestHandler  {
                                               peerName:     createChatModel.serverName,
                                               priority:     createChatModel.msgPriority)
 
-        chat.callbacksManager.addCallback(uniqueId: calculatedUniqueId , callback: completion)
+        chat.callbacksManager.addCallback(uniqueId: calculatedUniqueId){ [weak self]response in
+            self?.completion(response.result as? Conversation , response.error)
+        }
         chat.sendToAsync(asyncMessageVO: asyncMessage)
     }
     

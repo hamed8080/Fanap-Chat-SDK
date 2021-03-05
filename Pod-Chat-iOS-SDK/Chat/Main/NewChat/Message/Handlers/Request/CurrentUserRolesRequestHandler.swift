@@ -10,16 +10,16 @@ class CurrentUserRolesRequestHandler {
 	
 	class func handle( _ req:CurrentUserRolesRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[Roles]> ,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: nil,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								subjectId: req.threadId,
 								messageType: .GET_CURRENT_USER_ROLES,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? [Roles] , response.error)
+        }
 	}
 }

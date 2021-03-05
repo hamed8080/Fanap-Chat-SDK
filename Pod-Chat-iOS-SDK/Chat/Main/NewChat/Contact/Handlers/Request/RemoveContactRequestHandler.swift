@@ -10,14 +10,15 @@ import Alamofire
 
 class RemoveContactRequestHandler{
     
-    class func handle( req:RemoveContactsRequest , chat:Chat,typeCode:String? = nil , completion: @escaping (ChatResponse)->()){
+    class func handle( req:RemoveContactsRequest , chat:Chat,typeCode:String? = nil , completion: @escaping CompletionType<Bool>){
         
         guard let createChatModel = chat.createChatModel else {return}
         let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"
         let headers: HTTPHeaders    = ["_token_": createChatModel.token, "_token_issuer_": "1"]
         chat.restApiRequest(req, decodeType: NewRemoveContactResponse.self,  url: url , method: .post, headers: headers , typeCode: typeCode){ response in
-            removeFromCacheIfExist(chat: chat, removeContactResponse:response.result as? NewRemoveContactResponse , contactId: req.contactId)
-            completion(response)
+            let removeResponse = response.result as? NewRemoveContactResponse
+            removeFromCacheIfExist(chat: chat, removeContactResponse: removeResponse, contactId: req.contactId)
+            completion(removeResponse?.deteled ?? false , response.error)
         }
     }
     

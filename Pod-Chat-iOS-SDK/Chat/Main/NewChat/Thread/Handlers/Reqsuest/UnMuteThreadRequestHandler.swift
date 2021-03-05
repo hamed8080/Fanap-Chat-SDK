@@ -10,8 +10,8 @@ class UnMuteThreadRequestHandler {
 	
 	class func handle( _ request:NewMuteUnmuteThreadRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<Int> ,
+					   _ uniqueIdResult:UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: nil,
@@ -19,9 +19,10 @@ class UnMuteThreadRequestHandler {
 								typeCode: request.typeCode,
 								subjectId: request.threadId ,
 								messageType: .UNMUTE_THREAD,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            let unmuteResponse = response.result as? UnMuteThreadResponse
+            completion(unmuteResponse?.threadId , response.error)
+        }
 	}
 }
 

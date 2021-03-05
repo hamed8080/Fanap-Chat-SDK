@@ -10,17 +10,18 @@ class GetThreadsRequestHandler {
 	
 	class func handle( _ req:ThreadsRequest ,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[Conversation]> ,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .GET_THREADS,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+								uniqueIdResult: uniqueIdResult){ response in
+            let threads = response.result as? [Conversation]
+            completion(threads , response.error)
+        }
 	}
 }
 

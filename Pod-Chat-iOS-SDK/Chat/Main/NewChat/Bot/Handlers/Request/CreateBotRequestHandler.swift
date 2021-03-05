@@ -10,15 +10,17 @@ class CreateBotRequestHandler {
 	
 	class func handle( _ req:NewCreateBotRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<Bot> ,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: req.botName,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .CREATE_BOT,
 								uniqueIdResult: uniqueIdResult,
-								completion: completion,
+								completion: { response in
+                                    completion(response.result as? Bot , response.error)
+                                },
 								plainText:true
 		)
 	}

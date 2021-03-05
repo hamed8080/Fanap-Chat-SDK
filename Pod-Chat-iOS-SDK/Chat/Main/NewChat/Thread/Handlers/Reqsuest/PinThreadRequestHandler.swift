@@ -10,8 +10,8 @@ class PinThreadRequestHandler {
 	
 	class func handle( _ request:NewPinUnpinThreadRequest,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<Int>,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: nil,
@@ -19,9 +19,10 @@ class PinThreadRequestHandler {
 								typeCode: request.typeCode,
 								subjectId: request.threadId ,
 								messageType: .PIN_THREAD,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
+                                uniqueIdResult: uniqueIdResult){ response in
+            let pinResponse = response.result as? PinThreadResponse
+            completion(pinResponse?.threadId , response.error)
+        }
 	}
 }
 

@@ -11,23 +11,23 @@ class GetContactsRequestHandler {
 	
 	class func handle( _ req:ContactsRequest ,
 					   _ chat:Chat,
-					   _ useCache:Bool = false,
-					   _ completion: @escaping ([Contact]? ,[Contact]? , ChatError?)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[Contact]>,
+                       _ cacheResponse: CacheResponseType<[Contact]>? = nil,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: req,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode,
 								messageType: .GET_CONTACTS,
 								uniqueIdResult: uniqueIdResult) { response in
-			completion(response.result as? [Contact], nil, response.error)
+			completion(response.result as? [Contact], response.error)
 		}
 		
 		
 		CacheFactory.get(chat:chat ,
-						 useCache: useCache,
+						 useCache: cacheResponse != nil,
 						 completion: { cacheContacts in
-							completion(nil, cacheContacts.cacheResponse as? [Contact] ,nil)
+                            cacheResponse?( cacheContacts.cacheResponse as? [Contact] , cacheContacts.error)
 						 },
 						 cacheType: .GET_CASHED_CONTACTS)
 	}

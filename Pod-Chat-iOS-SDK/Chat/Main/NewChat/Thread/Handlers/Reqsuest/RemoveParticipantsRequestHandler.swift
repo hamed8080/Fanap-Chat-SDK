@@ -7,21 +7,21 @@
 
 import Foundation
 class RemoveParticipantsRequestHandler {
-	
-	class func handle( _ req : NewRemoveParticipantsRequest,
-					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
-	){
-		chat.prepareToSendAsync(req: req,
-								clientSpecificUniqueId: req.uniqueId,
-								typeCode: req.typeCode ,
-								subjectId: req.threadId,
-								messageType: .REMOVE_PARTICIPANT,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
-	}
+    
+    class func handle( _ req : NewRemoveParticipantsRequest,
+                       _ chat:Chat,
+                       _ completion: @escaping CompletionType<[Participant]> ,
+                       _ uniqueIdResult: UniqueIdResultType = nil
+    ){
+        chat.prepareToSendAsync(req: req,
+                                clientSpecificUniqueId: req.uniqueId,
+                                typeCode: req.typeCode ,
+                                subjectId: req.threadId,
+                                messageType: .REMOVE_PARTICIPANT,
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? [Participant] , response.error)
+        }
+    }
 }
 
-	
+

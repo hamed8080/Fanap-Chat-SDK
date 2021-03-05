@@ -9,8 +9,8 @@ import Foundation
 class NotSeenContactRequestHandler{
 	class func handle( _ req:NotSeenDurationRequest ,
 					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
+					   _ completion: @escaping CompletionType<[UserLastSeenDuration]> ,
+					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
 		chat.prepareToSendAsync(req: req,
@@ -18,7 +18,10 @@ class NotSeenContactRequestHandler{
 								typeCode: req.typeCode ,
 								messageType: .GET_NOT_SEEN_DURATION,
 								uniqueIdResult: uniqueIdResult,
-								completion: completion
+								completion: { response in
+                                    let contactNotSeenDusrationresponse = response.result as? ContactNotSeenDurationRespoonse
+                                    completion(contactNotSeenDusrationresponse?.notSeenDuration , response.error)
+                                }
 		)
 	}
 }

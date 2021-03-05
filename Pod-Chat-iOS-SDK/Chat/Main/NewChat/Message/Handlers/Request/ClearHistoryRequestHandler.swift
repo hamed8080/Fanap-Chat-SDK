@@ -7,19 +7,19 @@
 
 import Foundation
 class ClearHistoryRequestHandler {
-	
-	class func handle( _ req:NewClearHistoryRequest,
-					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
-	){
-		chat.prepareToSendAsync(req: nil,
-								clientSpecificUniqueId: req.uniqueId,
-								typeCode: req.typeCode ,
-								subjectId: req.threadId,
-								messageType: .CLEAR_HISTORY,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion
-		)
-	}
+    
+    class func handle( _ req:NewClearHistoryRequest,
+                       _ chat:Chat,
+                       _ completion: @escaping CompletionType<Int>,
+                       _ uniqueIdResult: UniqueIdResultType = nil
+    ){
+        chat.prepareToSendAsync(req: nil,
+                                clientSpecificUniqueId: req.uniqueId,
+                                typeCode: req.typeCode ,
+                                subjectId: req.threadId,
+                                messageType: .CLEAR_HISTORY,
+                                uniqueIdResult: uniqueIdResult){ response in
+            completion(response.result as? Int, response.error )
+        }
+    }
 }

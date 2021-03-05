@@ -9,10 +9,12 @@ import Foundation
 import Alamofire
 
 class MapStaticImageRequestHandler {
-	
-	class func handle( req:NewMapStaticImageRequest , chat:Chat ,uniqueIdResult:((String)->())? = nil,completion: @escaping (ChatResponse)->()){
-		guard  let createChatModel = chat.createChatModel else {return}
-		DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel, completion: completion)
-	}
-	
+    
+    class func handle( req:NewMapStaticImageRequest , chat:Chat ,uniqueIdResult:((String)->())? = nil,completion: @escaping CompletionType<Data>){
+        guard  let createChatModel = chat.createChatModel else {return}
+        DownloadMapStaticImageRequestHandler.handle(req:req , createChatModel: createChatModel){ response in
+            completion(response.result as? Data , response.error)
+        }
+    }
+    
 }

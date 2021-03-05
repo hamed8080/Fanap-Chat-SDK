@@ -8,17 +8,11 @@
 import Foundation
 class SeenRequestHandler {
 	
-	class func handle( _ req:MessageSeenRequest,
-					   _ chat:Chat,
-					   _ completion: @escaping (ChatResponse)->() ,
-					   _ uniqueIdResult: ((String)->())? = nil
-	){
+	class func handle( _ req:MessageSeenRequest, _ chat:Chat){
 		chat.prepareToSendAsync(req: req.messageId,
 								clientSpecificUniqueId: req.uniqueId,
 								typeCode: req.typeCode ,
 								messageType: .SEEN,
-								uniqueIdResult: uniqueIdResult,
-								completion: completion,
 								plainText:true
 		)
 	}

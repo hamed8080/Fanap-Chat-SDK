@@ -5,17 +5,20 @@ import Alamofire
 import SwiftyJSON
 
 
-struct Notifyable{
-	var onSent: ((Any)->())? = nil
-	var onDelivered: ((Any)->())? = nil
-	var onSeen: ((Any)->())? = nil
-}
-
 public struct ChatResponse{
 	public var result:Any?
 	public var cacheResponse:Any?
 	public var error:ChatError?
 }
+
+public typealias CompletionType<T>     = ( T? , ChatError? )->()
+public typealias CacheResponseType<T>  = ( T? , ChatError? )->()
+public typealias UniqueIdResultType    = ( (String)->() )?
+public typealias UniqueIdsResultType   = ( ([String])->() )?
+public typealias UploadProgressType    = (Float) -> ()
+public typealias OnSeenType            = ((SeenMessageResponse? , ChatError?) -> ())?
+public typealias OnDeliveryType        = ((DeliverMessageResponse? , ChatError? ) -> ())?
+public typealias OnSentType            = ((SentMessageResponse?, ChatError?) -> ())?
 
 //this extension merged after removed all deprecated method in Chat class
 public extension Chat {
@@ -98,324 +101,216 @@ public extension Chat {
 	}
 	//**************************** Intitializers ****************************
 	
-	func getContacts(_ request:ContactsRequest,
-					  uniqueIdResult: ((String)->())? = nil,
-					  useCache: Bool  = false,
-					  completion:@escaping ([Contact]? ,[Contact]? , ChatError?)->()){
-		GetContactsRequestHandler.handle(request,self,useCache,completion , uniqueIdResult)
+	func getContacts(_ request:ContactsRequest,completion:@escaping CompletionType<[Contact]>,cacheResponse:CacheResponseType<[Contact]>? = nil,uniqueIdResult: UniqueIdResultType = nil){
+		GetContactsRequestHandler.handle(request,self, completion , cacheResponse , uniqueIdResult)
 	}
 	
-	func getBlockedContacts(_ request:BlockedListRequest,
-					 uniqueIdResult: ((String)->())? = nil,
-					 useCache: Bool  = false,
-					 completion:@escaping (ChatResponse)->()){
-		GetBlockedContactsRequestHandler.handle(request,self,useCache,completion , uniqueIdResult)
+	func getBlockedContacts(_ request:BlockedListRequest , completion:@escaping CompletionType<[BlockedUser]>,uniqueIdResult: UniqueIdResultType = nil){
+		GetBlockedContactsRequestHandler.handle(request,self,completion , uniqueIdResult)
 	}
 	
-	func addContact(_ request:AddContactRequest,
-							uniqueIdResult: ((String)->())? = nil,
-							useCache: Bool  = false,
-							completion:@escaping (ChatResponse)->()){
-		AddContactRequestHandler.handle(req: request, chat: self, useCache: useCache, completion: completion)
+	func addContact(_ request:AddContactRequest,completion:@escaping CompletionType<[Contact]>, uniqueIdResult: UniqueIdResultType? = nil){
+        AddContactRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func addContacts(_ request:[AddContactRequest],
-					uniqueIdResult: ((String)->())? = nil,
-					useCache: Bool  = false,
-					completion:@escaping (ChatResponse)->()){
-		AddContactsRequestHandler.handle(req: request, chat: self, useCache: useCache, completion: completion)
+	func addContacts(_ request:[AddContactRequest],completion:@escaping CompletionType<[Contact]>,uniqueIdResult: UniqueIdResultType? = nil){
+		AddContactsRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func contactNotSeen(_ request:NotSeenDurationRequest,
-					 uniqueIdResult: ((String)->())? = nil,
-					 useCache: Bool  = false,
-					 completion:@escaping (ChatResponse)->()){
+	func contactNotSeen(_ request:NotSeenDurationRequest,completion:@escaping CompletionType<[UserLastSeenDuration]>,uniqueIdResult: UniqueIdResultType = nil){
 		NotSeenContactRequestHandler.handle(request, self, completion)
 	}
 	
-	func removeContact(_ request:RemoveContactsRequest,
-						uniqueIdResult: ((String)->())? = nil,
-						useCache: Bool  = false,
-						completion:@escaping (ChatResponse)->()){
+	func removeContact(_ request:RemoveContactsRequest,completion:@escaping CompletionType<Bool>,uniqueIdResult: UniqueIdResultType = nil){
 		RemoveContactRequestHandler.handle(req: request, chat: self, typeCode: request.typeCode, completion: completion)
 	}
 	
-	func searchContacts(_ request:ContactsRequest,
-					   uniqueIdResult: ((String)->())? = nil,
-					   useCache: Bool  = false,
-					   completion:@escaping ([Contact]? , [Contact]? , ChatError?)->()){
-		getContacts(request, uniqueIdResult: uniqueIdResult, useCache: useCache, completion: completion)
+	func searchContacts(_ request:ContactsRequest, completion:@escaping CompletionType<[Contact]>, cacheResponse: CacheResponseType<[Contact]>? = nil, uniqueIdResult: UniqueIdResultType = nil){
+        getContacts(request, completion: completion, cacheResponse:cacheResponse, uniqueIdResult: uniqueIdResult)
 	}
 	
-	func syncContacts(uniqueIdsResult: (([String])->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+	func syncContacts(completion:@escaping CompletionType<[Contact]>, uniqueIdsResult: UniqueIdsResultType = nil){
 		SyncContactsRequestHandler.handle(self, completion: completion,uniqueIdsResult: uniqueIdsResult)
 	}
 	
-	func updateContact(_ req: UpdateContactRequest,
-					  uniqueIdsResult: (([String])->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+    func updateContact(_ req: UpdateContactRequest, completion: @escaping CompletionType<[Contact]>, uniqueIdsResult:UniqueIdResultType = nil ){
 		UpdateContactRequestHandler.handle(req: req, chat: self, completion: completion)
 	}
 	
-	func blockContact(_ request:NewBlockRequest,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func blockContact(_ request:NewBlockRequest,completion:@escaping CompletionType<BlockedUser>,uniqueIdResult: UniqueIdResultType = nil){
 		BlockContactRequestHandler.handle(request,self,completion , uniqueIdResult)
 	}
 	
-	func unBlockContact(_ request:NewUnBlockRequest,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func unBlockContact(_ request:NewUnBlockRequest,completion:@escaping CompletionType<BlockedUser>,uniqueIdResult:UniqueIdResultType = nil){
 		UnBlockContactRequestHandler.handle(request,self,completion , uniqueIdResult)
 	}
 	
-	func mapReverse(_ request:MapReverseRequest,
-						uniqueIdResult: ((String)->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+    func mapReverse(_ request:MapReverseRequest,completion:@escaping CompletionType<NewMapReverse>,uniqueIdResult: UniqueIdResultType = nil){
 		MapReverseRequestHandler.handle(req: request, chat: self, uniqueIdResult:uniqueIdResult, completion: completion)
 	}
 	
-	func mapSearch(_ request:MapSearchRequest,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+	func mapSearch(_ request:MapSearchRequest,completion:@escaping CompletionType<[NewMapItem]>,uniqueIdResult: UniqueIdResultType = nil){
 		MapSearchRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func mapRouting(_ request:NewMapRoutingRequest,
-				   uniqueIdResult: ((String)->())? = nil,
-				   completion:@escaping (ChatResponse)->()){
+	func mapRouting(_ request:NewMapRoutingRequest,completion:@escaping CompletionType<[Route]>,uniqueIdResult: UniqueIdResultType = nil){
 		MapRoutingRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func mapStaticImage(_ request:NewMapStaticImageRequest,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+	func mapStaticImage(_ request:NewMapStaticImageRequest,completion:@escaping CompletionType<Data>,uniqueIdResult: UniqueIdResultType = nil){
 		MapStaticImageRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func getThreads(_ request:ThreadsRequest,
-						uniqueIdResult: ((String)->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+	func getThreads(_ request:ThreadsRequest,completion:@escaping CompletionType<[Conversation]>, uniqueIdResult: UniqueIdResultType = nil){
 		GetThreadsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func isThreadNamePublic(_ request:IsThreadNamePublicRequest,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+	func isThreadNamePublic(_ request:IsThreadNamePublicRequest,completion:@escaping CompletionType<String>,uniqueIdResult: UniqueIdResultType = nil){
 		IsThreadNamePublicRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func muteThread(_ request:NewMuteUnmuteThreadRequest,
-							uniqueIdResult: ((String)->())? = nil,
-							completion:@escaping (ChatResponse)->()){
+	func muteThread(_ request:NewMuteUnmuteThreadRequest,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		MuteThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func unmuteThread(_ request:NewMuteUnmuteThreadRequest,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+	func unmuteThread(_ request:NewMuteUnmuteThreadRequest,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		UnMuteThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func pinThread(_ request:NewPinUnpinThreadRequest,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func pinThread(_ request:NewPinUnpinThreadRequest,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		PinThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func unpinThread(_ request:NewPinUnpinThreadRequest,
-				   uniqueIdResult: ((String)->())? = nil,
-				   completion:@escaping (ChatResponse)->()){
+	func unpinThread(_ request:NewPinUnpinThreadRequest,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		UnPinThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func createThread(_ request:NewCreateThreadRequest,
-					 uniqueIdResult: ((String)->())? = nil,
-					 completion:@escaping (ChatResponse)->()){
+	func createThread(_ request:NewCreateThreadRequest, completion:@escaping CompletionType<Conversation> ,uniqueIdResult: UniqueIdResultType = nil){
 		CreateThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func addParticipant(_ request:AddParticipantRequest,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func addParticipant(_ request:AddParticipantRequest, completion:@escaping CompletionType<Conversation> , uniqueIdResult: UniqueIdResultType = nil){
 		AddParticipantsRequestHandler.handle([request], self , completion , uniqueIdResult)
 	}
 	
-	func addParticipants(_ request:[AddParticipantRequest],
-						uniqueIdResult: ((String)->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+	func addParticipants(_ request:[AddParticipantRequest],completion:@escaping CompletionType<Conversation>, uniqueIdResult: UniqueIdResultType = nil){
 		AddParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func removeParticipant(_ request: NewRemoveParticipantsRequest,
-						uniqueIdResult: ((String)->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+	func removeParticipant(_ request: NewRemoveParticipantsRequest,completion:@escaping CompletionType<[Participant]>, uniqueIdResult: UniqueIdResultType = nil){
 		RemoveParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func removeParticipants(_ request:NewRemoveParticipantsRequest ,
-						   uniqueIdResult: ((String)->())? = nil,
-						   completion:@escaping (ChatResponse)->()){
+	func removeParticipants(_ request:NewRemoveParticipantsRequest ,completion:@escaping CompletionType<[Participant]> ,uniqueIdResult: UniqueIdResultType = nil){
 		RemoveParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func joinThread(_ request:NewJoinPublicThreadRequest ,
-							uniqueIdResult: ((String)->())? = nil,
-							completion:@escaping (ChatResponse)->()){
+	func joinThread(_ request:NewJoinPublicThreadRequest ,completion:@escaping CompletionType<Conversation>,uniqueIdResult: UniqueIdResultType = nil){
 		JoinPublicThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func closeThread(_ request:NewCloseThreadRequest ,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+	func closeThread(_ request:NewCloseThreadRequest ,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		CloseThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func updateThreadInfo(_ request:NewUpdateThreadInfoRequest ,
-					 uniqueIdResult: ((String)->())? = nil,
-					 uploadProgress:@escaping (Float)->(),
-					 completion:@escaping (ChatResponse)->()){
-		UpdateThreadInfoRequestHandler(self , request ,
-									   uploadProgress ,
-									   completion ,
-									   uniqueIdResult ,
-									   .UPDATE_THREAD_INFO
-									   ).handle()
+	func updateThreadInfo(_ request:NewUpdateThreadInfoRequest , uniqueIdResult: UniqueIdResultType = nil, uploadProgress:@escaping UploadProgressType,completion:@escaping CompletionType<Conversation>){
+		UpdateThreadInfoRequestHandler(self , request ,uploadProgress ,completion , uniqueIdResult ,.UPDATE_THREAD_INFO).handle()
 	}
 	
 	func createThreadWithMessage(_ request:CreateThreadWithMessage ,
-					uniqueIdResult: ((String)->())? = nil,
-					onSent:((Any)->())? = nil,
-					onDelivery:((Any)->())? = nil,
-					onSeen:((Any)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+					uniqueIdResult: UniqueIdResultType = nil,
+					onSent:OnSentType = nil,
+					onDelivery:OnDeliveryType = nil,
+					onSeen: OnSentType = nil,
+					completion:@escaping CompletionType<Conversation>){
 		CreateThreadWithMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func leaveThread(_ request:NewLeaveThreadRequest ,
-								 uniqueIdResult: ((String)->())? = nil,
-								 completion:@escaping (ChatResponse)->()){
+	func leaveThread(_ request:NewLeaveThreadRequest ,completion:@escaping CompletionType<Conversation>,uniqueIdResult: UniqueIdResultType = nil){
 		LeaveThreadRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func createBot(_ request:NewCreateBotRequest ,
-					 uniqueIdResult: ((String)->())? = nil,
-					 completion:@escaping (ChatResponse)->()){
+	func createBot(_ request:NewCreateBotRequest ,completion:@escaping CompletionType<Bot>,uniqueIdResult: UniqueIdResultType = nil){
 		CreateBotRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func createBotCommand(_ request:NewAddBotCommandRequest ,
-				   uniqueIdResult: ((String)->())? = nil,
-				   completion:@escaping (ChatResponse)->()){
+	func createBotCommand(_ request:NewAddBotCommandRequest ,completion:@escaping CompletionType<BotInfo>,uniqueIdResult: UniqueIdResultType = nil){
 		AddBotCommandRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func startBot(_ request:NewStartStopBotRequest ,
-						  uniqueIdResult: ((String)->())? = nil,
-						  completion:@escaping (ChatResponse)->()){
+	func startBot(_ request:NewStartStopBotRequest ,completion:@escaping CompletionType<String> ,uniqueIdResult: UniqueIdResultType = nil){
 		StartBotRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func stopBot(_ request:NewStartStopBotRequest ,
-				  uniqueIdResult: ((String)->())? = nil,
-				  completion:@escaping (ChatResponse)->()){
+	func stopBot(_ request:NewStartStopBotRequest , completion:@escaping CompletionType<String> , uniqueIdResult: UniqueIdResultType = nil){
 		StopBotRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func getUserInfo(_ request:UserInfoRequest ,
-				 uniqueIdResult: ((String)->())? = nil,
-				 completion:@escaping (ChatResponse)->()){
+	func getUserInfo(_ request:UserInfoRequest ,completion:@escaping CompletionType<User>,uniqueIdResult: UniqueIdResultType = nil){
 		UserInfoRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func setProfile(_ request:NewUpdateChatProfile ,
-					 uniqueIdResult: ((String)->())? = nil,
-					 completion:@escaping (ChatResponse)->()){
+	func setProfile(_ request:NewUpdateChatProfile ,completion:@escaping CompletionType<Profile>,uniqueIdResult: UniqueIdResultType = nil){
 		UpdateChatProfileRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func sendStatusPing(_ request:SendStatusPingRequest ,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
-		SendStatusPingRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func sendStatusPing(_ request:SendStatusPingRequest){
+		SendStatusPingRequestHandler.handle(request, self)
 	}
 	
-	func getThreadParticipants(_ request:ThreadParticipantsRequest ,
-						uniqueIdResult: ((String)->())? = nil,
-						completion:@escaping (ChatResponse)->()){
+	func getThreadParticipants(_ request:ThreadParticipantsRequest ,completion:@escaping CompletionType<[Participant]>,uniqueIdResult: UniqueIdResultType = nil){
 		ThreadParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
+    
+    func sendTextMessage(_ request:NewSendTextMessageRequest ,uniqueIdresult:UniqueIdResultType = nil, onSent:OnSentType = nil , onSeen:OnSeenType = nil, onDeliver:OnDeliveryType = nil){
+        SendTextMessageRequestHandler.handle(request, self, onSent, onSeen, onDeliver)
+    }
 	
-	func pinMessage(_ request:NewPinUnpinMessageRequest ,
-							   uniqueIdResult: ((String)->())? = nil,
-							   completion:@escaping (ChatResponse)->()){
+	func pinMessage(_ request:NewPinUnpinMessageRequest ,completion:@escaping CompletionType<PinUnpinMessageResponse> , uniqueIdResult: UniqueIdResultType = nil){
 		PinMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func unpinMessage(_ request:NewPinUnpinMessageRequest ,
-					uniqueIdResult: ((String)->())? = nil,
-					completion:@escaping (ChatResponse)->()){
+    func unpinMessage(_ request:NewPinUnpinMessageRequest ,completion:@escaping CompletionType<PinUnpinMessageResponse> ,uniqueIdResult: UniqueIdResultType = nil){
 		UnPinMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func clearHistory(_ request:NewClearHistoryRequest ,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func clearHistory(_ request:NewClearHistoryRequest ,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		ClearHistoryRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func deleteMessage(_ request:NewDeleteMessagerRequest ,
-					  uniqueIdResult: ((String)->())? = nil,
-					  completion:@escaping (ChatResponse)->()){
+	func deleteMessage(_ request:NewDeleteMessagerRequest ,completion:@escaping CompletionType<DeleteMessage>,uniqueIdResult: UniqueIdResultType = nil){
 		DeleteMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func batchDeleteMessage(_ request:BatchDeleteMessageRequest ,
-					   uniqueIdResult: ((String)->())? = nil,
-					   completion:@escaping (ChatResponse)->()){
+	func batchDeleteMessage(_ request:BatchDeleteMessageRequest ,completion:@escaping CompletionType<DeleteMessage>,uniqueIdResult: UniqueIdResultType = nil){
 		BatchDeleteMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func allUnreadMessageCount(_ request:UnreadMessageCountRequest ,
-							uniqueIdResult: ((String)->())? = nil,
-							completion:@escaping (ChatResponse)->()){
+	func allUnreadMessageCount(_ request:UnreadMessageCountRequest ,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
 		AllUnreadMessageCountRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func getMentions(_ request:MentionRequest ,
-							   uniqueIdResult: ((String)->())? = nil,
-							   completion:@escaping (ChatResponse)->()){
+	func getMentions(_ request:MentionRequest ,completion:@escaping CompletionType<[Message]> , uniqueIdResult: UniqueIdResultType = nil){
 		MentionsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func messageDeliveryParticipants(_ request:MessageDeliveredUsersRequest ,
-					 uniqueIdResult: ((String)->())? = nil,
-					 completion:@escaping (ChatResponse)->()){
+	func messageDeliveryParticipants(_ request:MessageDeliveredUsersRequest ,completion:@escaping CompletionType<[Participant]> ,uniqueIdResult: UniqueIdResultType = nil){
 		MessageDeliveryParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func messageSeenByUsers(_ request:MessageSeenByUsersRequest ,
-									 uniqueIdResult: ((String)->())? = nil,
-									 completion:@escaping (ChatResponse)->()){
+	func messageSeenByUsers(_ request:MessageSeenByUsersRequest , completion:@escaping CompletionType<[Participant]> , uniqueIdResult: UniqueIdResultType = nil){
 		MessagSeenByUsersRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func deliver(_ request:MessageDeliverRequest ,
-							uniqueIdResult: ((String)->())? = nil,
-							completion:@escaping (ChatResponse)->()){
-		DeliverRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func deliver(_ request:MessageDeliverRequest ,uniqueIdResult: UniqueIdResultType = nil){
+		DeliverRequestHandler.handle(request, self)
 	}
 	
-	func seen(_ request:MessageSeenRequest ,
-				 uniqueIdResult: ((String)->())? = nil,
-				 completion:@escaping (ChatResponse)->()){
-		SeenRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func seen(_ request:MessageSeenRequest , uniqueIdResult: UniqueIdResultType = nil){
+		SeenRequestHandler.handle(request, self)
 	}
 	
-	func getCurrentUserRoles(_ request:CurrentUserRolesRequest ,
-			  uniqueIdResult: ((String)->())? = nil,
-			  completion:@escaping (ChatResponse)->()){
+	func getCurrentUserRoles(_ request:CurrentUserRolesRequest ,completion:@escaping CompletionType<[Roles]>, uniqueIdResult: UniqueIdResultType = nil){
 		CurrentUserRolesRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
@@ -454,10 +349,10 @@ public extension Chat {
 									subjectId:Int? = nil,
 									messageType:NewChatMessageVOTypes ,
 									uniqueIdResult:((String)->())? = nil,
-									completion: @escaping ((ChatResponse)->()),
-									onSent: ((Any)->())? = nil,
-									onDelivered: ((Any)->())? = nil,
-									onSeen: ((Any)->())? = nil,
+									completion: ((ChatResponse)->())? = nil,
+									onSent: OnSentType? = nil,
+									onDelivered: OnDeliveryType? = nil,
+									onSeen: OnSeenType? = nil,
 									plainText:Bool = false){
 		guard let createChatModel = createChatModel else {return}
 		let uniqueId = clientSpecificUniqueId ?? UUID().uuidString
@@ -483,6 +378,24 @@ public extension Chat {
 		callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
 		sendToAsync(asyncMessageVO: asyncMessage)
 	}
+    
+    func prepareToSendAsync(_ chatMessage:NewSendChatMessageVO,
+                            uniqueId:String,
+                            completion: ((ChatResponse)->())? = nil,
+                            onSent: OnSentType? = nil,
+                            onDelivered: OnDeliveryType? = nil,
+                            onSeen: OnSeenType? = nil){
+        guard let chatMessageContent = chatMessage.convertCodableToString() , let createChatModel = createChatModel  else{return}
+        let asyncMessage = NewSendAsyncMessageVO(content:     chatMessageContent,
+                                              ttl: createChatModel.msgTTL,
+                                              peerName:     createChatModel.serverName,
+                                              priority:     createChatModel.msgPriority
+        )
+        
+        
+        callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
+        sendToAsync(asyncMessageVO: asyncMessage)
+    }
 	
 	private func getContent(_ req:Encodable? , _ plainText:Bool)->String?{
 		var content:String? = nil
