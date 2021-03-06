@@ -9,10 +9,12 @@ import Foundation
 public  class BaseRequest: Encodable{
 	
 	public var uniqueId:String?
+	public var isAutoGenratedUniqueId = false
 	public var typeCode:String?
 	
 
 	public init(uniqueId:String? = nil , typeCode:String? = nil) {
+		isAutoGenratedUniqueId = uniqueId == nil
 		self.uniqueId = uniqueId ?? UUID().uuidString
 		self.typeCode = typeCode ?? Chat.sharedInstance.createChatModel?.typeCode ?? "defualt"
 	}

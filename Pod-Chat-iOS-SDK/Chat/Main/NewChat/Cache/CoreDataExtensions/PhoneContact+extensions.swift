@@ -65,6 +65,5 @@ extension PhoneContact{
 		for contact in contacts {
 			savePhoneBookContact(contact: contact)
 		}
-		PSM.shared.save()
 	}
 }

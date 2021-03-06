@@ -22,6 +22,8 @@ class GetThreadsRequestHandler {
             let threads = response.result as? [Conversation]
             completion(threads , response.error)
         }
+		
+		CacheFactory.get(chat: chat, cacheType: .GET_THREADS(req))
 	}
 }
 

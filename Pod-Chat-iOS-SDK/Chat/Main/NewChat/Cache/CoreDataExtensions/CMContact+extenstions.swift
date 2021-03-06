@@ -63,6 +63,46 @@ extension CMContact{
                 }
             }
         }
-		PSM.shared.save()
     }
+	
+	public class func getContacts(req:ContactsRequest?)->[Contact]{
+		guard let req = req else { return [] }
+		let fetchRequest = crud.fetchRequest()
+		let ascending = req.order != Ordering.descending.rawValue
+		if let id = req.id {
+			fetchRequest.predicate =  NSPredicate(format: "id == %i", id)
+		} else if let uniqueId = req.uniqueId , req.isAutoGenratedUniqueId == false  {
+			fetchRequest.predicate = NSPredicate(format: "uniqueId == %@", uniqueId)
+		} else {
+			var andPredicateArr = [NSPredicate]()
+			
+			if let cellphoneNumber = req.cellphoneNumber , cellphoneNumber != "" {
+				andPredicateArr.append(NSPredicate(format: "cellphoneNumber CONTAINS[cd] %@", cellphoneNumber))
+			}
+			if let email = req.email , email != "" {
+				andPredicateArr.append(NSPredicate(format: "email CONTAINS[cd] %@", email))
+			}
+			
+			var orPredicatArray = [NSPredicate]()
+			
+			if (andPredicateArr.count > 0) {
+				orPredicatArray.append(NSCompoundPredicate(type: .and, subpredicates: andPredicateArr))
+			}
+			
+			if let query = req.query  , query != "" {
+				let theSearchPredicate = NSPredicate(format: "cellphoneNumber CONTAINS[cd] %@ OR email CONTAINS[cd] %@ OR firstName CONTAINS[cd] %@ OR lastName CONTAINS[cd] %@", query, query, query, query)
+				orPredicatArray.append(theSearchPredicate)
+			}
+			
+			if (orPredicatArray.count > 0) {
+				fetchRequest.predicate = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.or, subpredicates: orPredicatArray)
+			}
+		}
+		
+		let firstNameSort   = NSSortDescriptor(key: "firstName", ascending: ascending)
+		let lastNameSort    = NSSortDescriptor(key: "lastName", ascending: ascending)
+		fetchRequest.sortDescriptors = [lastNameSort, firstNameSort]
+		let contacts = CMContact.crud.fetchWith(fetchRequest)?.map{$0.convertCMObjectToObject()}
+		return contacts ?? []
+	}
 }
