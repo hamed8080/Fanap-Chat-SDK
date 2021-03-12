@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public class NewRemoveContactResponse :  ResponseModel {
+public class NewRemoveContactResponse :  NewResponseModel {
     
     public var deteled:  Bool
     

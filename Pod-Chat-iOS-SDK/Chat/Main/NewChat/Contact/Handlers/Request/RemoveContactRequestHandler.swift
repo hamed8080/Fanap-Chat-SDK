@@ -10,7 +10,7 @@ import Alamofire
 
 class RemoveContactRequestHandler{
     
-    class func handle( req:RemoveContactsRequest , chat:Chat,typeCode:String? = nil , completion: @escaping CompletionType<Bool>){
+    class func handle( req:NewRemoveContactsRequest , chat:Chat,typeCode:String? = nil , completion: @escaping CompletionType<Bool>){
         
         guard let createChatModel = chat.createChatModel else {return}
         let url = "\(createChatModel.platformHost)\(SERVICES_PATH.REMOVE_CONTACTS.rawValue)"

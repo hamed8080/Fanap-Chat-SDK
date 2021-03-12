@@ -39,6 +39,36 @@ extension CMPinMessage{
                 resultEntity?(cmPinMessage)
             }
         }
-        
+    }
+    
+    public class func pinMessage(pinMessage:PinUnpinMessage , threadId:Int?){
+        guard let threadId = threadId else{return}
+    
+        //1-unpin old message if exist
+        unpinMessage(pinMessage: pinMessage, threadId: threadId)
+        //2-set new pinMessage relation to threadPinMessage property
+        let thread = CMConversation.crud.find(keyWithFromat: "id == %i", value: threadId)
+        insertOrUpdate(pinMessage: pinMessage){ resultEntity in
+            thread?.pinMessage  = resultEntity
+        }
+        //3-set true Message Model
+        if let message = CMMessage.crud.find(keyWithFromat: "id == %id", value: pinMessage.messageId)?.getCodable(){
+            CMMessage.insertOrUpdate(message: message, threadId: threadId){ resultEntity in
+                resultEntity.pinned = true
+            }
+        }
+    }
+    
+    public class func unpinMessage(pinMessage:PinUnpinMessage , threadId:Int?){
+        guard let threadId = threadId else{return}
+        let thread = CMConversation.crud.find(keyWithFromat: "id == %i", value: threadId)
+        insertOrUpdate(pinMessage: pinMessage){ resultEntity in
+            thread?.pinMessage  = nil
+        }
+        if let message = CMMessage.crud.find(keyWithFromat: "id == %id", value: pinMessage.messageId)?.getCodable(){
+            CMMessage.insertOrUpdate(message: message, threadId: threadId){  resultEntity in
+                resultEntity.pinned = false
+            }
+        }
     }
 }

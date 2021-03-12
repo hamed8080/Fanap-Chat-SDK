@@ -22,7 +22,10 @@ public class NewCreateThreadRequest: BaseRequest {
 				metadata:       String? = nil,
 				title:          String,
 				type:           ThreadTypes? = nil,
-				uniqueName:     String? = nil) {
+				uniqueName:     String? = nil,
+                typeCode:       String? = nil,
+                uniqueId:       String? = nil
+                ) {
 		
 		self.description    = description
 		self.image          = image
@@ -31,6 +34,7 @@ public class NewCreateThreadRequest: BaseRequest {
 		self.title          = title
 		self.type           = type
 		self.uniqueName     = uniqueName
+        super.init(uniqueId: uniqueId, typeCode: typeCode)
 	}
 	
 	private enum CodingKeys: String ,CodingKey{

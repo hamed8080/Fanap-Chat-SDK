@@ -14,7 +14,7 @@ class ThreadsResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let conversations = try? JSONDecoder().decode([Conversation].self, from: data) else{return}
 		callback(.init(result: conversations))
-		CacheFactory.write(chat: chat, cacheType: .THREADS(conversations))
+		CacheFactory.write(cacheType: .THREADS(conversations))
 		PSM.shared.save()
 		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 		

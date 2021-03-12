@@ -9,7 +9,6 @@
 import Foundation
 import SwiftyJSON
 
-@available(*,deprecated , message: "removed in future release. use request method.")
 open class GetCurrentUserRolesModel: ResponseModel, ResponseModelDelegates {
     
     public var userRoles:       [Roles] = []
@@ -48,12 +47,7 @@ open class GetCurrentUserRolesModel: ResponseModel, ResponseModelDelegates {
         self.userRoles          = userRoles
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     
     public func returnDataAsJSON() -> JSON {
         var roles = [String]()
@@ -71,7 +65,7 @@ open class GetCurrentUserRolesModel: ResponseModel, ResponseModelDelegates {
     
 }
 
-@available(*,deprecated , message: "removed in future release. use request method.")
+
 open class GetCurrentUserRolesResponse: GetCurrentUserRolesModel {
     
 }

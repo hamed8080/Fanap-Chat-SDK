@@ -11,6 +11,7 @@ class MentionsRequestHandler {
 	class func handle( _ req:MentionRequest,
 					   _ chat:Chat,
 					   _ completion: @escaping CompletionType<[Message]> ,
+                       _ cacheResponse: CacheResponseType<[Message]>? = nil,
 					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: req,
@@ -20,6 +21,10 @@ class MentionsRequestHandler {
 								messageType: .GET_HISTORY,
                                 uniqueIdResult: uniqueIdResult){ response in
             completion(response.result as? [Message] , response.error)
+        }
+        
+        CacheFactory.get(useCache: cacheResponse != nil ,  cacheType: .MENTIONS){ response in
+            cacheResponse?(response.cacheResponse as? [Message] , nil)
         }
 	}
 }

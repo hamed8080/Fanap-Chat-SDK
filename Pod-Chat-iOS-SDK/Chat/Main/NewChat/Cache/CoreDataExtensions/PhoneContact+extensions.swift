@@ -14,8 +14,8 @@ struct PhoneContactModel {
 	var lastName        : String?
 	
 	
-	func convertToAddRequest()->AddContactRequest{
-		return AddContactRequest(cellphoneNumber: cellphoneNumber,
+	func convertToAddRequest()->NewAddContactRequest{
+		return NewAddContactRequest(cellphoneNumber: cellphoneNumber,
 								 email: email,
 								 firstName: firstName,
 								 lastName: lastName)
@@ -41,7 +41,7 @@ extension PhoneContact{
 			(cacheContact.lastName != phoneContactModel.lastName)
 	}
 	
-	public class func savePhoneBookContact(contact : AddContactRequest) {
+	public class func savePhoneBookContact(contact : NewAddContactRequest) {
 		
 		if let contactCellphoneNumber = contact.cellphoneNumber {
 			if let findedContact = PhoneContact.crud.find(keyWithFromat: "cellphoneNumber == %@", value: contactCellphoneNumber){
@@ -61,7 +61,7 @@ extension PhoneContact{
 		}
 	}
 	
-	public class func updateOrInsertPhoneBooks(contacts : [AddContactRequest]) {
+	public class func updateOrInsertPhoneBooks(contacts : [NewAddContactRequest]) {
 		for contact in contacts {
 			savePhoneBookContact(contact: contact)
 		}

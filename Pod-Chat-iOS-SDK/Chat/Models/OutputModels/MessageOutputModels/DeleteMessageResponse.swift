@@ -56,12 +56,7 @@ open class DeleteMessageModel: ResponseModel, ResponseModelDelegates {
         self.pinned         = messageContent["pinned"].boolValue
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     public func returnDataAsJSON() -> JSON {
         let result: JSON = ["messageId":    messageId,
                             "messageType":  messageType,
@@ -81,7 +76,7 @@ open class DeleteMessageModel: ResponseModel, ResponseModelDelegates {
     
 }
 
-@available(*,deprecated , message: "removed in future release.")
+
 open class DeleteMessageResponse: DeleteMessageModel {
     
 }

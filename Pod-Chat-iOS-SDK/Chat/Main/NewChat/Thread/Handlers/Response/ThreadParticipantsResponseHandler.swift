@@ -11,8 +11,10 @@ class ThreadParticipantsResponseHandler : ResponseHandler{
 	static func handle(_ chat: Chat, _ chatMessage: NewChatMessage, _ asyncMessage: AsyncMessage) {
 		guard let callback = chat.callbacksManager.getCallBack(chatMessage.uniqueId)else {return}
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
-		guard let conversation = try? JSONDecoder().decode([Participant].self, from: data) else{return}
-		callback(.init(result: conversation))
+		guard let participants = try? JSONDecoder().decode([Participant].self, from: data) else{return}
+		callback(.init(result: participants))
+        CacheFactory.write(cacheType: .PARTICIPANTS(participants, chatMessage.subjectId))
+        PSM.shared.save()
 		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

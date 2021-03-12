@@ -39,12 +39,7 @@ open class DownloadFileModel: ResponseModel, ResponseModelDelegates {
         }
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     
     public func returnDataAsJSON() -> JSON {
         let result: JSON = ["downloadFile": downloadFile?.formatToJSON() ?? NSNull()]

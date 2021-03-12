@@ -13,7 +13,7 @@ class SyncContactsRequestHandler {
 	
     class func handle(_ chat:Chat ,completion:@escaping CompletionType<[Contact]>, uniqueIdsResult:UniqueIdsResultType = nil) {
 		
-		var contactsToSync:[AddContactRequest] = []
+		var contactsToSync:[NewAddContactRequest] = []
 		authorizeContactAccess(grant: { store in
 			let phoneContacts = SyncContactsRequestHandler.getContactsFromAuthorizedStore(store)
 			let cachePhoneContacts = PhoneContact.crud.getAll().map {$0.convertToContact()}
@@ -28,7 +28,7 @@ class SyncContactsRequestHandler {
 			}
 			var uniqueIds:[String] = []
 			contactsToSync.forEach { contact in
-				uniqueIds.append(contact.uniqueId) // uniqueId generated in initializer.don't need to set manualy.
+                uniqueIds.append(contact.uniqueId ?? UUID().uuidString) // uniqueId generated in initializer.don't need to set manualy.
 			}
 			if contactsToSync.count <= 0 {return}
 			

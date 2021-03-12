@@ -54,15 +54,15 @@ class CallbacksManager{
 		return callbacks[uniqueId]
 	}
     
-    func getSentCallBack(_ uniqueId:String)->OnSentType?{
+    func getSentCallback(_ uniqueId:String)->OnSentType?{
         return sentCallbacks[uniqueId]
     }
     
-    func getDeliverBack(_ uniqueId:String)->OnDeliveryType?{
+    func getDeliverCallback(_ uniqueId:String)->OnDeliveryType?{
         return deliveredCallbacks[uniqueId]
     }
     
-    func getSeenBack(_ uniqueId:String)->OnSeenType?{
+    func getSeenCallback(_ uniqueId:String)->OnSeenType?{
         return seenCallbacks[uniqueId]
     }
     

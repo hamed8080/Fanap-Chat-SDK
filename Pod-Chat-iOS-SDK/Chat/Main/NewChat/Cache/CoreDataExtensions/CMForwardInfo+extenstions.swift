@@ -16,22 +16,32 @@ extension CMForwardInfo{
 						   participant: participant?.getCodable())
     }
     
-    public class func convertForwardInfoToCM(forwardInfo:ForwardInfo  ,entity:CMForwardInfo? = nil) -> CMForwardInfo{
+    public class func convertForwardInfoToCM(forwardInfo:ForwardInfo ,messageId:Int?, threadId:Int? ,entity:CMForwardInfo? = nil) -> CMForwardInfo{
         
         let model        = entity ?? CMForwardInfo()
-//		model.conversation = forwardInfo.conversation
-//		model.participant = forwardInfo.participant
+        model.messageId = messageId as NSNumber?
+        if let participant = forwardInfo.participant{
+            CMParticipant.insertOrUpdate(participant: participant, threadId: threadId){ resultEntity in
+                model.participant = resultEntity
+            }
+        }
+        
+        if let conversation = forwardInfo.conversation{
+            CMConversation.insertOrUpdate(conversations: [conversation]){ resultEntity in
+                model.conversation = resultEntity
+            }
+        }
         return model
     }
     
-	public class func insertOrUpdate(forwardInfo:ForwardInfo , messageId:Int? , resultEntity:((CMForwardInfo)->())? = nil){
+    public class func insertOrUpdate(forwardInfo:ForwardInfo , messageId:Int? , threadId:Int?, resultEntity:((CMForwardInfo)->())? = nil){
         
-		if let messageId = messageId, let findedEntity = CMForwardInfo.crud.find(keyWithFromat: "coreUserId == %i", value: messageId){
-            let cmForwardInfo = convertForwardInfoToCM(forwardInfo: forwardInfo, entity: findedEntity)
+		if let messageId = messageId, let findedEntity = CMForwardInfo.crud.find(keyWithFromat: "messageId == %i", value: messageId){
+            let cmForwardInfo = convertForwardInfoToCM(forwardInfo: forwardInfo,messageId: messageId , threadId: threadId , entity: findedEntity)
             resultEntity?(cmForwardInfo)
         }else{
 			CMForwardInfo.crud.insert { cmForwardInfoEntity in
-               let cmForwardInfo = convertForwardInfoToCM(forwardInfo: forwardInfo, entity: cmForwardInfoEntity)
+               let cmForwardInfo = convertForwardInfoToCM(forwardInfo: forwardInfo , messageId: messageId , threadId: threadId , entity: cmForwardInfoEntity)
                 resultEntity?(cmForwardInfo)
             }
         }

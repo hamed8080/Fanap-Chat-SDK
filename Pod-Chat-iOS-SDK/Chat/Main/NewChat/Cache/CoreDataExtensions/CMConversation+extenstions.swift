@@ -96,18 +96,19 @@ extension CMConversation{
 				participants.append(entity)
 			}
 		})
-		
-		model.participants = NSOrderedSet(array: participants)
+        
+        if let pinMessage = conversation.pinMessage {
+            CMPinMessage.insertOrUpdate(pinMessage: pinMessage) { entity in
+                model.pinMessage = entity
+            }
+        }
+        
+        //only when create newThread the participants propery has value in getThreads we never get that.
+        //so just insert participants to CoreData Table and not related to thread.
 		if let lastMessage = conversation.lastMessageVO{
-			CMMessage.insertOrUpdate(message:lastMessage){ entity in
-				model.lastMessage = entity
-			}
+            CMMessage.insertOrUpdate(message:lastMessage, conversation:model)
 		}
-		if let pinMessage = conversation.pinMessage {
-			CMPinMessage.insertOrUpdate(pinMessage: pinMessage) { entity in
-				model.pinMessage = entity
-			}
-		}
+		
         return model
     }
     
@@ -117,13 +118,15 @@ extension CMConversation{
         CMContact.crud.deleteWith(predicate: predicate)
     }
     
-    public class func insertOrUpdate(conversations:[Conversation]){
+    public class func insertOrUpdate(conversations:[Conversation] , resultEntity:((CMConversation)->())? = nil){
 		conversations.forEach { conversation in
             if let findedEntity = CMConversation.crud.find(keyWithFromat: "id == %i", value: conversation.id!){
-                _ = convertConversationToCM(conversation: conversation, entity: findedEntity)
+                let cmConversation = convertConversationToCM(conversation: conversation, entity: findedEntity)
+                resultEntity?(cmConversation)
             }else{
                 CMConversation.crud.insert { entity in
-                    _ = convertConversationToCM(conversation: conversation, entity: entity)
+                    let cmConversation = convertConversationToCM(conversation: conversation, entity: entity)
+                    resultEntity?(cmConversation)
                 }
             }
         }

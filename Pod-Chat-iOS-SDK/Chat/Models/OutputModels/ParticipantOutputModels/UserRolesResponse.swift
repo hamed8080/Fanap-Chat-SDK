@@ -42,12 +42,7 @@ open class UserRolesModel: ResponseModel, ResponseModelDelegates {
         }
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     public func returnDataAsJSON() -> JSON {
         var userRolesArr = [JSON]()
         for item in userRoles {

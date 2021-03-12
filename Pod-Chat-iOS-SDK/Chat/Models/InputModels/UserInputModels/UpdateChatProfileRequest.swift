@@ -9,20 +9,18 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
-open class UpdateChatProfileRequest: RequestModelDelegates , Encodable {
+open class UpdateChatProfileRequest: RequestModelDelegates {
     
     public let bio:         String?
     public let metadata:    String?
     
-	@available(*,deprecated , message: "removed in future release. use request method.")
     public let typeCode:    String?
-	@available(*,deprecated , message: "removed in future release. use request method.")
     public let uniqueId:    String
     
     public init(bio:        String?,
-                metadata:   String? = nil,
-                typeCode:   String? = nil,
-                uniqueId:   String? = nil) {
+                metadata:   String?,
+                typeCode:   String?,
+                uniqueId:   String?) {
         
         self.bio        = bio
         self.metadata   = metadata
@@ -48,21 +46,10 @@ open class UpdateChatProfileRequest: RequestModelDelegates , Encodable {
     public func convertContentToJSONArray() -> [JSON] {
         return []
     }
-	
-	private enum CodingKeys : String , CodingKey{
-		case bio = "bio"
-		case metadata = "metadata"
-	}
-	
-	public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encodeIfPresent(bio?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .bio)
-		try container.encodeIfPresent(metadata?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .metadata)
-	}
     
 }
 
-@available(*,deprecated , message: "removed in future release. use request method.")
+/// MARK: -  this class will be deprecate.  (use this class instead: 'SetProfileRequest')
 open class SetProfileRequestModel: UpdateChatProfileRequest {
     
 }

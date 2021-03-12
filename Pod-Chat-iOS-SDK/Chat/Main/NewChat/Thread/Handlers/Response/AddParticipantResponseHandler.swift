@@ -13,6 +13,8 @@ class AddParticipantResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let conversation = try? JSONDecoder().decode(Conversation.self, from: data) else{return}
 		callback(.init(result: conversation))
+        CacheFactory.write(cacheType: .PARTICIPANTS(conversation.participants, conversation.id))
+        PSM.shared.save()
 		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

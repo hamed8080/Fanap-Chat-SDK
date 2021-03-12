@@ -8,7 +8,7 @@
 import Foundation
 class DeleteMessageRequestHandler {
 	
-	class func handle( _ req:NewDeleteMessagerRequest,
+	class func handle( _ req:NewDeleteMessageRequest,
 					   _ chat:Chat,
 					   _ completion:@escaping CompletionType<DeleteMessage>,
 					   _ uniqueIdResult: UniqueIdResultType = nil

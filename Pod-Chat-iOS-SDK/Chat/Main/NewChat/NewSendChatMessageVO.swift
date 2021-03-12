@@ -15,17 +15,17 @@ public struct NewSendChatMessageVO : Codable {
 	
 	let chatMessageVOType            : Int
 	let token                        : String
-	var content                      : String?             = nil
-	var messageType                  :        Int?         = nil
-	var metadata                     :           String?   = nil
-	var repliedTo                    :          Int?       = nil
-	var systemMetadata               :     String?         = nil
-	var subjectId                    :          Int?       = nil
-	var tokenIssuer                  :        Int?         = nil
-	var typeCode                     :           String?   = nil
-	var uniqueId                     :           String?   = nil
-	var uniqueIds                    :          [String]?  = nil
-	var isCreateThreadAndSendMessage : Bool                = false
+	var content                      : String?    = nil
+	var messageType                  : Int?       = nil
+	var metadata                     : String?    = nil
+	var repliedTo                    : Int?       = nil
+	var systemMetadata               : String?    = nil
+	var subjectId                    : Int?       = nil
+	var tokenIssuer                  : Int?       = nil
+	var typeCode                     : String?    = nil
+	var uniqueId                     : String?    = nil
+	var uniqueIds                    : [String]?  = nil
+	var isCreateThreadAndSendMessage : Bool       = false
 	
 	private enum CodingKeys : String ,CodingKey{
 		case chatMessageVOType
@@ -111,19 +111,19 @@ public struct NewSendChatMessageVO : Codable {
 				uniqueIds					: [String]? = nil,
 				isCreateThreadAndSendMessage: Bool = false) {
 		
-		self.chatMessageVOType 			= chatMessageVOType
-		self.token 						= token
-		self.content 						= content
-		self.messageType 					= messageType
-		self.metadata 					= metadata
-		self.repliedTo 					= repliedTo
-		self.systemMetadata 				= systemMetadata
-		self.subjectId 					= subjectId
-		self.tokenIssuer 					= tokenIssuer
-		self.typeCode 					= typeCode
-		self.uniqueId 					= uniqueId
-		self.uniqueIds 					= uniqueIds
-		self.isCreateThreadAndSendMessage 	= isCreateThreadAndSendMessage
+        self.chatMessageVOType                           = chatMessageVOType
+        self.token                                       = token
+        self.content                                     = content
+        self.messageType                                 = messageType
+        self.metadata                                    = metadata
+        self.repliedTo                                   = repliedTo
+        self.systemMetadata                              = systemMetadata
+        self.subjectId                                   = subjectId
+        self.tokenIssuer                                 = tokenIssuer
+        self.typeCode                                    = typeCode
+        self.uniqueId                                    = uniqueId
+        self.uniqueIds                                   = uniqueIds
+        self.isCreateThreadAndSendMessage                = isCreateThreadAndSendMessage
 		
 		
 		// FIXME: i think below method generateUUID not working properly

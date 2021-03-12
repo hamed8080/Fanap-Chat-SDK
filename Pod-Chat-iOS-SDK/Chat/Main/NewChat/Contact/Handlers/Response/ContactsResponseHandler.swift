@@ -17,7 +17,7 @@ class ContactsResponseHandler: ResponseHandler {
         guard let contacts = try? JSONDecoder().decode([Contact].self, from: data) else{return}
         callback(.init(result: contacts))
         chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
-        CacheFactory.write(chat: chat, cacheType: .CASHE_CONTACTS(contacts))
+        CacheFactory.write(cacheType: .CASHE_CONTACTS(contacts))
 		PSM.shared.save()
     }
     

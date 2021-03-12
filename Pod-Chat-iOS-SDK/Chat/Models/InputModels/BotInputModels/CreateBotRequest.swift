@@ -8,31 +8,23 @@
 
 import Foundation
 
-open class CreateBotRequest : Encodable{
+open class CreateBotRequest {
     
-    public let botName:      	String
+    public let botName:      String
     
-	@available(*,deprecated, message: "remove in future release. us erequest method")
-	public let typeCode:    	String?
-	@available(*,deprecated, message: "remove in future release. us erequest method")
-    public let uniqueId:    	String
+    public let typeCode:    String?
+    public let uniqueId:    String
     
-    public init(botName:   String,
-			  typeCode:   String? = nil,
-			  uniqueId:   String? = nil) {
+    public init(botName:    String,
+                typeCode:   String?,
+                uniqueId:   String?) {
         
         self.botName    = botName
+        
         self.typeCode   = typeCode
         self.uniqueId   = uniqueId ?? UUID().uuidString
     }
-	
-	private enum CodingKeys : String , CodingKey{
-		case botName = "botName"
-	}
-	
-	public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encode(botName, forKey: .botName)
-	}
     
 }
+
+

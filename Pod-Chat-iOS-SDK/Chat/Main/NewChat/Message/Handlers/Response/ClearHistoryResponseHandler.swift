@@ -15,6 +15,9 @@ class ClearHistoryResponseHandler: ResponseHandler {
         guard let threadId = try? JSONDecoder().decode(Int.self, from: data) else{return}
         callback(.init(result: threadId))
         chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
+        if let threadId = chatMessage.subjectId{
+            CacheFactory.write(cacheType: .CLEAR_ALL_HISTORY(threadId))//no need to call save context becaudse use excute
+        }
     }
 }
 

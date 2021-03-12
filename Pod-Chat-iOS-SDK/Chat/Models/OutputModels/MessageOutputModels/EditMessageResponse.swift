@@ -30,13 +30,7 @@ open class EditMessageModel: ResponseModel, ResponseModelDelegates {
         self.editedMessage = message
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     
     public func returnDataAsJSON() -> JSON {
         let result: JSON = ["editedMessage":    editedMessage?.formatToJSON() ?? NSNull()]

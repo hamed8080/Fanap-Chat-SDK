@@ -11,6 +11,7 @@ class GetThreadsRequestHandler {
 	class func handle( _ req:ThreadsRequest ,
 					   _ chat:Chat,
 					   _ completion: @escaping CompletionType<[Conversation]> ,
+                       _ cacheResponse: CacheResponseType<[Conversation]>? = nil ,
 					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		
@@ -23,7 +24,9 @@ class GetThreadsRequestHandler {
             completion(threads , response.error)
         }
 		
-		CacheFactory.get(chat: chat, cacheType: .GET_THREADS(req))
+        CacheFactory.get(useCache: cacheResponse != nil , cacheType: .GET_THREADS(req)){ response in
+            cacheResponse?(response.cacheResponse as? [Conversation]  , nil)
+        }
 	}
 }
 

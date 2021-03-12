@@ -18,7 +18,7 @@ class SentMessageResponseHandler: ResponseHandler {
 //                Chat.cacheDB.deleteWaitForwardMessage(uniqueId: message.uniqueId)
 //            }
 //        }
-        if let callback =  Chat.sharedInstance.callbacksManager.getSentCallBack(chatMessage.uniqueId) {
+        if let callback =  Chat.sharedInstance.callbacksManager.getSentCallback(chatMessage.uniqueId) {
             let message = Message(threadId: chatMessage.subjectId, pushMessageVO: chatMessage.content?.convertToJSON() ?? [:])
             let event = MessageEventModel(type: .MESSAGE_SEND, message: message, threadId: chatMessage.subjectId, messageId: chatMessage.messageId, senderId: nil, pinned: nil)
             chat.delegate?.messageEvents(model: event)
@@ -26,10 +26,8 @@ class SentMessageResponseHandler: ResponseHandler {
             let messageResponse = SentMessageResponse(isSent: true, messageId: message.id, threadId: chatMessage.subjectId, message: message, participantId: chatMessage.participantId)
             callback?(messageResponse, nil)
             chat.callbacksManager.removeSentCallback(uniqueId: chatMessage.uniqueId)
+            CacheFactory.write(cacheType: .DELETE_SEND_TXET_MESSAGE_QUEUE(chatMessage.uniqueId))
+            CacheFactory.write(cacheType: .DELETE_FORWARD_MESSAGE_QUEUE(chatMessage.uniqueId))
         }
-        
     }
-    
-    
-   
 }

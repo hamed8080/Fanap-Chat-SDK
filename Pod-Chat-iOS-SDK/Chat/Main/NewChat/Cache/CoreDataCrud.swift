@@ -58,15 +58,21 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
             req.predicate = predicate
             let deleteReq = NSBatchDeleteRequest(fetchRequest: req)
             try PSM.shared.context.execute(deleteReq)
+            print("saved successfully from deleteWith execute")
         }catch{
-            print("error in delete happened\(error)")
+            print("error in deleteWith happened\(error)")
         }
         
     }
     
     public func deleteAll(){
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest())
-        let _ = try? PSM.shared.context.execute(deleteRequest)
+        do{
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest())
+            try PSM.shared.context.execute(deleteRequest)
+            print("saved successfully from deleteAll execute")
+        }catch{
+            print("error in deleteAll happened\(error)")
+        }
     }
     
     public func insert(setEntityVariables:(T)->()){
@@ -79,6 +85,14 @@ open class CoreDataCrud<T:NSFetchRequestResult> {
             let entity = getInsertEntity()
             setEntityVariables(entity)
         }
+    }
+    
+    public func fetchWithOffset(count:Int? , offset:Int? ,predicate:NSPredicate?) ->[T]{
+        let req = fetchRequest()
+        req.predicate = predicate
+        req.fetchLimit = count ?? 50
+        req.fetchOffset = offset ?? 0
+        return fetchWith(req) ?? []
     }
 
 }

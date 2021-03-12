@@ -29,7 +29,7 @@ public class BatchDeleteMessageRequest: BaseRequest {
 	}
 	
 	private enum CodingKeys : String , CodingKey{
-		case deleteForAll  = "deleteForAll"
+        case deleteForAll = "deleteForAll"
 		case ids          = "ids"
 		case uniqueIds    = "uniqueIds"
 	}

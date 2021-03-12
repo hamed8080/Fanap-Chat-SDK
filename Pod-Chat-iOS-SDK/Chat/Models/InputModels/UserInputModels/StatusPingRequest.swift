@@ -8,8 +8,6 @@
 
 import SwiftyJSON
 
-
-@available(*, deprecated , message: "removed in future release.use request method")
 open class StatusPingRequest {
     
     public let chat:        Bool?
@@ -89,7 +87,5 @@ open class StatusPingRequest {
         }
         return content
     }
-	
-	
     
 }

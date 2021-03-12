@@ -25,12 +25,11 @@ class SendTextMessageRequestHandler {
                                                      repliedTo: req.repliedTo,
                                                      systemMetadata: req.systemMetadata,
                                                      subjectId: req.threadId,
-                                                     tokenIssuer: nil,
                                                      typeCode:req.typeCode,
                                                      uniqueId: req.uniqueId,
-                                                     uniqueIds: nil,
                                                      isCreateThreadAndSendMessage: false)
         chat.prepareToSendAsync(sendChatMessageVO, uniqueId: req.uniqueId ?? UUID().uuidString, completion: nil,onSent: onSent , onDelivered: onDeliver, onSeen: onSeen)
-
+        CacheFactory.write(cacheType: .SEND_TXET_MESSAGE_QUEUE(req))
+        PSM.shared.save()
     }
 }

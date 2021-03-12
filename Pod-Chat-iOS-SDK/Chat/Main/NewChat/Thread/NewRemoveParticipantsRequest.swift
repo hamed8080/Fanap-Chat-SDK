@@ -8,18 +8,18 @@
 import Foundation
 public class NewRemoveParticipantsRequest : BaseRequest {
 	
-	public let participantId:  [Int]
+	public let participantIds:  [Int]
 	public let threadId:        Int
 	
 	public init(participantId:Int , threadId:Int) {
-		self.threadId = threadId
-		self.participantId = [participantId]
+        self.threadId       = threadId
+		self.participantIds = [participantId]
 	}
 	
 	
 	public init(participantIds:[Int] , threadId:Int) {
-		self.threadId = threadId
-		self.participantId = participantIds
+        self.threadId       = threadId
+		self.participantIds = participantIds
 	}
 	
 }

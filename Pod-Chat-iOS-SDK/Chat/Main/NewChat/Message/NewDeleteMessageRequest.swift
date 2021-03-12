@@ -1,12 +1,12 @@
 //
-//  NewDeleteMessagerRequest.swift
+//  NewDeleteMessageRequest.swift
 //  FanapPodChatSDK
 //
 //  Created by Hamed Hosseini on 3/3/21.
 //
 
 import Foundation
-public class NewDeleteMessagerRequest: BaseRequest {
+public class NewDeleteMessageRequest: BaseRequest {
 	
 	public let deleteForAll:    Bool
 	public let messageId:       Int

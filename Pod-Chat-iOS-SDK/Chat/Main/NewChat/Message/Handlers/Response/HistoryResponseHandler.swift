@@ -16,4 +16,3 @@ class HistoryResponseHandler: ResponseHandler {
 		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }
-

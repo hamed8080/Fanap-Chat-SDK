@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 extension CMMessage{
     
@@ -37,7 +38,7 @@ extension CMMessage{
 					   replyInfo:       replyInfo?.getCodable())
     }
     
-    public class func convertMesageToCM(message:Message ,entity:CMMessage? = nil) -> CMMessage{
+    public class func convertMesageToCM(message:Message ,entity:CMMessage? = nil , threadId:Int?, conversation:CMConversation?) -> CMMessage{
 		
         let model = entity ?? CMMessage()
 		model.deletable                      = message.deletable as NSNumber?
@@ -57,25 +58,84 @@ extension CMMessage{
 		model.threadId                       = message.threadId as NSNumber?
 		model.time                           = message.time as NSNumber?
 		model.uniqueId                       = message.uniqueId
-//		model.conversation                   = message.conversation
-//		model.dummyConversationLastMessageVO = message.dummyConversationLastMessageVO
-//		model.forwardInfo                    = message.forwardInfo
-//		model.participant                    = message.participant
-//		model.replyInfo                      = message.replyInfo
+        if let conversation = conversation{
+            model.conversation               = conversation // prevent write nil when pinMessage or other method need to update or insert beacause it nil
+        }
+        
+        if let participant = message.participant{
+            CMParticipant.insertOrUpdate(participant: participant, threadId: threadId){ resultEntity in
+                model.participant = resultEntity
+            }
+        }
+        if let replyInfo = message.replyInfo{
+            CMReplyInfo.insertOrUpdate(replyInfo: replyInfo, messageId: message.id, threadId: threadId){ resultEntity in
+                model.replyInfo = resultEntity
+            }
+        }
+        
+        if let forwardInfo = message.forwardInfo{
+            CMForwardInfo.insertOrUpdate(forwardInfo: forwardInfo, messageId: message.id, threadId: threadId){ resultEntity in
+                model.forwardInfo = resultEntity
+            }
+        }
         
         return model
     }
     
-    public class func insertOrUpdate(message:Message , resultEntity:((CMMessage)->())? = nil){
+    public class func insertOrUpdate(message:Message , threadId:Int? , resultEntity:((CMMessage)->())? = nil){
         
-		if let id = message.id, let findedEntity = CMMessage.crud.find(keyWithFromat: "coreUserId == %i", value: id){
-            let cmMessage = convertMesageToCM(message: message, entity: findedEntity)
+		if let id = message.id, let findedEntity = CMMessage.crud.find(keyWithFromat: "id == %i", value: id){
+            let cmMessage = convertMesageToCM(message: message, entity: findedEntity , threadId: threadId, conversation: nil)
             resultEntity?(cmMessage)
         }else{
 			CMMessage.crud.insert { cmMessage in
-               let cmMessage = convertMesageToCM(message: message, entity: cmMessage)
+                let cmMessage = convertMesageToCM(message: message, entity: cmMessage, threadId: threadId, conversation: nil)
                 resultEntity?(cmMessage)
             }
         }
+    }
+    
+    public class func insertOrUpdate(message:Message , conversation:CMConversation? , resultEntity:((CMMessage)->())? = nil){
+        guard let threadId = conversation?.id as? Int else {return}
+        if let id = message.id, let findedEntity = CMMessage.crud.find(keyWithFromat: "id == %i", value: id){
+            let cmMessage = convertMesageToCM(message: message, entity: findedEntity , threadId: threadId , conversation: conversation)
+            resultEntity?(cmMessage)
+        }else{
+            CMMessage.crud.insert { cmMessage in
+               let cmMessage = convertMesageToCM(message: message, entity: cmMessage, threadId: threadId, conversation: conversation)
+                resultEntity?(cmMessage)
+            }
+        }
+    }
+    
+    public class func fetchRequestWithGetHistoryRequest(req:NewGetHistoryRequest)-> NSFetchRequest<NSFetchRequestResult>{
+        let fetchRequest = crud.fetchRequest()
+        fetchRequest.fetchOffset = req.offset
+        fetchRequest.fetchLimit = req.count
+        let sortByTime = NSSortDescriptor(key: "time", ascending:(req.order == Ordering.ascending.rawValue) ? true: false)
+        fetchRequest.sortDescriptors = [sortByTime]
+        if let messageId = req.messageId {
+            fetchRequest.predicate = NSPredicate(format: "id == %i", messageId)
+        }else if let uniqueIds = req.uniqueIds{
+            fetchRequest.predicate = NSPredicate(format:"uniqueId IN %@" , uniqueIds)
+        }else{
+            var predicateArray = [NSPredicate]()
+            predicateArray.append(NSPredicate(format: "threadId == %i", req.threadId))
+            if let formTime = req.fromTime {
+                predicateArray.append(NSPredicate(format: "time >= %i", formTime))
+            }
+            if let toTime = req.toTime {
+                predicateArray.append(NSPredicate(format: "time <= %i", toTime))
+            }
+            if let query = req.query , query != "" {
+                predicateArray.append(NSPredicate(format: "message CONTAINS[cd] %@", query))
+            }
+            if let messageType = req.messageType {
+                predicateArray.append(NSPredicate(format: "messageType == %i", messageType))
+            }
+            let compoundPredicate = NSCompoundPredicate(type: .and, subpredicates: predicateArray)
+            fetchRequest.predicate = compoundPredicate
+        }
+        return fetchRequest
     }
 }

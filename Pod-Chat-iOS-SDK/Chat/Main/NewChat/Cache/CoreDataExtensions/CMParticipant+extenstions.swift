@@ -89,4 +89,19 @@ extension CMParticipant{
         }
         
     }
+    
+    public class func insertOrUpdateParicipants(participants:[Participant]? ,threadId:Int? , resultEntity:((CMParticipant)->())? = nil){
+        participants?.forEach { participant in
+            insertOrUpdate(participant: participant, threadId: threadId, resultEntity: resultEntity)
+        }
+    }
+    
+    public class func deleteParticipants(participants:[Participant]? , threadId:Int?){
+        guard let participants = participants ,let threadId = threadId else{return}
+        crud.fetchWith(NSPredicate(format: "threadId == %i" , threadId))?.forEach({ cmParticipant in
+            if (participants.contains{$0.id == cmParticipant.id as? Int}){
+                crud.delete(entity: cmParticipant)
+            }
+        })
+    }
 }

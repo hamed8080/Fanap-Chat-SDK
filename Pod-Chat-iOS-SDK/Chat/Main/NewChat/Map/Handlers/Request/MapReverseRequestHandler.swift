@@ -10,7 +10,7 @@ import Alamofire
 
 class MapReverseRequestHandler {
 	
-	class func handle( req:MapReverseRequest , chat:Chat ,uniqueIdResult: UniqueIdResultType = nil,completion: @escaping CompletionType<NewMapReverse>){
+	class func handle( req:NewMapReverseRequest , chat:Chat ,uniqueIdResult: UniqueIdResultType = nil,completion: @escaping CompletionType<NewMapReverse>){
 		guard  let createChatModel = chat.createChatModel, let mapApiKey = createChatModel.mapApiKey else {return}
 		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_REVERSE.rawValue)"
 		let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]

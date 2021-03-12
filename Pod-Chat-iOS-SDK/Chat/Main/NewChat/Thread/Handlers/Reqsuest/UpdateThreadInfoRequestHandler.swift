@@ -10,6 +10,7 @@ import FanapPodAsyncSDK
 import Alamofire
 import SwiftyJSON
 
+
 public class UpdateThreadInfoRequestHandler  {
     
     private let chat:Chat
@@ -141,9 +142,10 @@ public class UpdateThreadInfoRequestHandler  {
                 crop:     nil,
                 size:     nil,
                 serverResponse: true)
-            self.chat.sendRequestToDownloadImage(withInputModel: getImageRequest,
-                                            progress:       { _ in },
-                                            completion:     { (_, _) in })
+            sendRequestToDownloadImage(chat:chat,
+                                       withInputModel: getImageRequest,
+                                       progress:       { _ in },
+                                       completion:     { (_, _) in })
             Chat.cacheDB.deleteWaitUploadImages(uniqueId: imageRequest.uniqueId)
         }
     }
@@ -190,6 +192,60 @@ public class UpdateThreadInfoRequestHandler  {
                                                                           typeCode:        imageRequest.typeCode,
                                                                           uniqueId:        imageRequest.uniqueId)
             Chat.cacheDB.saveUploadImageToWaitQueue(image: messageObjectToSendToQueue)
+        }
+    }
+    
+    private func sendRequestToDownloadImage(chat:Chat,
+                                            withInputModel getImageInput: GetImageRequest,
+                                            progress:      @escaping (Float) -> (),
+                                            completion:    @escaping (Data?, DownloadImageModel) -> ()) {
+        
+        let url = "\(chat.SERVICE_ADDRESSES.PODSPACE_FILESERVER_ADDRESS)\(SERVICES_PATH.DRIVE_DOWNLOAD_IMAGE.rawValue)"
+        let method:     HTTPMethod  = HTTPMethod.get
+        let headers:    HTTPHeaders = ["_token_": chat.token, "_token_issuer_": "1"]
+        
+        Networking.sharedInstance.download(fromUrl:         url,
+                                           withMethod:      method,
+                                           withHeaders:     headers,
+                                           withParameters:  getImageInput.convertContentToParameters()
+        , progress: { (myProgress) in
+            progress(myProgress)
+        }) { (imageDataResponse, responseHeader)  in
+            if let myData = imageDataResponse {
+                // save data comes from server to the Cache
+                let fileName = responseHeader["name"].string
+                let fileType = responseHeader["type"].string
+                let fileSize = responseHeader["size"].int
+                let theFinalFileName = "\(fileName ?? "default").\(fileType ?? "none")"
+                let uploadImage = ImageObject(actualHeight: nil,
+                                              actualWidth:  nil,
+                                              hashCode:     getImageInput.hashCode,
+                                              height:       nil,
+//                                              id:           getImageInput.imageId,
+                                              name:         theFinalFileName,
+                                              size:         fileSize ?? myData.count,
+                                              width:        nil)
+                
+                if chat.enableCache {
+                    if chat.checkIfDeviceHasFreeSpace(needSpaceInMB: Int64(myData.count / 1024), turnOffTheCache: true) {
+                        if getImageInput.quality == 0.123 {
+                            Chat.cacheDB.saveThumbnailImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: chat.localImageCustomPath)
+                        } else {
+                            Chat.cacheDB.saveImageObject(imageInfo: uploadImage, imageData: myData, toLocalPath: chat.localImageCustomPath)
+                        }
+                        
+                    }
+                }
+                
+                let uploadImageModel = DownloadImageModel(messageContentModel: uploadImage, errorCode: 0, errorMessage: "", hasError: false)
+                completion(myData, uploadImageModel)
+            } else {
+                let errorUploadImageModel = DownloadImageModel(messageContentModel: nil,
+                                                               errorCode:           responseHeader["errorCode"].int ?? 999,
+                                                               errorMessage:        responseHeader["errorMessage"].string ?? "",
+                                                               hasError:            responseHeader["hasError"].bool ?? false)
+                completion(nil, errorUploadImageModel)
+            }
         }
     }
     

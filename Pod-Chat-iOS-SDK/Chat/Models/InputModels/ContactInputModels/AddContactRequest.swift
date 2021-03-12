@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class AddContactRequest :Encodable {
+open class AddContactRequest {
     
     public var cellphoneNumber:    String?
     public var email:              String?
@@ -20,13 +20,14 @@ open class AddContactRequest :Encodable {
     public var typeCode:           String?
     public var uniqueId:           String
     
-    public init(cellphoneNumber    : String? = nil,
-                email              : String? = nil,
-                firstName          : String? = nil,
-                lastName           : String? = nil,
-                ownerId            : Int?    = nil,
-                typeCode           : String? = "default",
-                uniqueId           : String? = nil) {
+    /// Add Contact with CellPhone number
+    public init(cellphoneNumber:    String?,
+                email:              String?,
+                firstName:          String?,
+                lastName:           String?,
+                ownerId:            Int?,
+                typeCode:           String?,
+                uniqueId:           String?) {
         
         self.cellphoneNumber    = cellphoneNumber
         self.email              = email
@@ -34,7 +35,8 @@ open class AddContactRequest :Encodable {
         self.lastName           = lastName
         self.ownerId            = ownerId
         self.username           = nil
-        self.typeCode           = typeCode ?? "default"
+
+        self.typeCode           = typeCode
         self.uniqueId           = uniqueId ?? UUID().uuidString
     }
     

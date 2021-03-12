@@ -13,7 +13,7 @@ class RemoveParticipantsRequestHandler {
                        _ completion: @escaping CompletionType<[Participant]> ,
                        _ uniqueIdResult: UniqueIdResultType = nil
     ){
-        chat.prepareToSendAsync(req: req,
+        chat.prepareToSendAsync(req: req.participantIds ,
                                 clientSpecificUniqueId: req.uniqueId,
                                 typeCode: req.typeCode ,
                                 subjectId: req.threadId,

@@ -16,14 +16,14 @@ class UpdateContactRequestHandler {
 		guard let createChatModel = chat.createChatModel else {return}
 		let url = "\(createChatModel.platformHost)\(SERVICES_PATH.UPDATE_CONTACTS.rawValue)"
 		let headers: HTTPHeaders = ["_token_": createChatModel.token, "_token_issuer_": "1"]
-		chat.restApiRequest(req, decodeType: ContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode){ response in
-            let contactResponse = response.result as? ContactResponse
+		chat.restApiRequest(req, decodeType: NewContactResponse.self, url: url, method: .post ,headers: headers , typeCode: typeCode){ response in
+            let contactResponse = response.result as? NewContactResponse
 			updateContacts(chat: chat, contactsResponse: contactResponse)
             completion(contactResponse?.contacts , response.error)
 		}
 	}
 	
-	private class func updateContacts(chat:Chat , contactsResponse:ContactResponse?){
+	private class func updateContacts(chat:Chat , contactsResponse:NewContactResponse?){
 		if let contacts = contactsResponse?.contacts {
 			CMContact.insertOrUpdate(contacts: contacts)
 		}

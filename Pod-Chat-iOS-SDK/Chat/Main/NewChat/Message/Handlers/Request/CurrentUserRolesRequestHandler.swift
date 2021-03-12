@@ -11,6 +11,7 @@ class CurrentUserRolesRequestHandler {
 	class func handle( _ req:CurrentUserRolesRequest,
 					   _ chat:Chat,
 					   _ completion: @escaping CompletionType<[Roles]> ,
+                       _ cacheResponse: CacheResponseType<[Roles]>? = nil,
 					   _ uniqueIdResult: UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: nil,
@@ -20,6 +21,10 @@ class CurrentUserRolesRequestHandler {
 								messageType: .GET_CURRENT_USER_ROLES,
                                 uniqueIdResult: uniqueIdResult){ response in
             completion(response.result as? [Roles] , response.error)
+        }
+        
+        CacheFactory.get(useCache: cacheResponse != nil, cacheType: .CUREENT_USER_ROLES(req.threadId)){ response in
+            cacheResponse?(response.cacheResponse as? [Roles] , nil)
         }
 	}
 }

@@ -122,7 +122,7 @@ extension Chat {
         }
 
         if (!hasFileOntheCache) || (getFileInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false)
             sendRequestToDownloadFile(withInputModel: getFileInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, fileModel) in
@@ -242,7 +242,7 @@ extension Chat {
         }
         
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: self.deviecLimitationSpaceMB, turnOffTheCache: false)
             sendRequestToDownloadImage(withInputModel: getImageInput, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -290,7 +290,7 @@ extension Chat {
                                     size:       getImageInput.size,
                                     serverResponse: getImageInput.serverResponse)
         if (!hasImageOnTheCache) || (getImageInput.serverResponse) {
-            _ = DiskStatus.checkIfDeviceHasFreeSpace(needSpaceInMB: deviecLimitationSpaceMB, turnOffTheCache: false, errorDelegate: delegate)
+            _ = checkIfDeviceHasFreeSpace(needSpaceInMB: self.deviecLimitationSpaceMB, turnOffTheCache: false)
             sendRequestToDownloadImage(withInputModel: input, progress: { (theProgress) in
                 progress(theProgress)
             }) { (data, imageModel) in
@@ -300,7 +300,7 @@ extension Chat {
         
     }
     
-	func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
+    private func sendRequestToDownloadImage(withInputModel getImageInput: GetImageRequest,
                                             progress:      @escaping (Float) -> (),
                                             completion:    @escaping (Data?, DownloadImageModel) -> ()) {
         

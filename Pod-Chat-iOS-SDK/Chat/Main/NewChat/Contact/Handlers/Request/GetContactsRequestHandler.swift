@@ -23,12 +23,9 @@ class GetContactsRequestHandler {
 			completion(response.result as? [Contact], response.error)
 		}
 		
-		CacheFactory.get(chat:chat ,
-						 useCache: cacheResponse != nil,
-						 completion: { cacheContacts in
-							cacheResponse?( cacheContacts.cacheResponse as? [Contact] , cacheContacts.error)
-						 },
-						 cacheType: .GET_CASHED_CONTACTS(req))
-	}
+        CacheFactory.get(useCache: cacheResponse != nil,cacheType: .GET_CASHED_CONTACTS(req)){ cacheContacts in
+            cacheResponse?( cacheContacts.cacheResponse as? [Contact] , cacheContacts.error)
+        }
+    }
 	
 }

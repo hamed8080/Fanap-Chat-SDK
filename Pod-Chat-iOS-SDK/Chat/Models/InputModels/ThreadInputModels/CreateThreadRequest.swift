@@ -9,7 +9,7 @@
 import FanapPodAsyncSDK
 import SwiftyJSON
 
-open class CreateThreadRequest: Encodable , RequestModelDelegates {
+open class CreateThreadRequest: RequestModelDelegates {
     
     public let description: String?
     public let image:       String?
@@ -17,23 +17,20 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
     public let metadata:    String?
     public let title:       String
     public let type:        ThreadTypes?
-    public let uniqueName:  String? //only for public thread
+    public let uniqueName:  String?
     
-	
-	@available(*,deprecated , message: "removed in future release. use in request method")
     public let typeCode:    String?
-	@available(*,deprecated ,  message: "removed in future release. use in request method")
     public let uniqueId:    String
     
-    public init(description:    String? = nil,
-                image:          String? = nil,
+    public init(description:    String?,
+                image:          String?,
                 invitees:       [Invitee],
-                metadata:       String? = nil,
+                metadata:       String?,
                 title:          String,
-                type:           ThreadTypes? = nil,
-                uniqueName:     String? = nil,
-                typeCode:       String? = nil,
-                uniqueId:       String? = nil) {
+                type:           ThreadTypes?,
+                uniqueName:     String?,
+                typeCode:       String?,
+                uniqueId:       String?) {
         
         self.description    = description
         self.image          = image
@@ -47,7 +44,7 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
         self.uniqueId       = uniqueId ?? UUID().uuidString
     }
     
-	// TODO: removed in future release afetre remove typeCode and uniqueId
+    
     public func convertContentToJSON() -> JSON {
         var content: JSON = [:]
         content["title"] = JSON(MakeCustomTextToSend(message: self.title).replaceSpaceEnterWithSpecificCharecters())
@@ -82,28 +79,6 @@ open class CreateThreadRequest: Encodable , RequestModelDelegates {
     public func convertContentToJSONArray() -> [JSON] {
         return []
     }
-	
-	
-	private enum CodingKeys: String ,CodingKey{
-		case title       = "title"
-		case image       = "image"
-		case description = "description"
-		case metadata    = "metadata"
-		case uniqueName  = "uniqueName"
-		case type        = "type"
-		case invitees    = "invitees"
-	}
-	
-	public func encode(to encoder: Encoder) throws {
-		var container = encoder.container(keyedBy: CodingKeys.self)
-		try container.encodeIfPresent(title.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .title)
-		try container.encodeIfPresent(image, forKey: .image)
-		try container.encodeIfPresent(description?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .description)
-		try container.encodeIfPresent(metadata?.getCustomTextToSendWithRemoveSpaceAndEnter(), forKey: .metadata)
-		try container.encodeIfPresent(uniqueName, forKey: .uniqueName)
-		try container.encodeIfPresent(type, forKey: .type)
-		try container.encodeIfPresent(invitees, forKey: .invitees)
-	}
     
 }
 

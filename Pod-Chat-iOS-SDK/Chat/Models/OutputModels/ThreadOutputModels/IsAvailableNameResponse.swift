@@ -30,11 +30,7 @@ open class IsAvailableNameModel: ResponseModel, ResponseModelDelegates {
         self.uniqueName = uniqueName
         super.init(hasError: hasError, errorMessage: errorMessage, errorCode: errorCode)
     }
-	
-	public required init(from decoder: Decoder) throws {
-		fatalError("init(from:) has not been implemented")
-	}
-	
+    
     public func returnDataAsJSON() -> JSON {
         let result: JSON = ["uniqueName":   uniqueName ?? NSNull()]
         

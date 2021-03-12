@@ -9,7 +9,6 @@
 import Foundation
 import SwiftyJSON
 
-@available(*, deprecated , message: "removed in future release. use request Method")
 open class AddParticipantsRequest: RequestModelDelegates {
     
     public let contactIds:  [Int]?
@@ -94,7 +93,7 @@ open class AddParticipantsRequest: RequestModelDelegates {
     
 }
 
-@available(*, deprecated , message: "removed in future release.")
+/// MARK: -  this class will be deprecate. (use this class instead: 'AddParticipantsRequest')
 open class AddParticipantsRequestModel: AddParticipantsRequest {
     
 }

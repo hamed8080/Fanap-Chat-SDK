@@ -6,7 +6,7 @@
 //
 
 import Foundation
-public class CreateThreadWithMessage : CreateThreadRequest {
+public class CreateThreadWithMessage : NewCreateThreadRequest {
     
     public var message:CreateThreadMessage
 
@@ -32,6 +32,15 @@ public class CreateThreadWithMessage : CreateThreadRequest {
 
     }
     
+    private enum CodingKeys : String , CodingKey{
+        case message = "message"
+    }
+    
+    public override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(message, forKey: .message)
+    }
 }
 
 

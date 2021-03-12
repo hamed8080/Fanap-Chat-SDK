@@ -8,7 +8,7 @@
 import Foundation
 import Foundation
 
-open class NewMapRoutingResponse: ResponseModel {
+open class NewMapRoutingResponse: NewResponseModel {
 	
 	public var routes:  [Route]? = nil
 	

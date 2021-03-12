@@ -8,9 +8,7 @@
 
 import SwiftyJSON
 
-
-@available(*,deprecated , message:"this class remoed in future realese . use request method")
-open class IsPublicThreadNameAvailableRequest: RequestModelDelegates , Encodable {
+open class IsPublicThreadNameAvailableRequest: RequestModelDelegates {
     
     public let uniqueName:  String
     

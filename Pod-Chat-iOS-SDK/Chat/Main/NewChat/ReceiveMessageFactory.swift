@@ -56,6 +56,7 @@ class ReceiveMessageFactory{
                 DeliverMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .EDIT_MESSAGE:
+                EditMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .ERROR:
 				ErrorResponseHandler.handle(chat, chatMessage , asyncMessage)
@@ -112,7 +113,7 @@ class ReceiveMessageFactory{
                 log.verbose("Message of type 'PING' recieved", context: "Chat") //TODO: must replace with new log
 				break
 			case .PIN_MESSAGE:
-                PinUnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
+                PinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .PIN_THREAD:
 				PinThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
@@ -136,10 +137,10 @@ class ReceiveMessageFactory{
 			case .REPORT_USER:
 				break
 			case .SEEN:
-                SentMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
+                SeenMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SENT:
-                SeenMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
+                SentMessageResponseHandler.handle(chat , chatMessage , asyncMessage)
 				break
 			case .SET_PROFILE:
 				SetProfileResponseHandler.handle(chat , chatMessage , asyncMessage)
@@ -174,13 +175,14 @@ class ReceiveMessageFactory{
 				MuteThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UNPIN_MESSAGE:
-                PinUnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
+                UnPinMessageResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UNPIN_THREAD:
 				//same as Pin response no neeed new class to handle it
 				PinThreadResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .UPDATE_THREAD_INFO:
+                UpdateThreadInfoResponseHandler.handle(chat, chatMessage, asyncMessage)
 				break
 			case .USER_INFO:
 				UserInfoResponseHandler.handle(chat, chatMessage, asyncMessage)

@@ -10,7 +10,7 @@ import Alamofire
 
 class MapSearchRequestHandler {
 	
-	class func handle( req:MapSearchRequest , chat:Chat ,uniqueIdResult: UniqueIdResultType = nil,completion: @escaping CompletionType<[NewMapItem]>){
+	class func handle( req:NewMapSearchRequest , chat:Chat ,uniqueIdResult: UniqueIdResultType = nil,completion: @escaping CompletionType<[NewMapItem]>){
 		guard  let createChatModel = chat.createChatModel, let mapApiKey = createChatModel.mapApiKey else {return}
 		let url = "\(createChatModel.mapServer)\(SERVICES_PATH.MAP_SEARCH.rawValue)"
 		let headers:  HTTPHeaders = ["Api-Key":  mapApiKey]

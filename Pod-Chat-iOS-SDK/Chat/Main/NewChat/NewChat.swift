@@ -109,11 +109,11 @@ public extension Chat {
 		GetBlockedContactsRequestHandler.handle(request,self,completion , uniqueIdResult)
 	}
 	
-	func addContact(_ request:AddContactRequest,completion:@escaping CompletionType<[Contact]>, uniqueIdResult: UniqueIdResultType? = nil){
+	func addContact(_ request:NewAddContactRequest,completion:@escaping CompletionType<[Contact]>, uniqueIdResult: UniqueIdResultType? = nil){
         AddContactRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func addContacts(_ request:[AddContactRequest],completion:@escaping CompletionType<[Contact]>,uniqueIdResult: UniqueIdResultType? = nil){
+	func addContacts(_ request:[NewAddContactRequest],completion:@escaping CompletionType<[Contact]>,uniqueIdResult: UniqueIdResultType? = nil){
 		AddContactsRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
@@ -121,7 +121,7 @@ public extension Chat {
 		NotSeenContactRequestHandler.handle(request, self, completion)
 	}
 	
-	func removeContact(_ request:RemoveContactsRequest,completion:@escaping CompletionType<Bool>,uniqueIdResult: UniqueIdResultType = nil){
+	func removeContact(_ request:NewRemoveContactsRequest,completion:@escaping CompletionType<Bool>,uniqueIdResult: UniqueIdResultType = nil){
 		RemoveContactRequestHandler.handle(req: request, chat: self, typeCode: request.typeCode, completion: completion)
 	}
 	
@@ -145,11 +145,11 @@ public extension Chat {
 		UnBlockContactRequestHandler.handle(request,self,completion , uniqueIdResult)
 	}
 	
-    func mapReverse(_ request:MapReverseRequest,completion:@escaping CompletionType<NewMapReverse>,uniqueIdResult: UniqueIdResultType = nil){
+    func mapReverse(_ request:NewMapReverseRequest,completion:@escaping CompletionType<NewMapReverse>,uniqueIdResult: UniqueIdResultType = nil){
 		MapReverseRequestHandler.handle(req: request, chat: self, uniqueIdResult:uniqueIdResult, completion: completion)
 	}
 	
-	func mapSearch(_ request:MapSearchRequest,completion:@escaping CompletionType<[NewMapItem]>,uniqueIdResult: UniqueIdResultType = nil){
+	func mapSearch(_ request:NewMapSearchRequest,completion:@escaping CompletionType<[NewMapItem]>,uniqueIdResult: UniqueIdResultType = nil){
 		MapSearchRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
@@ -161,8 +161,8 @@ public extension Chat {
 		MapStaticImageRequestHandler.handle(req: request, chat: self, completion: completion)
 	}
 	
-	func getThreads(_ request:ThreadsRequest,completion:@escaping CompletionType<[Conversation]>, uniqueIdResult: UniqueIdResultType = nil){
-		GetThreadsRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func getThreads(_ request:ThreadsRequest,completion:@escaping CompletionType<[Conversation]>, cacheResponse: CacheResponseType<[Conversation]>? = nil ,  uniqueIdResult: UniqueIdResultType = nil){
+		GetThreadsRequestHandler.handle(request, self , completion , cacheResponse , uniqueIdResult)
 	}
 	
 	func isThreadNamePublic(_ request:IsThreadNamePublicRequest,completion:@escaping CompletionType<String>,uniqueIdResult: UniqueIdResultType = nil){
@@ -197,11 +197,7 @@ public extension Chat {
 		AddParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func removeParticipant(_ request: NewRemoveParticipantsRequest,completion:@escaping CompletionType<[Participant]>, uniqueIdResult: UniqueIdResultType = nil){
-		RemoveParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
-	}
-	
-	func removeParticipants(_ request:NewRemoveParticipantsRequest ,completion:@escaping CompletionType<[Participant]> ,uniqueIdResult: UniqueIdResultType = nil){
+	func removeParticipants(_ request: NewRemoveParticipantsRequest,completion:@escaping CompletionType<[Participant]>, uniqueIdResult: UniqueIdResultType = nil){
 		RemoveParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
@@ -246,8 +242,8 @@ public extension Chat {
 		StopBotRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func getUserInfo(_ request:UserInfoRequest ,completion:@escaping CompletionType<User>,uniqueIdResult: UniqueIdResultType = nil){
-		UserInfoRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func getUserInfo(_ request:UserInfoRequest ,completion:@escaping CompletionType<User> ,cacheResponse: CacheResponseType<User>? = nil,uniqueIdResult: UniqueIdResultType = nil){
+		UserInfoRequestHandler.handle(request, self , completion , cacheResponse , uniqueIdResult)
 	}
 	
 	func setProfile(_ request:NewUpdateChatProfile ,completion:@escaping CompletionType<Profile>,uniqueIdResult: UniqueIdResultType = nil){
@@ -258,12 +254,37 @@ public extension Chat {
 		SendStatusPingRequestHandler.handle(request, self)
 	}
 	
-	func getThreadParticipants(_ request:ThreadParticipantsRequest ,completion:@escaping CompletionType<[Participant]>,uniqueIdResult: UniqueIdResultType = nil){
-		ThreadParticipantsRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func getThreadParticipants(_ request:ThreadParticipantsRequest ,completion:@escaping CompletionType<[Participant]>, cacheResponse: CacheResponseType<[Participant]>? = nil,uniqueIdResult: UniqueIdResultType = nil){
+		ThreadParticipantsRequestHandler.handle(request, self , completion , cacheResponse , uniqueIdResult)
 	}
     
     func sendTextMessage(_ request:NewSendTextMessageRequest ,uniqueIdresult:UniqueIdResultType = nil, onSent:OnSentType = nil , onSeen:OnSeenType = nil, onDeliver:OnDeliveryType = nil){
         SendTextMessageRequestHandler.handle(request, self, onSent, onSeen, onDeliver)
+    }
+    
+    func editMessage(_ request:NewEditMessageRequest , completion:@escaping CompletionType<Message> ,uniqueIdresult:UniqueIdResultType = nil){
+        EditMessageRequestHandler.handle(request, self, completion )
+    }
+    
+    func forwardMessages(_ request:NewForwardMessageRequest ,  onSent:OnSentType = nil , onSeen:OnSeenType = nil, onDeliver:OnDeliveryType = nil ,uniqueIdsrResult:UniqueIdsResultType = nil){
+        ForwardMessagesRequestHandler.handle(request, self, onSent, onSeen, onDeliver, uniqueIdsrResult)
+    }
+    
+    func getHistory(_ request:NewGetHistoryRequest ,
+                    completion:@escaping CompletionType<[Message]> ,
+                    cacheResponse: CacheResponseType<[Message]>? = nil,
+                    textMessageNotSentRequests: CompletionType<[NewSendTextMessageRequest]>? = nil,
+                    editMessageNotSentRequests: CompletionType<[NewEditMessageRequest]>? = nil,
+                    forwardMessageNotSentRequests: CompletionType<[NewForwardMessageRequest]>? = nil,
+                    uniqueIdResult: UniqueIdResultType = nil){
+        GetHistoryRequestHandler.handle(request,
+                                        self ,
+                                        completion,
+                                        cacheResponse ,
+                                        textMessageNotSentRequests ,
+                                        editMessageNotSentRequests ,
+                                        forwardMessageNotSentRequests,
+                                        uniqueIdResult)
     }
 	
 	func pinMessage(_ request:NewPinUnpinMessageRequest ,completion:@escaping CompletionType<PinUnpinMessageResponse> , uniqueIdResult: UniqueIdResultType = nil){
@@ -278,7 +299,7 @@ public extension Chat {
 		ClearHistoryRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func deleteMessage(_ request:NewDeleteMessagerRequest ,completion:@escaping CompletionType<DeleteMessage>,uniqueIdResult: UniqueIdResultType = nil){
+	func deleteMessage(_ request:NewDeleteMessageRequest ,completion:@escaping CompletionType<DeleteMessage>,uniqueIdResult: UniqueIdResultType = nil){
 		DeleteMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
@@ -286,12 +307,12 @@ public extension Chat {
 		BatchDeleteMessageRequestHandler.handle(request, self , completion , uniqueIdResult)
 	}
 	
-	func allUnreadMessageCount(_ request:UnreadMessageCountRequest ,completion:@escaping CompletionType<Int>,uniqueIdResult: UniqueIdResultType = nil){
-		AllUnreadMessageCountRequestHandler.handle(request, self , completion , uniqueIdResult)
+    func allUnreadMessageCount(_ request:UnreadMessageCountRequest ,completion:@escaping CompletionType<Int>, cacheResponse: CacheResponseType<Int>? = nil ,uniqueIdResult: UniqueIdResultType = nil){
+		AllUnreadMessageCountRequestHandler.handle(request, self , completion , cacheResponse , uniqueIdResult)
 	}
 	
-	func getMentions(_ request:MentionRequest ,completion:@escaping CompletionType<[Message]> , uniqueIdResult: UniqueIdResultType = nil){
-		MentionsRequestHandler.handle(request, self , completion , uniqueIdResult)
+	func getMentions(_ request:MentionRequest ,completion:@escaping CompletionType<[Message]> ,cacheResponse: CacheResponseType<[Message]>? = nil, uniqueIdResult: UniqueIdResultType = nil){
+		MentionsRequestHandler.handle(request, self , completion, cacheResponse, uniqueIdResult)
 	}
 	
 	func messageDeliveryParticipants(_ request:MessageDeliveredUsersRequest ,completion:@escaping CompletionType<[Participant]> ,uniqueIdResult: UniqueIdResultType = nil){
@@ -310,8 +331,8 @@ public extension Chat {
 		SeenRequestHandler.handle(request, self)
 	}
 	
-	func getCurrentUserRoles(_ request:CurrentUserRolesRequest ,completion:@escaping CompletionType<[Roles]>, uniqueIdResult: UniqueIdResultType = nil){
-		CurrentUserRolesRequestHandler.handle(request, self , completion , uniqueIdResult)
+    func getCurrentUserRoles(_ request:CurrentUserRolesRequest ,completion:@escaping CompletionType<[Roles]> , cacheResponse: CacheResponseType<[Roles]>? = nil, uniqueIdResult: UniqueIdResultType = nil){
+		CurrentUserRolesRequestHandler.handle(request, self , completion , cacheResponse , uniqueIdResult)
 	}
 	
 	// REST API Request
@@ -376,6 +397,9 @@ public extension Chat {
 		
 		
 		callbacksManager.addCallback(uniqueId: uniqueId , callback: completion ,onSent: onSent , onDelivered: onDelivered , onSeen: onSeen)
+        if let data = try? JSONEncoder().encode(asyncMessage){
+            print("json sent is:\(String(describing: String(data: data , encoding: .utf8)))")
+        }
 		sendToAsync(asyncMessageVO: asyncMessage)
 	}
     

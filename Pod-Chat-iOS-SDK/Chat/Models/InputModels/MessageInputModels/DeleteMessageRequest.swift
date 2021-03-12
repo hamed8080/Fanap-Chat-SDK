@@ -9,24 +9,22 @@
 import Foundation
 import SwiftyJSON
 
-open class DeleteMessageRequest: RequestModelDelegates , Encodable {
+open class DeleteMessageRequest: RequestModelDelegates {
     
-    public let deleteForAll:    Bool
+    public let deleteForAll:    Bool?
     public let messageId:       Int
-    
-    @available(*,deprecated , message: "removed in future release.use request method")
     public let typeCode:    String?
-    @available(*,deprecated , message: "removed in future release.use request method")
     public let uniqueId:    String
-    @available(*,deprecated , message: "removed in future release.use messageId")
+    
+    // this variable will be deprecated soon, (use 'messageId' instead)
     public let subjectId: Int
     
-    public init(deleteForAll:   Bool? = false,
+    public init(deleteForAll:   Bool?,
                 messageId:      Int,
-                typeCode:       String? = nil,
-                uniqueId:       String? = nil) {
+                typeCode:       String?,
+                uniqueId:       String?) {
         
-        self.deleteForAll   = deleteForAll ?? false
+        self.deleteForAll   = deleteForAll
         self.messageId      = messageId
         
         self.subjectId      = messageId
@@ -35,13 +33,12 @@ open class DeleteMessageRequest: RequestModelDelegates , Encodable {
         self.uniqueId       = uniqueId ?? UUID().uuidString
     }
     
-    @available(*,deprecated , message: "removed in future release.use init with messageId instead")
-    public init(deleteForAll:   Bool? = false,
+    public init(deleteForAll:   Bool?,
                 subjectId:      Int,
                 typeCode:       String?,
                 uniqueId:       String?) {
         
-        self.deleteForAll   = deleteForAll ?? false
+        self.deleteForAll   = deleteForAll
         self.messageId      = subjectId
         
         self.subjectId      = subjectId
@@ -52,7 +49,10 @@ open class DeleteMessageRequest: RequestModelDelegates , Encodable {
     
     public func convertContentToJSON() -> JSON {
         var content: JSON = []
-        content["deleteForAll"] = JSON("\(deleteForAll)")
+        if let deleteForAll = self.deleteForAll {
+            content["deleteForAll"] = JSON("\(deleteForAll)")
+        }
+        
         return content
     }
     
@@ -60,19 +60,10 @@ open class DeleteMessageRequest: RequestModelDelegates , Encodable {
         return []
     }
     
-    private enum CodingKeys : String , CodingKey{
-        case deleteForAll = "deleteForAll"
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(deleteForAll, forKey: .deleteForAll)
-    }
-    
 }
 
 
-@available(*,deprecated , message: "removed in future release.use DeleteMessageRequest")
+/// MARK: -  this class will be deprecate (use this class instead: 'DeleteMessageRequest')
 open class DeleteMessageRequestModel: DeleteMessageRequest {
     
 }

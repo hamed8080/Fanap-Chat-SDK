@@ -7,7 +7,7 @@
 
 import Foundation
 
-open class NewMapSearchResponse : ResponseModel{
+open class NewMapSearchResponse : NewResponseModel{
 	
 	public var count:   Int
 	public var items:   [NewMapItem]?

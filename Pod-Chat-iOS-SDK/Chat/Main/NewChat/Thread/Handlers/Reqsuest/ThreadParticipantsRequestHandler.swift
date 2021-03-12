@@ -11,6 +11,7 @@ class ThreadParticipantsRequestHandler {
 	class func handle( _ req:ThreadParticipantsRequest,
 					   _ chat:Chat,
 					   _ completion: @escaping CompletionType<[Participant]> ,
+                       _ cacheResponse: CacheResponseType<[Participant]>? ,
 					   _ uniqueIdResult:UniqueIdResultType = nil
 	){
 		chat.prepareToSendAsync(req: req,
@@ -21,7 +22,9 @@ class ThreadParticipantsRequestHandler {
                                 uniqueIdResult: uniqueIdResult){ response in
             completion(response.result as? [Participant] , response.error)
         }
+        
+        CacheFactory.get(useCache: cacheResponse != nil , cacheType: .GET_THREAD_PARTICIPANTS(req)){ response in
+            cacheResponse?(response.cacheResponse as? [Participant], nil)
+        }
 	}
 }
-
-	

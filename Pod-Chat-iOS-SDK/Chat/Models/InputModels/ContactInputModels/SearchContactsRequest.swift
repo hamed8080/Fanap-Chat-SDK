@@ -18,13 +18,11 @@ open class SearchContactsRequest {
     public let order:           Ordering?
     public let query:           String?
     public let summery:         Bool?
-	@available(*,deprecated , message: "remove from future release. use request method")
-	public let typeCode:        String?
     
-	@available(*,deprecated , message: "remove from future release. use request method")
+    public let typeCode:        String?
     public let uniqueId:        String
     
-    @available(*,deprecated , message: "remove from future release. use init without uniqueId and typeCode")
+    
     public init(cellphoneNumber:    String?,
                 contactId:          Int?,
                 count:              Int?,
@@ -35,44 +33,25 @@ open class SearchContactsRequest {
                 summery:            Bool?,
                 typeCode:           String?,
                 uniqueId:           String?) {
-        self.cellphoneNumber    = cellphoneNumber
-        self.contactId          = contactId
-        self.count              = count ?? 50
-        self.email              = email
-        self.offset             = offset ?? 0
-        self.order              = order
-        self.query              = query
-        self.summery            = summery
-        self.typeCode           = typeCode
-        self.uniqueId           = uniqueId ?? UUID().uuidString
-    }
-    
-    public init(cellphoneNumber:    String? = nil,
-                contactId:          Int? = nil,
-                count:              Int? = nil,
-                email:              String? = nil,
-                offset:             Int? = nil,
-                order:              Ordering? = nil,
-                query:              String? = nil,
-                summery:            Bool? = nil) {
         
         self.cellphoneNumber    = cellphoneNumber
         self.contactId          = contactId
-        self.count              = count ?? 50
+        self.count              = count
         self.email              = email
-        self.offset             = offset ?? 0
+        self.offset             = offset
         self.order              = order
         self.query              = query
         self.summery            = summery
-		//removed in future release
-        self.typeCode           = nil
-        //removed in future release
-        self.uniqueId           = UUID().uuidString
+        
+        self.typeCode           = typeCode
+        self.uniqueId           = uniqueId ?? UUID().uuidString
     }
     
 }
 
 
-@available(*,unavailable , message:"use SearchContactsRequest class")
-open class SearchContactsRequestModel{}
+/// MARK: -  this class will be deprecate (use this class instead: 'SearchContactsRequest')
+open class SearchContactsRequestModel: SearchContactsRequest {
+    
+}
 

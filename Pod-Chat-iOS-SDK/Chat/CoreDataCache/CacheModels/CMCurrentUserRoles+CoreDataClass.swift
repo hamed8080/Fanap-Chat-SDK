@@ -44,7 +44,7 @@ public class RolesArray: NSObject, NSCoding {
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(roles, forKey: Key.roles.rawValue)
     }
-    
+
     public required convenience init?(coder aDecoder: NSCoder) {
         let myRoles = aDecoder.decodeObject(forKey: Key.roles.rawValue) as! [String]
         self.init(roles: myRoles)

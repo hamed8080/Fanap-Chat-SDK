@@ -172,7 +172,7 @@ extension Chat: AsyncDelegates {
          *
          */
         log.verbose("content of received message: \n \(params)", context: "Chat")
-        
+
         let asyncMessage = AsyncMessage(withContent: params)
         handleReceiveMessageFromAsync(withContent: asyncMessage)
         

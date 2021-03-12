@@ -6,7 +6,7 @@
 //
 
 import Foundation
-open class ContactNotSeenDurationRespoonse: ResponseModel {
+open class ContactNotSeenDurationRespoonse: NewResponseModel {
 	
 	public let notSeenDuration: [UserLastSeenDuration]
 	

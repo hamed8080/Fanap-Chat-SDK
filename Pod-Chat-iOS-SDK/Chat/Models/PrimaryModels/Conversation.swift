@@ -91,7 +91,7 @@ open class Conversation : Codable{
         if (messageContent["inviter"] != JSON.null) {
             self.inviter = Participant(messageContent: messageContent["inviter"], threadId: id)
         }
-		
+        
         if let myParticipants = messageContent["participants"].array {
             var tempParticipants = [Participant]()
             for item in myParticipants {

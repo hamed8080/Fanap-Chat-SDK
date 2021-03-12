@@ -13,6 +13,8 @@ class CreateThreadResponseHandler: ResponseHandler {
 		guard let data = chatMessage.content?.data(using: .utf8) else {return}
 		guard let newThread = try? JSONDecoder().decode(Conversation.self, from: data) else{return}
 		callback(.init(result: newThread))
+        CacheFactory.write(cacheType: .THREADS([newThread]))
+        PSM.shared.save()
 		chat.callbacksManager.removeCallback(uniqueId: chatMessage.uniqueId)
 	}
 }

@@ -23,7 +23,7 @@ class Networking {
                 withParameters:     Parameters?,
                 isImage:            Bool?,
                 isFile:             Bool?,
-                dataToSend:         Any?,
+                dataToSend:         Data?,
                 uniqueId:           String?,
                 progress:           callbackTypeAliasFloat?,
                 completion:         @escaping callbackTypeAlias) {
@@ -37,7 +37,7 @@ class Networking {
 //            if let hasFile = isFile, (hasFile == true) {
 //                multipartFormData.append(dataToSend as! Data, withName: "file")
 //            }
-            multipartFormData.append(dataToSend as! Data, withName: "file")
+            multipartFormData.append(dataToSend!, withName: "file")
             
             if let header = withHeaders {
                 for (key, value) in header {

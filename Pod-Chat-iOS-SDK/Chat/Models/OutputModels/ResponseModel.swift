@@ -8,7 +8,7 @@
 
 import Foundation
 
-open class ResponseModel : Codable{
+open class ResponseModel {
     
     var hasError:       Bool
     var errorMessage:   String
